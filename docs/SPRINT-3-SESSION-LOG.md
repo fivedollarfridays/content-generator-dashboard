@@ -35,12 +35,12 @@ api-client.ts  |   97.61 |       96 |     100 |     100 | 109
 
 ### Coverage Analysis
 
-| Metric | Achieved | Target | Status |
-|--------|----------|--------|--------|
-| Statements | 97.61% | 70% | ✅ +27.61% |
-| Branches | 96% | 70% | ✅ +26% |
-| Functions | 100% | 70% | ✅ +30% |
-| Lines | 100% | 70% | ✅ +30% |
+| Metric     | Achieved | Target | Status     |
+| ---------- | -------- | ------ | ---------- |
+| Statements | 97.61%   | 70%    | ✅ +27.61% |
+| Branches   | 96%      | 70%    | ✅ +26%    |
+| Functions  | 100%     | 70%    | ✅ +30%    |
+| Lines      | 100%     | 70%    | ✅ +30%    |
 
 **Only 1 uncovered line**: Line 109 in validateContent default parameter
 **Reason**: Default parameter branch, not critical for coverage
@@ -145,6 +145,7 @@ afterEach(() => {
 #### healthCheck()
 
 **Successful Response Test**:
+
 ```typescript
 const mockHealth: HealthStatus = {
   status: 'healthy',
@@ -159,12 +160,14 @@ const mockHealth: HealthStatus = {
 ```
 
 **Verifications**:
+
 - ✅ Correct endpoint called (`/health`)
 - ✅ Proper headers included
 - ✅ Response data matches expected type
 - ✅ Success flag set correctly
 
 **Error Handling Test**:
+
 - Tests 503 Service Unavailable response
 - Verifies error message extraction
 - Checks status code propagation
@@ -187,6 +190,7 @@ const mockHealth: HealthStatus = {
 #### generateContent()
 
 **Success Case**:
+
 ```typescript
 const request = {
   document_id: 'doc-456',
@@ -195,12 +199,14 @@ const request = {
 ```
 
 **Verifications**:
+
 - ✅ POST method used
 - ✅ Request body serialized correctly
 - ✅ Response includes job ID
 - ✅ SyncJob type returned
 
 **API Key Test**:
+
 ```typescript
 const apiWithKey = new ContentGeneratorAPI(BASE_URL, API_KEY);
 // Verifies Authorization header: Bearer {API_KEY}
@@ -223,15 +229,13 @@ const apiWithKey = new ContentGeneratorAPI(BASE_URL, API_KEY);
 #### validateContent()
 
 **Test Scenario**:
+
 ```typescript
-await api.validateContent(
-  { title: 'Test' },
-  'article',
-  true
-);
+await api.validateContent({ title: 'Test' }, 'article', true);
 ```
 
 **Verifications**:
+
 - ✅ Content payload in request body
 - ✅ content_type parameter passed
 - ✅ strict mode flag included
@@ -243,12 +247,14 @@ await api.validateContent(
 #### listJobs()
 
 **Test Case 1: No Parameters**
+
 ```typescript
 await api.listJobs();
 // Calls: /api/v2/content/sync
 ```
 
 **Test Case 2: With Filters**
+
 ```typescript
 await api.listJobs({
   status: 'completed',
@@ -259,6 +265,7 @@ await api.listJobs({
 ```
 
 **Verifications**:
+
 - ✅ Query parameter construction
 - ✅ URLSearchParams handling
 - ✅ JobsListResponse type
@@ -288,6 +295,7 @@ await api.listJobs({
 #### getCacheStats()
 
 **Mock Response**:
+
 ```typescript
 const mockStats: CacheStats = {
   total_keys: 100,
@@ -305,14 +313,16 @@ const mockStats: CacheStats = {
 #### invalidateCache()
 
 **Test Case 1: Pattern-based**
+
 ```typescript
 await api.invalidateCache({ pattern: 'content:*' });
 ```
 
 **Test Case 2: Specific keys**
+
 ```typescript
 await api.invalidateCache({
-  cache_keys: ['key1', 'key2']
+  cache_keys: ['key1', 'key2'],
 });
 ```
 
@@ -331,18 +341,21 @@ await api.invalidateCache({
 #### batchGenerate()
 
 **Test Case 1: Default Options**
+
 ```typescript
 await api.batchGenerate(requests);
 // parallel: true, fail_fast: false (defaults)
 ```
 
 **Test Case 2: Custom Options**
+
 ```typescript
 await api.batchGenerate(requests, false, true);
 // parallel: false, fail_fast: true
 ```
 
 **Verifications**:
+
 - ✅ Request array serialization
 - ✅ Option flags passed correctly
 - ✅ Batch ID returned
@@ -354,12 +367,11 @@ await api.batchGenerate(requests, false, true);
 #### Network Error Test
 
 ```typescript
-(global.fetch as jest.Mock).mockRejectedValueOnce(
-  new Error('Network error')
-);
+(global.fetch as jest.Mock).mockRejectedValueOnce(new Error('Network error'));
 ```
 
 **Verifies**:
+
 - Error caught and wrapped
 - APIResponse.success = false
 - Error message preserved
@@ -375,20 +387,28 @@ await api.batchGenerate(requests, false, true);
 #### API Error Responses
 
 **Test Case 1: Error with `detail` field**
+
 ```typescript
-{ detail: 'Invalid request' }
+{
+  detail: 'Invalid request';
+}
 // Expects: error.message = 'Invalid request'
 ```
 
 **Test Case 2: Error with `message` field**
+
 ```typescript
-{ message: 'Internal server error' }
+{
+  message: 'Internal server error';
+}
 // Expects: error.message = 'Internal server error'
 ```
 
 **Test Case 3: Error with no detail or message**
+
 ```typescript
-{}
+{
+}
 // Expects: error.message = 'Request failed'
 ```
 
@@ -401,6 +421,7 @@ await api.batchGenerate(requests, false, true);
 #### setApiKey()
 
 **Test Flow**:
+
 1. Create API client without key
 2. Set API key using `setApiKey()`
 3. Make request
@@ -411,6 +432,7 @@ await api.batchGenerate(requests, false, true);
 #### generateCorrelationId()
 
 **Test Criteria**:
+
 ```typescript
 const id1 = api.generateCorrelationId();
 const id2 = api.generateCorrelationId();
@@ -422,6 +444,7 @@ expect(id1).toMatch(/^\d+-[a-z0-9]+$/);
 ```
 
 **Verifies**:
+
 - ✅ IDs are generated
 - ✅ IDs are unique
 - ✅ IDs match expected format
@@ -497,6 +520,7 @@ import type {
 ### Decision 1: Fetch Mock Strategy
 
 **Options Considered**:
+
 1. Mock axios (incorrect - not used)
 2. Mock native fetch globally
 3. Use MSW (Mock Service Worker)
@@ -504,12 +528,14 @@ import type {
 **Decision**: Mock native fetch globally
 
 **Rationale**:
+
 - API client uses native fetch, not axios
 - Global mock simpler for unit tests
 - No additional dependencies needed
 - Fast test execution
 
 **Tradeoffs**:
+
 - More verbose than MSW
 - Manual mock management
 - **Acceptable**: Unit tests don't need full HTTP simulation
@@ -519,6 +545,7 @@ import type {
 **Structure Chosen**: Group by API category
 
 **Rationale**:
+
 - Mirrors API client structure
 - Easy to locate tests
 - Clear test hierarchy
@@ -529,6 +556,7 @@ import type {
 **Approach**: Use realistic mock data with all fields
 
 **Rationale**:
+
 - Tests actual API contract
 - Catches type mismatches
 - Documents expected responses
@@ -539,6 +567,7 @@ import type {
 **Coverage**: Test all error response formats
 
 **Rationale**:
+
 - API may return errors in different formats
 - Need to handle all cases
 - 96% branch coverage achieved
@@ -598,9 +627,9 @@ testing:
 
 ### Coverage vs. Target
 
-| Component | Target | Achieved | Delta |
-|-----------|--------|----------|-------|
-| API Client | 70% | 97.61% | +27.61% |
+| Component  | Target | Achieved | Delta   |
+| ---------- | ------ | -------- | ------- |
+| API Client | 70%    | 97.61%   | +27.61% |
 
 **Status**: ✅ EXCEEDS TARGET
 
@@ -627,13 +656,13 @@ testing:
 
 ### Test Quality Indicators
 
-| Metric | Value | Status |
-|--------|-------|--------|
-| Pass Rate | 100% | ✅ |
-| Coverage | 97.61% | ✅ |
-| Test Speed | 1.868s | ✅ Fast |
-| Flakiness | 0% | ✅ Stable |
-| Maintenance | Low | ✅ Clean |
+| Metric      | Value  | Status    |
+| ----------- | ------ | --------- |
+| Pass Rate   | 100%   | ✅        |
+| Coverage    | 97.61% | ✅        |
+| Test Speed  | 1.868s | ✅ Fast   |
+| Flakiness   | 0%     | ✅ Stable |
+| Maintenance | Low    | ✅ Clean  |
 
 ---
 

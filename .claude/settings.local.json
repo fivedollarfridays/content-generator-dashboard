@@ -9,7 +9,9 @@
       "Bash(awk:*)",
       "Bash(npm test:*)",
       "Bash(npm run test:coverage:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git checkout:*)"
     ],
     "deny": [],
     "ask": []
