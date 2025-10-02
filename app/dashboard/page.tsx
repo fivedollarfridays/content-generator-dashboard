@@ -1,13 +1,13 @@
 'use client';
 
 import React from 'react';
-import ContentGeneratorHealth from '@/components/features/ContentGeneratorHealth';
+import ContentGeneratorHealth from '@/app/components/features/content-generator-health';
 
 /**
  * Dashboard Page
  * Main dashboard view showing system health and metrics
  */
-export default function DashboardPage() {
+const DashboardPage = (): React.ReactElement => {
   const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
   return (
@@ -28,7 +28,7 @@ export default function DashboardPage() {
           <ContentGeneratorHealth
             apiUrl={API_URL}
             refreshInterval={30000} // Refresh every 30 seconds
-            onStatusChange={(status) => {
+            onStatusChange={status => {
               console.log('Health status changed:', status);
               // You can add custom logic here (e.g., show notifications)
             }}
@@ -85,4 +85,6 @@ export default function DashboardPage() {
       </div>
     </div>
   );
-}
+};
+
+export default DashboardPage;

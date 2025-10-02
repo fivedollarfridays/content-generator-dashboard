@@ -30,28 +30,33 @@ Thank you for your interest in contributing to the Content Generator Dashboard! 
 1. **Fork the repository** on GitHub
 
 2. **Clone your fork**:
+
    ```bash
    git clone https://github.com/YOUR_USERNAME/content-generator-dashboard.git
    cd content-generator-dashboard
    ```
 
 3. **Add upstream remote**:
+
    ```bash
    git remote add upstream https://github.com/fivedollarfridays/content-generator-dashboard.git
    ```
 
 4. **Install dependencies**:
+
    ```bash
    npm install
    ```
 
 5. **Configure environment**:
+
    ```bash
    cp .env.example .env.local
    # Edit .env.local with your settings
    ```
 
 6. **Start development server**:
+
    ```bash
    npm run dev
    ```
@@ -81,6 +86,7 @@ git checkout -b fix/bug-description
 ```
 
 **Branch naming convention**:
+
 - `feature/description` - New features
 - `fix/description` - Bug fixes
 - `docs/description` - Documentation updates
@@ -126,6 +132,7 @@ git commit -m "feat(jobs): add job filtering by status"
 ```
 
 **Commit message format**:
+
 ```
 <type>(<scope>): <description>
 
@@ -135,6 +142,7 @@ git commit -m "feat(jobs): add job filtering by status"
 ```
 
 **Types**:
+
 - `feat`: New feature
 - `fix`: Bug fix
 - `docs`: Documentation changes
@@ -144,6 +152,7 @@ git commit -m "feat(jobs): add job filtering by status"
 - `chore`: Maintenance
 
 **Examples**:
+
 ```bash
 feat(dashboard): add analytics widget
 fix(websocket): resolve reconnection logic
@@ -172,12 +181,14 @@ git push origin feature/my-feature
 ### TypeScript
 
 **✅ Required**:
+
 - Strict mode enabled
 - No `any` types
 - Explicit return types
 - Interface for props
 
 **Example**:
+
 ```typescript
 interface ButtonProps {
   label: string;
@@ -193,6 +204,7 @@ export default function Button({ label, onClick, variant = 'primary' }: ButtonPr
 ### React
 
 **✅ Required**:
+
 - Functional components only
 - Use hooks (no class components)
 - `'use client'` directive when needed
@@ -201,6 +213,7 @@ export default function Button({ label, onClick, variant = 'primary' }: ButtonPr
 ### Styling
 
 **✅ Required**:
+
 - Tailwind CSS utilities
 - Mobile-first responsive design
 - Accessibility (ARIA labels, semantic HTML)
@@ -215,6 +228,7 @@ export default function Button({ label, onClick, variant = 'primary' }: ButtonPr
 ### Imports
 
 Use `@/` path alias:
+
 ```typescript
 import { apiClient } from '@/lib/api/client';
 import { Button } from '@/components/ui/Button';
@@ -228,6 +242,7 @@ import type { Job } from '@/types';
 ### Before Submitting PR
 
 **Checklist**:
+
 - [ ] Code follows conventions in [CONVENTIONS.md](CONVENTIONS.md)
 - [ ] Tests added for new features
 - [ ] All tests passing (`npm run test`)
@@ -241,6 +256,7 @@ import type { Job } from '@/types';
 ### PR Title
 
 Follow Conventional Commits format:
+
 ```
 feat(scope): add feature description
 fix(scope): fix bug description
@@ -250,6 +266,7 @@ docs(scope): update documentation
 ### PR Description
 
 Include:
+
 1. **What** - What does this PR do?
 2. **Why** - Why is this change needed?
 3. **How** - How does it work?
@@ -257,27 +274,34 @@ Include:
 5. **Screenshots** - If UI changes
 
 **Template**:
+
 ```markdown
 ## Description
+
 Brief description of the changes
 
 ## Motivation
+
 Why is this change needed?
 
 ## Changes
+
 - Change 1
 - Change 2
 - Change 3
 
 ## Testing
+
 - [ ] Unit tests added
 - [ ] Manual testing completed
 - [ ] Accessibility tested
 
 ## Screenshots
+
 [If applicable]
 
 ## Checklist
+
 - [ ] Code follows conventions
 - [ ] Tests passing
 - [ ] Documentation updated
@@ -287,6 +311,7 @@ Why is this change needed?
 ### PR Size
 
 Keep PRs focused and small:
+
 - **Ideal**: <300 lines changed
 - **Maximum**: <500 lines changed
 - Break large changes into multiple PRs
@@ -298,11 +323,13 @@ Keep PRs focused and small:
 ### Unit Tests
 
 **Required for**:
+
 - New utility functions
 - Custom hooks
 - Complex component logic
 
 **Example**:
+
 ```typescript
 import { render, screen } from '@testing-library/react';
 import Button from './Button';
@@ -326,10 +353,12 @@ describe('Button', () => {
 ### Component Tests
 
 **Required for**:
+
 - New components
 - Modified component behavior
 
 **Example**:
+
 ```typescript
 import { render, screen, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -375,6 +404,7 @@ npm run test Button.test.tsx
 ### Code Documentation
 
 **JSDoc for public functions**:
+
 ```typescript
 /**
  * Formats a date string into a readable format
@@ -394,6 +424,7 @@ export function formatDate(date: string, format?: string): string {
 ### README Updates
 
 Update README.md if:
+
 - Adding new features
 - Changing setup instructions
 - Modifying commands
@@ -402,6 +433,7 @@ Update README.md if:
 ### Documentation Files
 
 Update `/docs` if:
+
 - Changing architecture
 - Adding new patterns
 - Updating workflows
@@ -422,6 +454,7 @@ Update `/docs` if:
 ### Review Checklist
 
 Reviewers will check:
+
 - [ ] Code quality and conventions
 - [ ] Test coverage
 - [ ] Documentation
@@ -448,12 +481,15 @@ Update `/context/development.md` after significant changes:
 
 ```markdown
 ### Last action was:
+
 Added job filtering feature
 
 ### Next action will be:
+
 Add job sorting functionality
 
 ### Blockers/Risks:
+
 None
 ```
 
@@ -464,6 +500,7 @@ None
    - Feature components → `components/features/`
 
 2. **Define TypeScript interface**
+
    ```typescript
    interface ComponentProps {
      // Props definition
@@ -471,6 +508,7 @@ None
    ```
 
 3. **Implement component**
+
    ```typescript
    export default function Component({ ...props }: ComponentProps) {
      // Implementation
@@ -478,6 +516,7 @@ None
    ```
 
 4. **Add tests**
+
    ```typescript
    describe('Component', () => {
      it('works', () => {
@@ -522,27 +561,32 @@ None
 ### Build Errors
 
 **TypeScript errors**:
+
 ```bash
 npm run type-check
 ```
 
 **Linting errors**:
+
 ```bash
 npm run lint:fix
 ```
 
 **Import errors**:
+
 - Use `@/` alias for imports
 - Check `tsconfig.json` path mapping
 
 ### Test Failures
 
 **Clear test cache**:
+
 ```bash
 npm run test -- --clearCache
 ```
 
 **Update snapshots**:
+
 ```bash
 npm run test -- -u
 ```

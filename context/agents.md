@@ -12,6 +12,7 @@ Always maintain these fields in `/context/development.md`:
 - **Blockers/Risks:** Any technical issues, dependencies, or concerns
 
 **After every change:**
+
 ```bash
 git add -A && git commit -m "feat: [component] - description" && git push
 ```
@@ -23,6 +24,7 @@ git add -A && git commit -m "feat: [component] - description" && git push
 **Repository**: https://github.com/fivedollarfridays/content-generator-dashboard
 
 **Tech Stack**:
+
 - **Framework**: Next.js 15.5.4 with App Router
 - **Language**: TypeScript (strict mode)
 - **Styling**: Tailwind CSS
@@ -32,6 +34,7 @@ git add -A && git commit -m "feat: [component] - description" && git push
 - **Real-time**: WebSocket
 
 **Backend API**: `halcytone-content-generator` repository (FastAPI)
+
 - **Local**: http://localhost:8000
 - **API Docs**: http://localhost:8000/docs
 
@@ -44,6 +47,7 @@ git add -A && git commit -m "feat: [component] - description" && git push
 **Duration**: 2 hours | **Completed**: 2025-10-02
 
 **Achievements**:
+
 - [x] Repository created and on GitHub
 - [x] Next.js 15.5.4 setup with TypeScript and Tailwind
 - [x] 6 components migrated from backend repo
@@ -53,6 +57,7 @@ git add -A && git commit -m "feat: [component] - description" && git push
 - [x] Comprehensive README and documentation
 
 **Components Migrated**:
+
 1. ContentGeneratorHealth.tsx
 2. ContentGenerationForm.tsx
 3. JobsList.tsx
@@ -69,7 +74,9 @@ git add -A && git commit -m "feat: [component] - description" && git push
 **Goals**: Build out complete dashboard pages with authentication and real-time updates
 
 #### Sprint 2.1: Page Development
+
 **Tasks**:
+
 - [ ] Build `/generate` page with ContentGenerationForm
 - [ ] Build `/jobs` page with JobsList and real-time updates
 - [ ] Build `/templates` page with TemplateSelector
@@ -78,7 +85,9 @@ git add -A && git commit -m "feat: [component] - description" && git push
 - [ ] Implement responsive mobile design
 
 #### Sprint 2.2: Authentication & Real-time
+
 **Tasks**:
+
 - [ ] Implement API key management UI
 - [ ] Add authentication flow
 - [ ] WebSocket integration for real-time job updates
@@ -87,7 +96,9 @@ git add -A && git commit -m "feat: [component] - description" && git push
 - [ ] Error boundary implementation
 
 #### Sprint 2.3: Advanced Features
+
 **Tasks**:
+
 - [ ] Content history view
 - [ ] Analytics dashboard
 - [ ] Batch operations UI
@@ -102,6 +113,7 @@ git add -A && git commit -m "feat: [component] - description" && git push
 **Duration**: 1 week | **Status**: Planned
 
 **Tasks**:
+
 - [ ] Unit tests with Jest and Testing Library
 - [ ] Component testing
 - [ ] Integration tests
@@ -117,6 +129,7 @@ git add -A && git commit -m "feat: [component] - description" && git push
 **Duration**: 1 week | **Status**: Planned
 
 **Tasks**:
+
 - [ ] Vercel deployment configuration
 - [ ] Environment variable setup
 - [ ] Custom domain configuration
@@ -217,11 +230,11 @@ function useHealthCheck() {
 // Mutation example
 function useGenerateContent() {
   return useMutation({
-    mutationFn: (data) => apiClient.generateContent(data),
-    onSuccess: (data) => {
+    mutationFn: data => apiClient.generateContent(data),
+    onSuccess: data => {
       // Handle success
     },
-    onError: (error) => {
+    onError: error => {
       // Handle error
     },
   });
@@ -240,12 +253,12 @@ function useJobUpdates(clientId: string) {
   useEffect(() => {
     const ws = new WebSocket(getWebSocketUrl(`/ws/content/${clientId}`));
 
-    ws.onmessage = (event) => {
+    ws.onmessage = event => {
       const data = JSON.parse(event.data);
       setJobs(prev => [...prev, data]);
     };
 
-    ws.onerror = (error) => {
+    ws.onerror = error => {
       console.error('WebSocket error:', error);
     };
 
@@ -602,6 +615,7 @@ NEXT_PUBLIC_ENABLE_BATCH_OPERATIONS=false
 ## Success Criteria
 
 ### Phase 2 Complete When:
+
 - [ ] All dashboard pages built and functional
 - [ ] Authentication flow implemented
 - [ ] WebSocket real-time updates working
@@ -611,6 +625,7 @@ NEXT_PUBLIC_ENABLE_BATCH_OPERATIONS=false
 - [ ] Basic tests written
 
 ### Production Ready When:
+
 - [ ] Test coverage >80%
 - [ ] Lighthouse score >90
 - [ ] WCAG 2.1 AA compliance

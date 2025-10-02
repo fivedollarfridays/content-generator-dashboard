@@ -57,6 +57,7 @@ NEXT_PUBLIC_SENTRY_DSN=https://xxx@sentry.io/xxx
 ### Step 5: Deploy
 
 Click "Deploy" - Vercel will:
+
 1. Clone repository
 2. Install dependencies
 3. Build project
@@ -80,9 +81,11 @@ Click "Deploy" - Vercel will:
 ### Automatic Deployments
 
 **Production**:
+
 - Push to `master` branch → Deploys to production
 
 **Preview**:
+
 - Create PR → Vercel creates preview deployment
 - Each commit → New preview deployment
 
@@ -170,7 +173,7 @@ services:
   dashboard:
     build: .
     ports:
-      - "3000:3000"
+      - '3000:3000'
     environment:
       - NEXT_PUBLIC_API_URL=https://api.content-generator.com
       - NEXT_PUBLIC_WS_URL=wss://api.content-generator.com
@@ -179,8 +182,8 @@ services:
   nginx:
     image: nginx:alpine
     ports:
-      - "80:80"
-      - "443:443"
+      - '80:80'
+      - '443:443'
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
       - ./ssl:/etc/nginx/ssl
@@ -271,6 +274,7 @@ netlify deploy --prod
 ### Vercel
 
 **Automatic SSL**:
+
 - Vercel provides automatic SSL
 - Free SSL certificates via Let's Encrypt
 - Auto-renewal
@@ -278,6 +282,7 @@ netlify deploy --prod
 ### Custom SSL (Docker/VPS)
 
 **Using Let's Encrypt**:
+
 ```bash
 # Install certbot
 sudo apt install certbot
@@ -291,6 +296,7 @@ sudo certbot certonly --standalone -d yourdomain.com
 ```
 
 **Nginx Configuration**:
+
 ```nginx
 server {
     listen 443 ssl http2;
@@ -348,6 +354,7 @@ export default function RootLayout({ children }) {
    npm install @sentry/nextjs
    ```
 4. Configure:
+
    ```typescript
    // sentry.client.config.ts
    import * as Sentry from '@sentry/nextjs';
@@ -424,6 +431,7 @@ export async function GET() {
 ### Monitoring
 
 Configure uptime monitoring:
+
 - UptimeRobot
 - Pingdom
 - StatusCake

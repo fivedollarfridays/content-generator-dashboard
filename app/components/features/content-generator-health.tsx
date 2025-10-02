@@ -57,7 +57,7 @@ export const ContentGeneratorHealth: React.FC<ContentGeneratorHealthProps> = ({
     return () => clearInterval(interval);
   }, [fetchHealth, refreshInterval]);
 
-  const getStatusColor = (status: string) => {
+  const getStatusColor = (status: string): string => {
     switch (status) {
       case 'healthy':
       case 'pass':
@@ -73,7 +73,7 @@ export const ContentGeneratorHealth: React.FC<ContentGeneratorHealthProps> = ({
     }
   };
 
-  const formatUptime = (seconds: number) => {
+  const formatUptime = (seconds: number): string => {
     const days = Math.floor(seconds / 86400);
     const hours = Math.floor((seconds % 86400) / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);

@@ -24,7 +24,8 @@ export const ContentGenerationForm: React.FC<ContentGenerationFormProps> = ({
   const [documentId, setDocumentId] = useState('');
   const [channels, setChannels] = useState<Channel[]>(defaultChannels);
   const [contentType, setContentType] = useState<ContentType>('update');
-  const [templateStyle, setTemplateStyle] = useState<TemplateStyle>(defaultTemplate);
+  const [templateStyle, setTemplateStyle] =
+    useState<TemplateStyle>(defaultTemplate);
   const [scheduleTime, setScheduleTime] = useState('');
   const [dryRun, setDryRun] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -47,16 +48,32 @@ export const ContentGenerationForm: React.FC<ContentGenerationFormProps> = ({
     { value: 'announcement', label: 'Announcement' },
   ];
 
-  const templateStyles: { value: TemplateStyle; label: string; description: string }[] = [
-    { value: 'modern', label: 'Modern', description: 'Clean, contemporary design' },
-    { value: 'classic', label: 'Classic', description: 'Traditional, timeless style' },
-    { value: 'minimal', label: 'Minimal', description: 'Simple, focused layout' },
+  const templateStyles: {
+    value: TemplateStyle;
+    label: string;
+    description: string;
+  }[] = [
+    {
+      value: 'modern',
+      label: 'Modern',
+      description: 'Clean, contemporary design',
+    },
+    {
+      value: 'classic',
+      label: 'Classic',
+      description: 'Traditional, timeless style',
+    },
+    {
+      value: 'minimal',
+      label: 'Minimal',
+      description: 'Simple, focused layout',
+    },
   ];
 
-  const toggleChannel = (channel: Channel) => {
-    setChannels((prev) =>
+  const toggleChannel = (channel: Channel): void => {
+    setChannels(prev =>
       prev.includes(channel)
-        ? prev.filter((c) => c !== channel)
+        ? prev.filter(c => c !== channel)
         : [...prev, channel]
     );
   };
@@ -114,7 +131,17 @@ export const ContentGenerationForm: React.FC<ContentGenerationFormProps> = ({
         setLoading(false);
       }
     },
-    [documentId, channels, contentType, templateStyle, scheduleTime, dryRun, api, onSubmit, onError]
+    [
+      documentId,
+      channels,
+      contentType,
+      templateStyle,
+      scheduleTime,
+      dryRun,
+      api,
+      onSubmit,
+      onError,
+    ]
   );
 
   return (
@@ -136,7 +163,7 @@ export const ContentGenerationForm: React.FC<ContentGenerationFormProps> = ({
           <input
             type="text"
             value={documentId}
-            onChange={(e) => setDocumentId(e.target.value)}
+            onChange={e => setDocumentId(e.target.value)}
             placeholder="gdocs:1234567890 or notion:abc123"
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             disabled={loading}
@@ -153,7 +180,7 @@ export const ContentGenerationForm: React.FC<ContentGenerationFormProps> = ({
             <span className="text-red-500 ml-1">*</span>
           </label>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-            {availableChannels.map((channel) => (
+            {availableChannels.map(channel => (
               <button
                 key={channel.value}
                 type="button"
@@ -180,13 +207,13 @@ export const ContentGenerationForm: React.FC<ContentGenerationFormProps> = ({
             Content Type
           </label>
           <div className="flex space-x-4">
-            {contentTypes.map((type) => (
+            {contentTypes.map(type => (
               <label key={type.value} className="flex items-center">
                 <input
                   type="radio"
                   value={type.value}
                   checked={contentType === type.value}
-                  onChange={(e) => setContentType(e.target.value as ContentType)}
+                  onChange={e => setContentType(e.target.value as ContentType)}
                   disabled={loading}
                   className="mr-2"
                 />
@@ -202,7 +229,7 @@ export const ContentGenerationForm: React.FC<ContentGenerationFormProps> = ({
             Template Style
           </label>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-            {templateStyles.map((template) => (
+            {templateStyles.map(template => (
               <button
                 key={template.value}
                 type="button"
@@ -214,7 +241,9 @@ export const ContentGenerationForm: React.FC<ContentGenerationFormProps> = ({
                     : 'border-gray-300 bg-white hover:border-gray-400'
                 } disabled:opacity-50 disabled:cursor-not-allowed`}
               >
-                <div className="font-medium text-gray-900">{template.label}</div>
+                <div className="font-medium text-gray-900">
+                  {template.label}
+                </div>
                 <div className="text-xs text-gray-600 mt-1">
                   {template.description}
                 </div>
@@ -231,7 +260,7 @@ export const ContentGenerationForm: React.FC<ContentGenerationFormProps> = ({
           <input
             type="datetime-local"
             value={scheduleTime}
-            onChange={(e) => setScheduleTime(e.target.value)}
+            onChange={e => setScheduleTime(e.target.value)}
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             disabled={loading}
           />
@@ -246,7 +275,7 @@ export const ContentGenerationForm: React.FC<ContentGenerationFormProps> = ({
             type="checkbox"
             id="dryRun"
             checked={dryRun}
-            onChange={(e) => setDryRun(e.target.checked)}
+            onChange={e => setDryRun(e.target.checked)}
             disabled={loading}
             className="mr-2 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
           />
@@ -299,7 +328,10 @@ export const ContentGenerationForm: React.FC<ContentGenerationFormProps> = ({
               <p>Job ID: {success.job_id}</p>
               <p>Status: {success.status}</p>
               {success.scheduled_for && (
-                <p>Scheduled for: {new Date(success.scheduled_for).toLocaleString()}</p>
+                <p>
+                  Scheduled for:{' '}
+                  {new Date(success.scheduled_for).toLocaleString()}
+                </p>
               )}
             </div>
           </div>

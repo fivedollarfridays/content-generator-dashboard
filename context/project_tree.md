@@ -169,14 +169,17 @@ content-generator-dashboard/
 ## Directory Descriptions
 
 ### `/app` - Next.js App Router
+
 Next.js 15 uses file-based routing with the App Router. Each folder becomes a route, and `page.tsx` files define the page content.
 
 **Key Files**:
+
 - `layout.tsx`: Root layout applied to all pages (navigation, fonts, global providers)
 - `globals.css`: Global styles with Tailwind directives
 - `page.tsx`: Home page at `/`
 
 **Route Structure**:
+
 - `/` → `app/page.tsx` (Home)
 - `/dashboard` → `app/dashboard/page.tsx`
 - `/generate` → `app/generate/page.tsx`
@@ -186,74 +189,91 @@ Next.js 15 uses file-based routing with the App Router. Each folder becomes a ro
 - `/settings` → `app/settings/page.tsx`
 
 ### `/components` - React Components
+
 Organized into three categories:
 
 **`ui/`** - Generic, reusable UI components
+
 - Button, Input, Card, Modal, etc.
 - No business logic
 - Styled with Tailwind CSS
 - Fully typed with TypeScript
 
 **`features/`** - Feature-specific components
+
 - Connected to API/state
 - Contains business logic
 - Domain-specific (jobs, templates, content)
 - Uses UI components for presentation
 
 **`layouts/`** - Page layout components
+
 - DashboardLayout: Sidebar + main content
 - PublicLayout: Header + footer
 - AuthLayout: Centered auth forms
 
 ### `/lib` - Libraries and Utilities
+
 Reusable code that doesn't fit elsewhere.
 
 **`api/`** - API integration layer
+
 - `api-client.ts`: ContentGeneratorAPI class with all methods
 - `client.ts`: Configured instance + helper exports
 
 **`utils/`** - Pure utility functions
+
 - Format helpers (dates, numbers, text)
 - Validation functions
 - Date manipulation with date-fns
 
 ### `/hooks` - Custom React Hooks
+
 Reusable stateful logic.
 
 **Examples**:
+
 - `useApi`: Wraps React Query for API calls
 - `useWebSocket`: Manages WebSocket connections
 - `useAuth`: Authentication state
 - `useLocalStorage`: Persisted state
 
 ### `/types` - TypeScript Definitions
+
 Centralized type definitions.
 
 **Key Files**:
+
 - `content-generator.ts`: All API types (HealthStatus, JobStatus, Template, etc.)
 - `index.ts`: Re-export all types for easy importing
 
 ### `/public` - Static Assets
+
 Files served directly by Next.js at `/filename`.
 
 **Contents**:
+
 - Images
 - Fonts (if not using next/font)
 - Icons
 - Manifest files
 
 ### `/context` - PairCoder Context
+
 Development context for AI pair programming.
 
 **Files**:
+
 - `agents.md`: AI agent instructions
 - `development.md`: Current progress & goals
 - `project_tree.md`: This file
 
 ### `/docs` - Documentation
+
 Comprehensive project documentation.
 
 **Files**:
+
 - Architecture overview
 - Development guide
 - Testing guide
@@ -269,32 +289,38 @@ Comprehensive project documentation.
 ### Configuration Files
 
 **`package.json`**
+
 - Dependencies list
 - npm scripts (dev, build, start, test, lint)
 - Project metadata
 
 **`tsconfig.json`**
+
 - TypeScript strict mode enabled
 - Path mapping (`@/*` → `./`)
 - Next.js plugin configuration
 
 **`tailwind.config.js`**
+
 - Theme customization
 - Color palette
 - Spacing scale
 - Plugin configuration
 
 **`next.config.js`**
+
 - React strict mode
 - Next.js configuration
 - Build optimizations
 
 **`jest.config.js`**
+
 - Testing environment (jsdom)
 - Module path mapping
 - Coverage thresholds
 
 **`.env.local`** (not in git)
+
 - Environment variables for development
 - API URL, WebSocket URL
 - API keys (if needed)
@@ -302,6 +328,7 @@ Comprehensive project documentation.
 ### Documentation Files
 
 **`README.md`**
+
 - Project overview
 - Quick start guide
 - Tech stack
@@ -309,21 +336,25 @@ Comprehensive project documentation.
 - Development commands
 
 **`SETUP-SUMMARY.md`**
+
 - Detailed setup guide
 - Requirements
 - Installation steps
 - Configuration
 
 **`CLAUDE.md`**
+
 - Root pointer for Claude AI
 - PairCoder entry point
 
 **`CONVENTIONS.md`**
+
 - Coding standards
 - Naming conventions
 - Best practices
 
 **`CONTRIBUTING.md`**
+
 - How to contribute
 - Git workflow
 - PR guidelines
@@ -333,26 +364,32 @@ Comprehensive project documentation.
 ## File Naming Conventions
 
 ### Components
+
 - **PascalCase**: `ComponentName.tsx`
 - **Example**: `ContentGenerationForm.tsx`, `JobsList.tsx`
 
 ### Utilities
+
 - **camelCase**: `utilityName.ts`
 - **Example**: `formatDate.ts`, `validateEmail.ts`
 
 ### Hooks
+
 - **camelCase with `use` prefix**: `useHookName.ts`
 - **Example**: `useApi.ts`, `useWebSocket.ts`
 
 ### Types
+
 - **kebab-case**: `type-name.ts`
 - **Example**: `content-generator.ts`, `api-types.ts`
 
 ### Pages (App Router)
+
 - **lowercase**: `page.tsx`, `layout.tsx`
 - **Dynamic routes**: `[param]/page.tsx`
 
 ### Tests
+
 - **Match source file**: `ComponentName.test.tsx`
 - **Example**: `JobsList.test.tsx`, `formatDate.test.ts`
 
@@ -373,6 +410,7 @@ TypeScript path mapping configured in `tsconfig.json`:
 ```
 
 **Usage**:
+
 ```typescript
 // ✅ Good - Use @ alias
 import { apiClient } from '@/lib/api/client';
@@ -389,9 +427,11 @@ import { ContentGeneratorHealth } from '../../components/features';
 ## Component Organization
 
 ### UI Components (`components/ui/`)
+
 Generic, reusable components with no business logic.
 
 **Characteristics**:
+
 - Accept data via props
 - No API calls or state management
 - Styled with Tailwind CSS
@@ -399,6 +439,7 @@ Generic, reusable components with no business logic.
 - Documented with JSDoc
 
 **Example**:
+
 ```typescript
 // components/ui/Button.tsx
 interface ButtonProps {
@@ -417,9 +458,11 @@ export default function Button({ label, onClick, variant = 'primary' }: ButtonPr
 ```
 
 ### Feature Components (`components/features/`)
+
 Business logic components connected to API/state.
 
 **Characteristics**:
+
 - Use hooks (useQuery, useState, etc.)
 - Make API calls
 - Manage local state
@@ -427,6 +470,7 @@ Business logic components connected to API/state.
 - Domain-specific
 
 **Example**:
+
 ```typescript
 // components/features/JobsList.tsx
 'use client';
@@ -456,11 +500,13 @@ export default function JobsList() {
 ## Testing Structure (Phase 3)
 
 ### Unit Tests
+
 Test individual functions and components in isolation.
 
 **Location**: `tests/unit/`
 
 **Example**:
+
 ```
 tests/unit/
 ├── components/
@@ -477,11 +523,13 @@ tests/unit/
 ```
 
 ### Integration Tests
+
 Test component interactions and API integration.
 
 **Location**: `tests/integration/`
 
 **Example**:
+
 ```
 tests/integration/
 └── api/
@@ -491,11 +539,13 @@ tests/integration/
 ```
 
 ### E2E Tests
+
 Test complete user workflows.
 
 **Location**: `tests/e2e/`
 
 **Example**:
+
 ```
 tests/e2e/
 ├── auth.spec.ts
@@ -509,9 +559,11 @@ tests/e2e/
 ## Build Output
 
 ### `.next/` Directory
+
 Next.js build output (not in git).
 
 **Contents**:
+
 - Compiled pages
 - Optimized bundles
 - Static assets
@@ -520,6 +572,7 @@ Next.js build output (not in git).
 **Size**: ~50-100MB (development), ~20-50MB (production)
 
 ### `node_modules/` Directory
+
 npm packages (not in git).
 
 **Size**: ~500MB-1GB
@@ -571,6 +624,7 @@ yarn-error.log*
 ## Future Additions (Planned)
 
 ### Phase 2
+
 - Layout components (`components/layouts/`)
 - Custom hooks (`hooks/`)
 - Utility functions (`lib/utils/`)
@@ -579,11 +633,13 @@ yarn-error.log*
 - Authentication pages
 
 ### Phase 3
+
 - Test files (`tests/`)
 - E2E test configuration (Playwright)
 - Coverage reports
 
 ### Phase 4
+
 - GitHub Actions workflows (`.github/workflows/`)
 - Deployment scripts
 - Environment examples (`.env.example`)

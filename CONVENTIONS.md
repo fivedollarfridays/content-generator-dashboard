@@ -10,6 +10,7 @@
 ### Strict Mode
 
 **Always use strict mode** (enabled in `tsconfig.json`):
+
 ```json
 {
   "compilerOptions": {
@@ -23,6 +24,7 @@
 ### Type Definitions
 
 **✅ Good**:
+
 ```typescript
 interface User {
   id: string;
@@ -38,17 +40,20 @@ const users: User[] = [];
 ```
 
 **❌ Bad**:
+
 ```typescript
-function getUser(id) {  // No type
+function getUser(id) {
+  // No type
   return apiClient.getUser(id);
 }
 
-const users = [];  // No type
+const users = []; // No type
 ```
 
 ### No `any`
 
 **✅ Good**:
+
 ```typescript
 function processData(data: unknown): string {
   if (typeof data === 'string') {
@@ -59,8 +64,10 @@ function processData(data: unknown): string {
 ```
 
 **❌ Bad**:
+
 ```typescript
-function processData(data: any): string {  // Avoid any
+function processData(data: any): string {
+  // Avoid any
   return data.toUpperCase();
 }
 ```
@@ -68,6 +75,7 @@ function processData(data: any): string {  // Avoid any
 ### Interface vs Type
 
 **Prefer `interface` for object shapes**:
+
 ```typescript
 // ✅ Good
 interface Props {
@@ -88,6 +96,7 @@ type Status = 'pending' | 'success' | 'error';
 **Always use functional components** (no class components):
 
 **✅ Good**:
+
 ```typescript
 interface ButtonProps {
   label: string;
@@ -100,6 +109,7 @@ export default function Button({ label, onClick }: ButtonProps) {
 ```
 
 **❌ Bad**:
+
 ```typescript
 class Button extends React.Component {  // No class components
   render() {
@@ -111,6 +121,7 @@ class Button extends React.Component {  // No class components
 ### Client Components
 
 **Use `'use client'` directive when needed**:
+
 ```typescript
 'use client';  // Required for hooks, event handlers
 
@@ -125,6 +136,7 @@ export default function Counter() {
 ### Prop Destructuring
 
 **✅ Good**:
+
 ```typescript
 interface Props {
   title: string;
@@ -137,6 +149,7 @@ export default function Button({ title, onClick }: Props) {
 ```
 
 **❌ Bad**:
+
 ```typescript
 export default function Button(props) {
   return <button onClick={props.onClick}>{props.title}</button>;
@@ -146,11 +159,13 @@ export default function Button(props) {
 ### Hooks
 
 **Follow React hooks rules**:
+
 1. Only call at top level
 2. Only call from React functions
 3. Use `use` prefix for custom hooks
 
 **✅ Good**:
+
 ```typescript
 function useWindowSize() {
   const [size, setSize] = useState({ width: 0, height: 0 });
@@ -192,6 +207,7 @@ function useWindowSize() {
 ### Variables
 
 **camelCase** for variables and functions:
+
 ```typescript
 const userName = 'John';
 const isLoading = false;
@@ -204,6 +220,7 @@ function getUserName() {
 ### Constants
 
 **SCREAMING_SNAKE_CASE** for constants:
+
 ```typescript
 const MAX_RETRIES = 3;
 const API_TIMEOUT = 30000;
@@ -213,6 +230,7 @@ const DEFAULT_PAGE_SIZE = 20;
 ### Components
 
 **PascalCase** for components:
+
 ```typescript
 function UserProfile() {}
 function JobStatusCard() {}
@@ -222,6 +240,7 @@ function ContentGenerationForm() {}
 ### Types/Interfaces
 
 **PascalCase** for types and interfaces:
+
 ```typescript
 interface User {}
 interface JobStatus {}
@@ -237,6 +256,7 @@ type ContentType = 'blog' | 'newsletter';
 **Use Tailwind utility classes**:
 
 **✅ Good**:
+
 ```tsx
 <button className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
   Submit
@@ -244,15 +264,15 @@ type ContentType = 'blog' | 'newsletter';
 ```
 
 **❌ Bad**:
+
 ```tsx
-<button style={{ padding: '8px 16px', background: 'blue' }}>
-  Submit
-</button>
+<button style={{ padding: '8px 16px', background: 'blue' }}>Submit</button>
 ```
 
 ### Responsive Design
 
 **Mobile-first approach**:
+
 ```tsx
 <div className="w-full md:w-1/2 lg:w-1/3">
   {/* Full width on mobile, half on tablet, third on desktop */}
@@ -262,6 +282,7 @@ type ContentType = 'blog' | 'newsletter';
 ### Class Organization
 
 **Order classes logically**:
+
 1. Layout (flex, grid)
 2. Sizing (w-, h-)
 3. Spacing (p-, m-)
@@ -313,6 +334,7 @@ import './styles.css';
 **Always use `@/` alias** (not relative paths):
 
 **✅ Good**:
+
 ```typescript
 import { apiClient } from '@/lib/api/client';
 import { Button } from '@/components/ui/Button';
@@ -320,6 +342,7 @@ import type { Job } from '@/types';
 ```
 
 **❌ Bad**:
+
 ```typescript
 import { apiClient } from '../../../lib/api/client';
 import { Button } from '../../components/ui/Button';
@@ -334,6 +357,7 @@ import { Button } from '../../components/ui/Button';
 **Prefer arrow functions**:
 
 **✅ Good**:
+
 ```typescript
 const handleClick = () => {
   console.log('Clicked');
@@ -347,6 +371,7 @@ const users = data.map(user => user.name);
 **Use async/await** (not `.then()`):
 
 **✅ Good**:
+
 ```typescript
 async function fetchUser(id: string): Promise<User> {
   try {
@@ -360,9 +385,11 @@ async function fetchUser(id: string): Promise<User> {
 ```
 
 **❌ Bad**:
+
 ```typescript
 function fetchUser(id: string) {
-  return apiClient.getUser(id)
+  return apiClient
+    .getUser(id)
     .then(response => response.data)
     .catch(error => console.error(error));
 }
@@ -373,6 +400,7 @@ function fetchUser(id: string) {
 **Always specify return types**:
 
 **✅ Good**:
+
 ```typescript
 function add(a: number, b: number): number {
   return a + b;
@@ -384,8 +412,10 @@ async function fetchData(): Promise<Data> {
 ```
 
 **❌ Bad**:
+
 ```typescript
-function add(a: number, b: number) {  // No return type
+function add(a: number, b: number) {
+  // No return type
   return a + b;
 }
 ```
@@ -397,6 +427,7 @@ function add(a: number, b: number) {  // No return type
 ### Component Structure
 
 **Standard structure**:
+
 ```typescript
 'use client';  // If needed
 
@@ -439,6 +470,7 @@ export default function ComponentName({ prop1, prop2 }: ComponentProps) {
 ### Props Interface
 
 **Define props interface**:
+
 ```typescript
 interface ButtonProps {
   label: string;
@@ -464,6 +496,7 @@ export default function Button({
 ### Try-Catch
 
 **Always handle errors**:
+
 ```typescript
 try {
   const data = await apiClient.fetchData();
@@ -481,6 +514,7 @@ try {
 ### Error Types
 
 **Use typed errors**:
+
 ```typescript
 class ValidationError extends Error {
   constructor(message: string) {
@@ -503,6 +537,7 @@ function validate(data: unknown): void {
 ### JSDoc
 
 **Document public functions and components**:
+
 ```typescript
 /**
  * Formats a date string into a readable format
@@ -524,12 +559,14 @@ function formatDate(date: string, format?: string): string {
 **Use inline comments sparingly**:
 
 **✅ Good** (explains why):
+
 ```typescript
 // Retry with exponential backoff to handle rate limiting
 const delay = Math.min(1000 * 2 ** attemptIndex, 30000);
 ```
 
 **❌ Bad** (explains what - code is self-explanatory):
+
 ```typescript
 // Add 1 to count
 const newCount = count + 1;
@@ -542,12 +579,14 @@ const newCount = count + 1;
 ### Test File Names
 
 **Match source file**:
+
 - `Button.tsx` → `Button.test.tsx`
 - `formatDate.ts` → `formatDate.test.ts`
 
 ### Test Structure
 
 **Use describe/it blocks**:
+
 ```typescript
 describe('Button', () => {
   it('renders with label', () => {
@@ -576,6 +615,7 @@ describe('Button', () => {
 Format: `<type>(<scope>): <description>`
 
 **Types**:
+
 - `feat`: New feature
 - `fix`: Bug fix
 - `docs`: Documentation
@@ -585,6 +625,7 @@ Format: `<type>(<scope>): <description>`
 - `chore`: Maintenance tasks
 
 **Examples**:
+
 ```bash
 feat(jobs): add job filtering by status
 fix(websocket): resolve connection timeout issue
@@ -600,6 +641,7 @@ chore(deps): update dependencies
 **Format**: `<type>/<description>`
 
 **Examples**:
+
 ```bash
 feature/job-filtering
 fix/websocket-timeout
@@ -616,6 +658,7 @@ refactor/error-handling
 **Use correct HTML elements**:
 
 **✅ Good**:
+
 ```tsx
 <button onClick={handleClick}>Click me</button>
 <nav aria-label="Main navigation">...</nav>
@@ -623,6 +666,7 @@ refactor/error-handling
 ```
 
 **❌ Bad**:
+
 ```tsx
 <div onClick={handleClick}>Click me</div>  // Use <button>
 <div>...</div>  // Use semantic elements
@@ -631,6 +675,7 @@ refactor/error-handling
 ### ARIA Labels
 
 **Add labels for accessibility**:
+
 ```tsx
 <button aria-label="Close modal" onClick={onClose}>
   <XIcon aria-hidden="true" />
@@ -646,12 +691,13 @@ refactor/error-handling
 ### Keyboard Navigation
 
 **Ensure keyboard accessibility**:
+
 ```tsx
 <div
   role="button"
   tabIndex={0}
   onClick={handleClick}
-  onKeyDown={(e) => {
+  onKeyDown={e => {
     if (e.key === 'Enter' || e.key === ' ') {
       handleClick();
     }
@@ -668,6 +714,7 @@ refactor/error-handling
 ### Memoization
 
 **Use memoization when appropriate**:
+
 ```typescript
 // Expensive calculations
 const sortedJobs = useMemo(() => {
@@ -686,6 +733,7 @@ const MemoizedComponent = React.memo(ExpensiveComponent);
 ### Code Splitting
 
 **Lazy load heavy components**:
+
 ```typescript
 import dynamic from 'next/dynamic';
 
@@ -704,6 +752,7 @@ const HeavyComponent = dynamic(() => import('./HeavyComponent'), {
 **Never commit secrets**:
 
 **✅ Good**:
+
 ```bash
 # .env.local (not in git)
 NEXT_PUBLIC_API_URL=http://localhost:8000
@@ -711,6 +760,7 @@ API_SECRET=secret123
 ```
 
 **❌ Bad**:
+
 ```typescript
 // Hardcoded secrets in code
 const apiKey = 'sk-1234567890abcdef';
@@ -721,11 +771,13 @@ const apiKey = 'sk-1234567890abcdef';
 **Avoid dangerouslySetInnerHTML**:
 
 **✅ Good**:
+
 ```tsx
-<div>{userInput}</div>  // Automatically escaped
+<div>{userInput}</div> // Automatically escaped
 ```
 
 **❌ Bad** (only if absolutely necessary and sanitized):
+
 ```tsx
 <div dangerouslySetInnerHTML={{ __html: userInput }} />
 ```

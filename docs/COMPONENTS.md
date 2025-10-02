@@ -9,6 +9,7 @@
 This document catalogs all components in the dashboard, organized by category.
 
 **Component Structure**:
+
 - `components/ui/` - Generic, reusable UI components
 - `components/features/` - Feature-specific components
 - `components/layouts/` - Page layout components
@@ -26,6 +27,7 @@ This document catalogs all components in the dashboard, organized by category.
 **Props**: None (uses Next.js usePathname hook)
 
 **Usage**:
+
 ```typescript
 import Navigation from '@/components/ui/Navigation';
 
@@ -33,6 +35,7 @@ import Navigation from '@/components/ui/Navigation';
 ```
 
 **Features**:
+
 - Active link highlighting
 - Responsive design
 - API URL display
@@ -48,13 +51,15 @@ import Navigation from '@/components/ui/Navigation';
 **Description**: Health monitoring dashboard with real-time status
 
 **Props**:
+
 ```typescript
 interface ContentGeneratorHealthProps {
-  refreshInterval?: number;  // Default: 10000 (10s)
+  refreshInterval?: number; // Default: 10000 (10s)
 }
 ```
 
 **Usage**:
+
 ```typescript
 import ContentGeneratorHealth from '@/components/features/ContentGeneratorHealth';
 
@@ -62,12 +67,14 @@ import ContentGeneratorHealth from '@/components/features/ContentGeneratorHealth
 ```
 
 **Features**:
+
 - Real-time health checks
 - Component status breakdown
 - Uptime display
 - Automatic refresh
 
 **API**:
+
 - `GET /health` - Health check endpoint
 
 ---
@@ -79,6 +86,7 @@ import ContentGeneratorHealth from '@/components/features/ContentGeneratorHealth
 **Description**: Content creation interface with template selection
 
 **Props**:
+
 ```typescript
 interface ContentGenerationFormProps {
   onSuccess?: (jobId: string) => void;
@@ -86,6 +94,7 @@ interface ContentGenerationFormProps {
 ```
 
 **Usage**:
+
 ```typescript
 import ContentGenerationForm from '@/components/features/ContentGenerationForm';
 
@@ -95,6 +104,7 @@ import ContentGenerationForm from '@/components/features/ContentGenerationForm';
 ```
 
 **Features**:
+
 - Form validation
 - Template selection
 - Channel configuration (email, social, web)
@@ -102,6 +112,7 @@ import ContentGenerationForm from '@/components/features/ContentGenerationForm';
 - Loading states
 
 **API**:
+
 - `POST /api/v2/generate-content` - Content generation
 
 ---
@@ -113,6 +124,7 @@ import ContentGenerationForm from '@/components/features/ContentGenerationForm';
 **Description**: Job queue management with real-time updates
 
 **Props**:
+
 ```typescript
 interface JobsListProps {
   filter?: {
@@ -123,6 +135,7 @@ interface JobsListProps {
 ```
 
 **Usage**:
+
 ```typescript
 import JobsList from '@/components/features/JobsList';
 
@@ -133,6 +146,7 @@ import JobsList from '@/components/features/JobsList';
 ```
 
 **Features**:
+
 - Real-time job updates (WebSocket)
 - Status filtering
 - Sorting
@@ -140,6 +154,7 @@ import JobsList from '@/components/features/JobsList';
 - Auto-refresh
 
 **API**:
+
 - `GET /api/v2/jobs` - List jobs
 - `WS /ws/content/{client_id}` - Real-time updates
 
@@ -152,15 +167,17 @@ import JobsList from '@/components/features/JobsList';
 **Description**: Individual job status display
 
 **Props**:
+
 ```typescript
 interface JobStatusCardProps {
   jobId: string;
-  autoRefresh?: boolean;  // Default: true
-  refreshInterval?: number;  // Default: 5000
+  autoRefresh?: boolean; // Default: true
+  refreshInterval?: number; // Default: 5000
 }
 ```
 
 **Usage**:
+
 ```typescript
 import JobStatusCard from '@/components/features/JobStatusCard';
 
@@ -168,6 +185,7 @@ import JobStatusCard from '@/components/features/JobStatusCard';
 ```
 
 **Features**:
+
 - Job status visualization
 - Progress indicator
 - Timestamp display
@@ -175,6 +193,7 @@ import JobStatusCard from '@/components/features/JobStatusCard';
 - Error messages
 
 **API**:
+
 - `GET /api/v2/jobs/{id}` - Get job status
 
 ---
@@ -186,13 +205,15 @@ import JobStatusCard from '@/components/features/JobStatusCard';
 **Description**: Cache statistics and management
 
 **Props**:
+
 ```typescript
 interface CacheStatsProps {
-  refreshInterval?: number;  // Default: 30000 (30s)
+  refreshInterval?: number; // Default: 30000 (30s)
 }
 ```
 
 **Usage**:
+
 ```typescript
 import CacheStats from '@/components/features/CacheStats';
 
@@ -200,12 +221,14 @@ import CacheStats from '@/components/features/CacheStats';
 ```
 
 **Features**:
+
 - Cache hit rate visualization
 - Cache size display
 - Cache invalidation controls
 - Performance metrics
 
 **API**:
+
 - `GET /api/v2/cache/stats` - Cache statistics
 - `POST /api/v2/cache/invalidate` - Invalidate cache
 
@@ -218,6 +241,7 @@ import CacheStats from '@/components/features/CacheStats';
 **Description**: Template browsing and selection
 
 **Props**:
+
 ```typescript
 interface TemplateSelectorProps {
   category?: string;
@@ -227,6 +251,7 @@ interface TemplateSelectorProps {
 ```
 
 **Usage**:
+
 ```typescript
 import TemplateSelector from '@/components/features/TemplateSelector';
 
@@ -238,12 +263,14 @@ import TemplateSelector from '@/components/features/TemplateSelector';
 ```
 
 **Features**:
+
 - Template gallery
 - Category filtering
 - Template preview
 - Search functionality
 
 **API**:
+
 - `GET /api/v2/templates` - List templates
 
 ---
@@ -255,6 +282,7 @@ import TemplateSelector from '@/components/features/TemplateSelector';
 **Description**: Standard dashboard layout with sidebar
 
 **Props**:
+
 ```typescript
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -263,6 +291,7 @@ interface DashboardLayoutProps {
 ```
 
 **Usage**:
+
 ```typescript
 import DashboardLayout from '@/components/layouts/DashboardLayout';
 
@@ -278,11 +307,13 @@ import DashboardLayout from '@/components/layouts/DashboardLayout';
 ### Creating New UI Components
 
 1. **Create file** in `components/ui/`:
+
    ```bash
    touch components/ui/MyComponent.tsx
    ```
 
 2. **Define props interface**:
+
    ```typescript
    interface MyComponentProps {
      title: string;
@@ -291,6 +322,7 @@ import DashboardLayout from '@/components/layouts/DashboardLayout';
    ```
 
 3. **Implement component**:
+
    ```typescript
    export default function MyComponent({ title, onClick }: MyComponentProps) {
      return (
@@ -303,6 +335,7 @@ import DashboardLayout from '@/components/layouts/DashboardLayout';
    ```
 
 4. **Add tests**:
+
    ```bash
    touch components/ui/MyComponent.test.tsx
    ```
@@ -316,6 +349,7 @@ import DashboardLayout from '@/components/layouts/DashboardLayout';
 1. **Create file** in `components/features/`
 
 2. **Add React Query hooks** for data fetching:
+
    ```typescript
    const { data, isLoading } = useQuery({
      queryKey: ['myData'],
@@ -324,6 +358,7 @@ import DashboardLayout from '@/components/layouts/DashboardLayout';
    ```
 
 3. **Implement loading/error states**:
+
    ```typescript
    if (isLoading) return <Spinner />;
    if (error) return <ErrorMessage />;
@@ -341,6 +376,7 @@ import DashboardLayout from '@/components/layouts/DashboardLayout';
 ### Tailwind CSS
 
 **Use utility classes**:
+
 ```tsx
 <div className="flex flex-col space-y-4 p-6 bg-white rounded-lg shadow-md">
   <h1 className="text-2xl font-bold text-gray-900">Title</h1>
@@ -351,15 +387,15 @@ import DashboardLayout from '@/components/layouts/DashboardLayout';
 ### Responsive Design
 
 **Mobile-first**:
+
 ```tsx
-<div className="w-full md:w-1/2 lg:w-1/3">
-  Content
-</div>
+<div className="w-full md:w-1/2 lg:w-1/3">Content</div>
 ```
 
 ### Dark Mode
 
 **Support dark mode**:
+
 ```tsx
 <div className="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100">
   Content
@@ -373,6 +409,7 @@ import DashboardLayout from '@/components/layouts/DashboardLayout';
 ### Semantic HTML
 
 **Use correct elements**:
+
 ```tsx
 <button onClick={handleClick}>Click</button>  // Not <div onClick>
 <nav>...</nav>  // For navigation
@@ -382,6 +419,7 @@ import DashboardLayout from '@/components/layouts/DashboardLayout';
 ### ARIA Labels
 
 **Add labels**:
+
 ```tsx
 <button aria-label="Close modal" onClick={onClose}>
   <XIcon aria-hidden="true" />
@@ -393,12 +431,13 @@ import DashboardLayout from '@/components/layouts/DashboardLayout';
 ### Keyboard Navigation
 
 **Ensure keyboard accessibility**:
+
 ```tsx
 <div
   role="button"
   tabIndex={0}
   onClick={handleClick}
-  onKeyDown={(e) => {
+  onKeyDown={e => {
     if (e.key === 'Enter' || e.key === ' ') {
       handleClick();
     }
@@ -415,6 +454,7 @@ import DashboardLayout from '@/components/layouts/DashboardLayout';
 ### Memoization
 
 **Memoize expensive operations**:
+
 ```typescript
 const sortedItems = useMemo(() => {
   return items.sort((a, b) => a.name.localeCompare(b.name));
@@ -428,6 +468,7 @@ const handleClick = useCallback(() => {
 ### Code Splitting
 
 **Lazy load heavy components**:
+
 ```typescript
 import dynamic from 'next/dynamic';
 
@@ -444,6 +485,7 @@ const HeavyComponent = dynamic(() => import('./HeavyComponent'), {
 ### Component Testing
 
 **Test user interactions**:
+
 ```typescript
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -467,9 +509,11 @@ describe('MyComponent', () => {
 ## Component Catalog Summary
 
 ### UI Components (1)
+
 - **Navigation** - Main navigation bar
 
 ### Feature Components (6)
+
 - **ContentGeneratorHealth** - Health monitoring dashboard
 - **ContentGenerationForm** - Content creation interface
 - **JobsList** - Job queue management
@@ -478,6 +522,7 @@ describe('MyComponent', () => {
 - **TemplateSelector** - Template browsing
 
 ### Layout Components (Planned)
+
 - **DashboardLayout** - Dashboard page layout
 - **AuthLayout** - Authentication page layout
 - **PublicLayout** - Public page layout

@@ -24,6 +24,7 @@
 ### Required Software
 
 **Node.js and npm**:
+
 - Node.js 18.x or higher
 - npm 9.x or higher
 
@@ -34,15 +35,18 @@ npm --version   # Should be 9.x.x or higher
 ```
 
 **Install Node.js**:
+
 - Download from https://nodejs.org/
 - Or use nvm: `nvm install 18 && nvm use 18`
 
 **Git**:
+
 ```bash
 git --version  # Should be 2.x.x or higher
 ```
 
 **Code Editor**:
+
 - VS Code (recommended)
 - WebStorm
 - Or any editor with TypeScript support
@@ -54,6 +58,7 @@ The dashboard requires the Content Generator backend API:
 **Repository**: https://github.com/fivedollarfridays/halcytone-content-generator
 
 **Setup**:
+
 ```bash
 # Clone backend repository
 cd ..
@@ -73,6 +78,7 @@ python run_dev.py
 ```
 
 **Verify backend is running**:
+
 - API: http://localhost:8000
 - Docs: http://localhost:8000/docs
 - Health: http://localhost:8000/health
@@ -100,6 +106,7 @@ npm install
 ```
 
 **This installs**:
+
 - Next.js 15.5.4
 - React 18.3.1
 - TypeScript 5.x
@@ -108,6 +115,7 @@ npm install
 - And all other dependencies
 
 **Troubleshooting**:
+
 ```bash
 # If install fails, try:
 rm -rf node_modules package-lock.json
@@ -128,6 +136,7 @@ cp .env.example .env.local
 ```
 
 **Minimum required**:
+
 ```bash
 NEXT_PUBLIC_API_URL=http://localhost:8000
 NEXT_PUBLIC_WS_URL=ws://localhost:8000
@@ -140,6 +149,7 @@ npm run dev
 ```
 
 **Output**:
+
 ```
 > content-generator-dashboard@0.1.0 dev
 > next dev
@@ -156,11 +166,13 @@ npm run dev
 Open http://localhost:3000 in your browser.
 
 **You should see**:
+
 - Home page loads
 - Navigation bar appears
 - No console errors
 
 **Test backend connection**:
+
 - Go to `/dashboard`
 - Health check should show green status
 - If red, verify backend is running
@@ -172,6 +184,7 @@ Open http://localhost:3000 in your browser.
 ### VS Code Setup (Recommended)
 
 **Recommended Extensions**:
+
 ```json
 {
   "recommendations": [
@@ -186,6 +199,7 @@ Open http://localhost:3000 in your browser.
 ```
 
 **Settings** (`.vscode/settings.json`):
+
 ```json
 {
   "editor.formatOnSave": true,
@@ -203,11 +217,13 @@ Open http://localhost:3000 in your browser.
 ### Browser DevTools
 
 **Recommended**:
+
 - Chrome DevTools
 - React Developer Tools extension
 - Redux DevTools (if using Redux)
 
 **Useful shortcuts**:
+
 - `Ctrl/Cmd + Shift + C` - Inspect element
 - `Ctrl/Cmd + Shift + J` - Open console
 - `Ctrl/Cmd + Shift + M` - Toggle device toolbar
@@ -254,22 +270,26 @@ content-generator-dashboard/
 ### Daily Workflow
 
 1. **Pull latest changes**:
+
    ```bash
    git pull origin master
    ```
 
 2. **Install dependencies** (if package.json changed):
+
    ```bash
    npm install
    ```
 
 3. **Start backend API**:
+
    ```bash
    cd ../halcytone-content-generator
    python run_dev.py
    ```
 
 4. **Start dashboard**:
+
    ```bash
    npm run dev
    ```
@@ -277,6 +297,7 @@ content-generator-dashboard/
 5. **Make changes** following [CONVENTIONS.md](../CONVENTIONS.md)
 
 6. **Test changes**:
+
    ```bash
    npm run lint
    npm run type-check
@@ -294,6 +315,7 @@ content-generator-dashboard/
 ### Feature Development
 
 1. **Create branch**:
+
    ```bash
    git checkout -b feature/my-feature
    ```
@@ -305,6 +327,7 @@ content-generator-dashboard/
    - Add tests
 
 3. **Test thoroughly**:
+
    ```bash
    npm run lint
    npm run type-check
@@ -313,6 +336,7 @@ content-generator-dashboard/
    ```
 
 4. **Commit with conventional commit**:
+
    ```bash
    git commit -m "feat(scope): description"
    ```
@@ -438,10 +462,12 @@ NEXT_PUBLIC_ENABLE_ANALYTICS=true
 ### Environment Variable Rules
 
 **Next.js rules**:
+
 - `NEXT_PUBLIC_*` - Exposed to browser (client-side)
 - Others - Server-side only (not exposed to browser)
 
 **Example**:
+
 ```typescript
 // ✅ Can use in browser
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
@@ -454,6 +480,7 @@ const secret = process.env.SECRET_KEY;
 ```
 
 **Loading environment variables**:
+
 1. `.env.local` - Loaded in all environments (not committed)
 2. `.env.development` - Loaded in development only
 3. `.env.production` - Loaded in production only
@@ -466,6 +493,7 @@ const secret = process.env.SECRET_KEY;
 ### Adding a New Page
 
 1. **Create page file**:
+
    ```bash
    # Create app/my-page/page.tsx
    mkdir app/my-page
@@ -473,6 +501,7 @@ const secret = process.env.SECRET_KEY;
    ```
 
 2. **Implement page**:
+
    ```typescript
    export default function MyPage() {
      return (
@@ -484,6 +513,7 @@ const secret = process.env.SECRET_KEY;
    ```
 
 3. **Add to navigation** (if needed):
+
    ```typescript
    // components/ui/Navigation.tsx
    const navItems = [
@@ -503,11 +533,13 @@ const secret = process.env.SECRET_KEY;
    - Feature component → `components/features/`
 
 2. **Create component file**:
+
    ```bash
    touch components/ui/MyComponent.tsx
    ```
 
 3. **Implement component**:
+
    ```typescript
    'use client';  // If using hooks/events
 
@@ -527,11 +559,13 @@ const secret = process.env.SECRET_KEY;
    ```
 
 4. **Add tests**:
+
    ```bash
    touch components/ui/MyComponent.test.tsx
    ```
 
 5. **Use component**:
+
    ```typescript
    import MyComponent from '@/components/ui/MyComponent';
 
@@ -541,6 +575,7 @@ const secret = process.env.SECRET_KEY;
 ### Adding API Integration
 
 1. **Add types** in `types/content-generator.ts`:
+
    ```typescript
    export interface MyData {
      id: string;
@@ -549,6 +584,7 @@ const secret = process.env.SECRET_KEY;
    ```
 
 2. **Add API method** in `lib/api/api-client.ts`:
+
    ```typescript
    async getMyData(id: string): Promise<MyData> {
      const response = await this.axios.get(`/api/my-data/${id}`);
@@ -557,6 +593,7 @@ const secret = process.env.SECRET_KEY;
    ```
 
 3. **Use with React Query**:
+
    ```typescript
    import { useQuery } from '@tanstack/react-query';
    import { apiClient } from '@/lib/api/client';
@@ -577,11 +614,13 @@ const secret = process.env.SECRET_KEY;
 ### Adding a Custom Hook
 
 1. **Create hook file**:
+
    ```bash
    touch hooks/useMyHook.ts
    ```
 
 2. **Implement hook**:
+
    ```typescript
    import { useState, useEffect } from 'react';
 
@@ -598,6 +637,7 @@ const secret = process.env.SECRET_KEY;
    ```
 
 3. **Use hook**:
+
    ```typescript
    import { useMyHook } from '@/hooks/useMyHook';
 
@@ -637,12 +677,14 @@ console.warn('Deprecated feature used');
 ### Network Debugging
 
 **Browser DevTools**:
+
 1. Open DevTools → Network tab
 2. Filter by XHR/Fetch
 3. Inspect API requests
 4. Check request/response
 
 **Common issues**:
+
 - CORS errors → Check backend CORS settings
 - 404 errors → Verify API endpoint
 - 500 errors → Check backend logs
@@ -658,6 +700,7 @@ npx tsc --noEmit --watch
 ```
 
 **Common fixes**:
+
 - Add type definitions
 - Use type assertions: `as Type`
 - Check tsconfig.json paths
@@ -676,11 +719,13 @@ npm run build 2>&1 | grep "error"
 ### Hot Reload Issues
 
 **If changes don't reflect**:
+
 1. Stop dev server (Ctrl+C)
 2. Delete `.next` folder
 3. Restart: `npm run dev`
 
 **If still not working**:
+
 ```bash
 rm -rf .next node_modules package-lock.json
 npm install
@@ -747,6 +792,7 @@ npm run dev
 ### Common Issues
 
 **Port 3000 already in use**:
+
 ```bash
 # Kill process on port 3000
 # Windows:
@@ -761,6 +807,7 @@ PORT=3001 npm run dev
 ```
 
 **Module not found**:
+
 ```bash
 # Reinstall dependencies
 rm -rf node_modules package-lock.json
@@ -768,12 +815,14 @@ npm install
 ```
 
 **TypeScript errors after pulling**:
+
 ```bash
 # Rebuild TypeScript cache
 npm run type-check
 ```
 
 **Build fails**:
+
 ```bash
 # Clean and rebuild
 rm -rf .next

@@ -21,12 +21,14 @@ export const TemplateSelector: React.FC<TemplateSelectorProps> = ({
 
   // Filter templates by channel compatibility
   const filteredTemplates = channelFilter
-    ? templates.filter((template) =>
-        channelFilter.some((channel) => template.supported_channels.includes(channel))
+    ? templates.filter(template =>
+        channelFilter.some(channel =>
+          template.supported_channels.includes(channel)
+        )
       )
     : templates;
 
-  const getStyleIcon = (style: string) => {
+  const getStyleIcon = (style: string): string => {
     switch (style) {
       case 'modern':
         return '✨';
@@ -39,7 +41,7 @@ export const TemplateSelector: React.FC<TemplateSelectorProps> = ({
     }
   };
 
-  const getChannelIcon = (channel: Channel) => {
+  const getChannelIcon = (channel: Channel): string => {
     switch (channel) {
       case 'email':
         return '📧';
@@ -56,14 +58,14 @@ export const TemplateSelector: React.FC<TemplateSelectorProps> = ({
     }
   };
 
-  const handleTemplateClick = (template: Template) => {
+  const handleTemplateClick = (template: Template): void => {
     onChange(template);
     if (showPreview) {
       setPreviewTemplate(template);
     }
   };
 
-  const closePreview = () => {
+  const closePreview = (): void => {
     setPreviewTemplate(null);
   };
 
@@ -71,7 +73,7 @@ export const TemplateSelector: React.FC<TemplateSelectorProps> = ({
     <div className="space-y-4">
       {/* Template Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {filteredTemplates.map((template) => (
+        {filteredTemplates.map(template => (
           <div
             key={template.id}
             onClick={() => handleTemplateClick(template)}
@@ -114,14 +116,12 @@ export const TemplateSelector: React.FC<TemplateSelectorProps> = ({
 
             {/* Supported Channels */}
             <div className="mb-3">
-              <div className="text-xs text-gray-600 mb-1">Supported Channels</div>
+              <div className="text-xs text-gray-600 mb-1">
+                Supported Channels
+              </div>
               <div className="flex flex-wrap gap-1">
-                {template.supported_channels.map((channel) => (
-                  <span
-                    key={channel}
-                    className="text-lg"
-                    title={channel}
-                  >
+                {template.supported_channels.map(channel => (
+                  <span key={channel} className="text-lg" title={channel}>
                     {getChannelIcon(channel)}
                   </span>
                 ))}
@@ -139,7 +139,7 @@ export const TemplateSelector: React.FC<TemplateSelectorProps> = ({
             {/* Preview Link */}
             {template.preview_url && showPreview && (
               <button
-                onClick={(e) => {
+                onClick={e => {
                   e.stopPropagation();
                   setPreviewTemplate(template);
                 }}
@@ -185,24 +185,32 @@ export const TemplateSelector: React.FC<TemplateSelectorProps> = ({
         >
           <div
             className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-auto"
-            onClick={(e) => e.stopPropagation()}
+            onClick={e => e.stopPropagation()}
           >
             {/* Modal Header */}
             <div className="sticky top-0 bg-white border-b border-gray-200 p-6 flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <span className="text-3xl">{getStyleIcon(previewTemplate.style)}</span>
+                <span className="text-3xl">
+                  {getStyleIcon(previewTemplate.style)}
+                </span>
                 <div>
                   <h2 className="text-2xl font-bold text-gray-900">
                     {previewTemplate.name}
                   </h2>
-                  <p className="text-sm text-gray-600">{previewTemplate.description}</p>
+                  <p className="text-sm text-gray-600">
+                    {previewTemplate.description}
+                  </p>
                 </div>
               </div>
               <button
                 onClick={closePreview}
                 className="text-gray-500 hover:text-gray-700 transition-colors"
               >
-                <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                <svg
+                  className="w-6 h-6"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
                   <path
                     fillRule="evenodd"
                     d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
@@ -220,7 +228,9 @@ export const TemplateSelector: React.FC<TemplateSelectorProps> = ({
                   <h3 className="text-sm font-medium text-gray-700 mb-2">
                     Style
                   </h3>
-                  <div className="text-lg capitalize">{previewTemplate.style}</div>
+                  <div className="text-lg capitalize">
+                    {previewTemplate.style}
+                  </div>
                 </div>
                 <div>
                   <h3 className="text-sm font-medium text-gray-700 mb-2">
@@ -238,7 +248,7 @@ export const TemplateSelector: React.FC<TemplateSelectorProps> = ({
                   Supported Channels
                 </h3>
                 <div className="flex flex-wrap gap-2">
-                  {previewTemplate.supported_channels.map((channel) => (
+                  {previewTemplate.supported_channels.map(channel => (
                     <div
                       key={channel}
                       className="px-3 py-2 bg-blue-50 text-blue-900 rounded-lg text-sm font-medium flex items-center space-x-2"
@@ -251,47 +261,48 @@ export const TemplateSelector: React.FC<TemplateSelectorProps> = ({
               </div>
 
               {/* Variables */}
-              {previewTemplate.variables && previewTemplate.variables.length > 0 && (
-                <div>
-                  <h3 className="text-sm font-medium text-gray-700 mb-2">
-                    Template Variables
-                  </h3>
-                  <div className="space-y-2">
-                    {previewTemplate.variables.map((variable) => (
-                      <div
-                        key={variable.name}
-                        className="border border-gray-200 rounded-lg p-3"
-                      >
-                        <div className="flex items-center justify-between mb-1">
-                          <span className="font-mono text-sm font-bold">
-                            {variable.name}
-                          </span>
-                          <div className="flex items-center space-x-2">
-                            <span className="text-xs bg-gray-100 px-2 py-1 rounded">
-                              {variable.type}
+              {previewTemplate.variables &&
+                previewTemplate.variables.length > 0 && (
+                  <div>
+                    <h3 className="text-sm font-medium text-gray-700 mb-2">
+                      Template Variables
+                    </h3>
+                    <div className="space-y-2">
+                      {previewTemplate.variables.map(variable => (
+                        <div
+                          key={variable.name}
+                          className="border border-gray-200 rounded-lg p-3"
+                        >
+                          <div className="flex items-center justify-between mb-1">
+                            <span className="font-mono text-sm font-bold">
+                              {variable.name}
                             </span>
-                            {variable.required && (
-                              <span className="text-xs bg-red-100 text-red-800 px-2 py-1 rounded font-semibold">
-                                Required
+                            <div className="flex items-center space-x-2">
+                              <span className="text-xs bg-gray-100 px-2 py-1 rounded">
+                                {variable.type}
                               </span>
-                            )}
+                              {variable.required && (
+                                <span className="text-xs bg-red-100 text-red-800 px-2 py-1 rounded font-semibold">
+                                  Required
+                                </span>
+                              )}
+                            </div>
                           </div>
+                          {variable.description && (
+                            <p className="text-sm text-gray-600 mb-1">
+                              {variable.description}
+                            </p>
+                          )}
+                          {variable.default_value !== undefined && (
+                            <div className="text-xs text-gray-500">
+                              Default: {JSON.stringify(variable.default_value)}
+                            </div>
+                          )}
                         </div>
-                        {variable.description && (
-                          <p className="text-sm text-gray-600 mb-1">
-                            {variable.description}
-                          </p>
-                        )}
-                        {variable.default_value !== undefined && (
-                          <div className="text-xs text-gray-500">
-                            Default: {JSON.stringify(variable.default_value)}
-                          </div>
-                        )}
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
 
               {/* Preview Image */}
               {previewTemplate.preview_url && (
@@ -304,7 +315,7 @@ export const TemplateSelector: React.FC<TemplateSelectorProps> = ({
                       src={previewTemplate.preview_url}
                       alt={`${previewTemplate.name} preview`}
                       className="w-full h-auto"
-                      onError={(e) => {
+                      onError={e => {
                         e.currentTarget.style.display = 'none';
                         e.currentTarget.parentElement!.innerHTML =
                           '<div class="p-8 text-center text-gray-500">Preview not available</div>';

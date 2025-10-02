@@ -21,10 +21,14 @@ export const CacheStats: React.FC<CacheStatsProps> = ({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
-  const [invalidationMode, setInvalidationMode] = useState<'keys' | 'pattern' | 'tags'>('pattern');
+  const [invalidationMode, setInvalidationMode] = useState<
+    'keys' | 'pattern' | 'tags'
+  >('pattern');
   const [invalidationInput, setInvalidationInput] = useState('');
   const [invalidating, setInvalidating] = useState(false);
-  const [invalidationSuccess, setInvalidationSuccess] = useState<string | null>(null);
+  const [invalidationSuccess, setInvalidationSuccess] = useState<string | null>(
+    null
+  );
 
   const api = new ContentGeneratorAPI(apiUrl, apiKey);
 
@@ -67,11 +71,11 @@ export const CacheStats: React.FC<CacheStatsProps> = ({
       const request: CacheInvalidationRequest = {};
 
       if (invalidationMode === 'keys') {
-        request.cache_keys = invalidationInput.split(',').map((k) => k.trim());
+        request.cache_keys = invalidationInput.split(',').map(k => k.trim());
       } else if (invalidationMode === 'pattern') {
         request.pattern = invalidationInput.trim();
       } else if (invalidationMode === 'tags') {
-        request.tags = invalidationInput.split(',').map((t) => t.trim());
+        request.tags = invalidationInput.split(',').map(t => t.trim());
       }
 
       const response = await api.invalidateCache(request);
@@ -95,7 +99,11 @@ export const CacheStats: React.FC<CacheStatsProps> = ({
   };
 
   const handleClearAll = async () => {
-    if (!window.confirm('Are you sure you want to clear ALL caches? This cannot be undone.')) {
+    if (
+      !window.confirm(
+        'Are you sure you want to clear ALL caches? This cannot be undone.'
+      )
+    ) {
       return;
     }
 
@@ -119,7 +127,7 @@ export const CacheStats: React.FC<CacheStatsProps> = ({
     }
   };
 
-  const formatBytes = (bytes: number) => {
+  const formatBytes = (bytes: number): string => {
     if (bytes === 0) return '0 B';
     const k = 1024;
     const sizes = ['B', 'KB', 'MB', 'GB'];
@@ -127,7 +135,7 @@ export const CacheStats: React.FC<CacheStatsProps> = ({
     return `${(bytes / Math.pow(k, i)).toFixed(2)} ${sizes[i]}`;
   };
 
-  const formatDuration = (seconds: number) => {
+  const formatDuration = (seconds: number): string => {
     const hours = Math.floor(seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
     const secs = seconds % 60;
@@ -142,7 +150,7 @@ export const CacheStats: React.FC<CacheStatsProps> = ({
       <div className="animate-pulse bg-white rounded-lg shadow p-6">
         <div className="h-8 bg-gray-200 rounded w-1/4 mb-4"></div>
         <div className="grid grid-cols-3 gap-4">
-          {[1, 2, 3].map((i) => (
+          {[1, 2, 3].map(i => (
             <div key={i} className="h-24 bg-gray-200 rounded"></div>
           ))}
         </div>
@@ -165,7 +173,9 @@ export const CacheStats: React.FC<CacheStatsProps> = ({
               clipRule="evenodd"
             />
           </svg>
-          <span className="text-red-800 font-medium">Failed to Load Cache Stats</span>
+          <span className="text-red-800 font-medium">
+            Failed to Load Cache Stats
+          </span>
         </div>
         <p className="text-red-700 text-sm mt-2">{error}</p>
         <button
@@ -185,7 +195,9 @@ export const CacheStats: React.FC<CacheStatsProps> = ({
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Cache Performance</h2>
+          <h2 className="text-2xl font-bold text-gray-900">
+            Cache Performance
+          </h2>
           <p className="text-sm text-gray-600 mt-1">
             {lastUpdate && `Updated ${lastUpdate.toLocaleTimeString()}`}
           </p>
@@ -232,7 +244,9 @@ export const CacheStats: React.FC<CacheStatsProps> = ({
         </div>
 
         <div className="bg-orange-50 rounded-lg p-4">
-          <div className="text-sm text-orange-600 font-medium">Memory Usage</div>
+          <div className="text-sm text-orange-600 font-medium">
+            Memory Usage
+          </div>
           <div className="text-3xl font-bold text-orange-900">
             {stats.memory_usage_mb.toFixed(1)} MB
           </div>
@@ -245,45 +259,49 @@ export const CacheStats: React.FC<CacheStatsProps> = ({
       {/* Cache Targets */}
       {stats.cache_targets && Object.keys(stats.cache_targets).length > 0 && (
         <div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-3">Cache Targets</h3>
+          <h3 className="text-lg font-semibold text-gray-900 mb-3">
+            Cache Targets
+          </h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {Object.entries(stats.cache_targets).map(([target, targetStats]) => (
-              <div
-                key={target}
-                className={`border-2 rounded-lg p-4 ${
-                  targetStats.enabled
-                    ? 'border-green-200 bg-green-50'
-                    : 'border-gray-200 bg-gray-50'
-                }`}
-              >
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-bold uppercase text-gray-700">
-                    {target}
-                  </span>
-                  <span
-                    className={`px-2 py-1 text-xs font-semibold rounded ${
-                      targetStats.enabled
-                        ? 'bg-green-200 text-green-800'
-                        : 'bg-gray-200 text-gray-600'
-                    }`}
-                  >
-                    {targetStats.enabled ? 'Enabled' : 'Disabled'}
-                  </span>
+            {Object.entries(stats.cache_targets).map(
+              ([target, targetStats]) => (
+                <div
+                  key={target}
+                  className={`border-2 rounded-lg p-4 ${
+                    targetStats.enabled
+                      ? 'border-green-200 bg-green-50'
+                      : 'border-gray-200 bg-gray-50'
+                  }`}
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm font-bold uppercase text-gray-700">
+                      {target}
+                    </span>
+                    <span
+                      className={`px-2 py-1 text-xs font-semibold rounded ${
+                        targetStats.enabled
+                          ? 'bg-green-200 text-green-800'
+                          : 'bg-gray-200 text-gray-600'
+                      }`}
+                    >
+                      {targetStats.enabled ? 'Enabled' : 'Disabled'}
+                    </span>
+                  </div>
+                  {targetStats.enabled && (
+                    <>
+                      <div className="text-2xl font-bold text-gray-900 mb-1">
+                        {(targetStats.hit_rate * 100).toFixed(1)}%
+                      </div>
+                      <div className="text-xs text-gray-600">
+                        {targetStats.total_keys.toLocaleString()} keys
+                        {targetStats.memory_mb !== undefined &&
+                          ` • ${targetStats.memory_mb.toFixed(1)} MB`}
+                      </div>
+                    </>
+                  )}
                 </div>
-                {targetStats.enabled && (
-                  <>
-                    <div className="text-2xl font-bold text-gray-900 mb-1">
-                      {(targetStats.hit_rate * 100).toFixed(1)}%
-                    </div>
-                    <div className="text-xs text-gray-600">
-                      {targetStats.total_keys.toLocaleString()} keys
-                      {targetStats.memory_mb !== undefined &&
-                        ` • ${targetStats.memory_mb.toFixed(1)} MB`}
-                    </div>
-                  </>
-                )}
-              </div>
-            ))}
+              )
+            )}
           </div>
         </div>
       )}
@@ -314,14 +332,16 @@ export const CacheStats: React.FC<CacheStatsProps> = ({
               { value: 'pattern', label: 'Pattern' },
               { value: 'keys', label: 'Specific Keys' },
               { value: 'tags', label: 'Tags' },
-            ].map((mode) => (
+            ].map(mode => (
               <label key={mode.value} className="flex items-center">
                 <input
                   type="radio"
                   value={mode.value}
                   checked={invalidationMode === mode.value}
-                  onChange={(e) =>
-                    setInvalidationMode(e.target.value as 'keys' | 'pattern' | 'tags')
+                  onChange={e =>
+                    setInvalidationMode(
+                      e.target.value as 'keys' | 'pattern' | 'tags'
+                    )
                   }
                   className="mr-2"
                 />
@@ -341,13 +361,13 @@ export const CacheStats: React.FC<CacheStatsProps> = ({
           <input
             type="text"
             value={invalidationInput}
-            onChange={(e) => setInvalidationInput(e.target.value)}
+            onChange={e => setInvalidationInput(e.target.value)}
             placeholder={
               invalidationMode === 'pattern'
                 ? 'content:*'
                 : invalidationMode === 'keys'
-                ? 'key1, key2, key3'
-                : 'tag1, tag2'
+                  ? 'key1, key2, key3'
+                  : 'tag1, tag2'
             }
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             disabled={invalidating}

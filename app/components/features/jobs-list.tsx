@@ -23,7 +23,9 @@ export const JobsList: React.FC<JobsListProps> = ({
   const [jobs, setJobs] = useState<SyncJob[]>([]);
   const [total, setTotal] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
-  const [selectedStatus, setSelectedStatus] = useState<JobStatus | 'all'>('all');
+  const [selectedStatus, setSelectedStatus] = useState<JobStatus | 'all'>(
+    'all'
+  );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
@@ -65,7 +67,7 @@ export const JobsList: React.FC<JobsListProps> = ({
     return () => clearInterval(interval);
   }, [fetchJobs, refreshInterval]);
 
-  const getStatusColor = (status: JobStatus) => {
+  const getStatusColor = (status: JobStatus): string => {
     switch (status) {
       case 'completed':
         return 'text-green-700 bg-green-100';
@@ -84,7 +86,7 @@ export const JobsList: React.FC<JobsListProps> = ({
     }
   };
 
-  const getStatusIcon = (status: JobStatus) => {
+  const getStatusIcon = (status: JobStatus): string => {
     switch (status) {
       case 'completed':
         return '✓';
@@ -103,7 +105,7 @@ export const JobsList: React.FC<JobsListProps> = ({
     }
   };
 
-  const formatDate = (dateString: string) => {
+  const formatDate = (dateString: string): string => {
     const date = new Date(dateString);
     const now = new Date();
     const diffMs = now.getTime() - date.getTime();
@@ -135,7 +137,7 @@ export const JobsList: React.FC<JobsListProps> = ({
       <div className="animate-pulse bg-white rounded-lg shadow p-6">
         <div className="h-8 bg-gray-200 rounded w-1/4 mb-4"></div>
         <div className="space-y-3">
-          {[1, 2, 3].map((i) => (
+          {[1, 2, 3].map(i => (
             <div key={i} className="h-20 bg-gray-200 rounded"></div>
           ))}
         </div>
@@ -180,7 +182,9 @@ export const JobsList: React.FC<JobsListProps> = ({
           <p className="text-sm text-gray-600 mt-1">
             {total} total jobs
             {lastUpdate && (
-              <span className="ml-2">• Updated {lastUpdate.toLocaleTimeString()}</span>
+              <span className="ml-2">
+                • Updated {lastUpdate.toLocaleTimeString()}
+              </span>
             )}
           </p>
         </div>
@@ -196,7 +200,7 @@ export const JobsList: React.FC<JobsListProps> = ({
       {/* Status Filter */}
       <div className="mb-6">
         <div className="flex flex-wrap gap-2">
-          {statuses.map((status) => (
+          {statuses.map(status => (
             <button
               key={status.value}
               onClick={() => {
@@ -240,7 +244,7 @@ export const JobsList: React.FC<JobsListProps> = ({
         </div>
       ) : (
         <div className="space-y-3">
-          {jobs.map((job) => (
+          {jobs.map(job => (
             <div
               key={job.job_id}
               onClick={() => onJobClick?.(job)}
@@ -333,14 +337,14 @@ export const JobsList: React.FC<JobsListProps> = ({
           </div>
           <div className="flex space-x-2">
             <button
-              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+              onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
               disabled={currentPage === 1 || loading}
               className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-medium"
             >
               Previous
             </button>
             <button
-              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+              onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
               disabled={currentPage === totalPages || loading}
               className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-medium"
             >

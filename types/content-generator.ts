@@ -37,7 +37,12 @@ export interface Metrics {
 // ========== Content Generation ==========
 
 export type ContentType = 'update' | 'blog' | 'announcement';
-export type Channel = 'email' | 'website' | 'social_twitter' | 'social_linkedin' | 'social_facebook';
+export type Channel =
+  | 'email'
+  | 'website'
+  | 'social_twitter'
+  | 'social_linkedin'
+  | 'social_facebook';
 export type TemplateStyle = 'modern' | 'classic' | 'minimal';
 
 export interface ContentGenerationRequest {
@@ -60,7 +65,13 @@ export interface ContentGenerationResponse {
 
 // ========== Jobs ==========
 
-export type JobStatus = 'pending' | 'in_progress' | 'completed' | 'failed' | 'partial' | 'cancelled';
+export type JobStatus =
+  | 'pending'
+  | 'in_progress'
+  | 'completed'
+  | 'failed'
+  | 'partial'
+  | 'cancelled';
 
 export interface SyncJob {
   job_id: string;

@@ -1,20 +1,20 @@
-import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
-import './globals.css'
-import Navigation from '@/components/ui/Navigation'
+import type { Metadata } from 'next';
+import { Inter } from 'next/font/google';
+import './globals.css';
+import Navigation from '@/app/components/ui/navigation';
 
-const inter = Inter({ subsets: ['latin'] })
+const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: 'Content Generator Dashboard',
   description: 'AI-powered content generation platform',
-}
+};
 
-export default function RootLayout({
+const RootLayout = ({
   children,
 }: {
-  children: React.ReactNode
-}) {
+  children: React.ReactNode;
+}): React.ReactElement => {
   return (
     <html lang="en">
       <body className={inter.className}>
@@ -22,5 +22,7 @@ export default function RootLayout({
         {children}
       </body>
     </html>
-  )
-}
+  );
+};
+
+export default RootLayout;

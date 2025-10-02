@@ -5,6 +5,7 @@ AI-powered content generation platform dashboard built with Next.js 14, TypeScri
 ## Overview
 
 This is the **standalone dashboard** for the Content Generator product. It provides a user-friendly interface for:
+
 - Content generation and management
 - Job queue monitoring
 - Template management
@@ -64,23 +65,28 @@ Backend will be available at [http://localhost:8000](http://localhost:8000)
 ## Tech Stack
 
 ### Core Framework
+
 - **Next.js 14** - React framework with App Router
 - **TypeScript** - Type-safe JavaScript
 - **Tailwind CSS** - Utility-first CSS framework
 
 ### State Management & API
+
 - **@tanstack/react-query** - Server state management
 - **Axios** - HTTP client
 - **WebSocket** - Real-time updates
 
 ### Forms & Validation
+
 - **React Hook Form** - Form state management
 - **Zod** - Schema validation
 
 ### Visualization
+
 - **Recharts** - Charts and graphs
 
 ### Development Tools
+
 - **ESLint** - Code linting
 - **bpsai-pair** - AI pair programming assistant
 
@@ -124,30 +130,35 @@ content-generator-dashboard/
 The following components were migrated from the backend's `frontend/` directory:
 
 ### 1. **ContentGeneratorHealth** (`components/features/ContentGeneratorHealth.tsx`)
+
 - Displays API health status
 - Shows system metrics and uptime
 - Real-time health check monitoring
 - Component health breakdown
 
 ### 2. **ContentGenerationForm** (`components/features/ContentGenerationForm.tsx`)
+
 - Content creation interface
 - Template selection
 - Channel configuration (email, social, web)
 - Tone/style settings
 
 ### 3. **JobsList** & **JobStatusCard** (`components/features/Jobs*.tsx`)
+
 - Job queue management
 - Real-time status updates via WebSocket
 - Job filtering and sorting
 - Status tracking (pending, running, completed, failed)
 
 ### 4. **CacheStats** (`components/features/CacheStats.tsx`)
+
 - Cache statistics visualization
 - Cache hit rate monitoring
 - Cache management controls
 - Invalidation history
 
 ### 5. **TemplateSelector** (`components/features/TemplateSelector.tsx`)
+
 - Template browsing and selection
 - Template preview
 - Category filtering
@@ -166,7 +177,7 @@ const health = await apiClient.healthCheck();
 const result = await apiClient.generateContent({
   living_doc_id: 'doc-123',
   channel: 'email',
-  tone: 'professional'
+  tone: 'professional',
 });
 
 // Get job status
@@ -180,7 +191,7 @@ import { getWebSocketUrl } from '@/lib/api/client';
 
 const ws = new WebSocket(getWebSocketUrl('/ws/content/client-123'));
 
-ws.onmessage = (event) => {
+ws.onmessage = event => {
   const data = JSON.parse(event.data);
   console.log('Real-time update:', data);
 };
@@ -193,6 +204,7 @@ ws.onmessage = (event) => {
 This project uses `bpsai-pair` for AI-assisted development. Configuration is in `.bpsai/config.yaml`.
 
 **Key conventions:**
+
 - File naming: `kebab-case.tsx`
 - Components: `PascalCase`
 - Hooks: `useCamelCase`
@@ -244,10 +256,10 @@ npm run lint
 
 ## Environment Variables
 
-| Variable | Description | Default |
-|----------|-------------|---------|
+| Variable              | Description          | Default                 |
+| --------------------- | -------------------- | ----------------------- |
 | `NEXT_PUBLIC_API_URL` | Backend API base URL | `http://localhost:8000` |
-| `NEXT_PUBLIC_WS_URL` | WebSocket base URL | `ws://localhost:8000` |
+| `NEXT_PUBLIC_WS_URL`  | WebSocket base URL   | `ws://localhost:8000`   |
 
 ## Deployment
 
@@ -269,6 +281,7 @@ vercel
 ### Other Platforms
 
 The dashboard can be deployed to any platform that supports Next.js:
+
 - Netlify
 - AWS Amplify
 - Docker
@@ -293,6 +306,7 @@ python -m uvicorn src.halcytone_content_generator.main:app --reload
 ## Features Roadmap
 
 ### Phase 1: MVP ✅ (Components Migrated)
+
 - [x] Health monitoring
 - [x] Content generation interface
 - [x] Job queue management
@@ -300,6 +314,7 @@ python -m uvicorn src.halcytone_content_generator.main:app --reload
 - [x] Template selection
 
 ### Phase 2: Enhancement (In Progress)
+
 - [ ] Authentication flow (API key management)
 - [ ] User settings page
 - [ ] Analytics dashboard
@@ -307,6 +322,7 @@ python -m uvicorn src.halcytone_content_generator.main:app --reload
 - [ ] Advanced filtering and search
 
 ### Phase 3: Advanced Features
+
 - [ ] Batch operations UI
 - [ ] Scheduled content generation
 - [ ] Multi-user support
@@ -365,6 +381,7 @@ import type { HealthStatus } from '@/types';
 ## Support
 
 For issues and questions:
+
 - Backend API issues: `halcytone-content-generator` repository
 - Dashboard issues: This repository
 

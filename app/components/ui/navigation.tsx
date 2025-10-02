@@ -8,7 +8,7 @@ import { usePathname } from 'next/navigation';
  * Navigation Component
  * Main navigation bar for the dashboard
  */
-export default function Navigation() {
+const Navigation = (): React.ReactElement => {
   const pathname = usePathname();
 
   const navItems = [
@@ -19,7 +19,7 @@ export default function Navigation() {
     { href: '/settings', label: 'Settings' },
   ];
 
-  const isActive = (path: string) => pathname === path;
+  const isActive = (path: string): boolean => pathname === path;
 
   return (
     <nav className="bg-white shadow-sm">
@@ -35,7 +35,7 @@ export default function Navigation() {
 
             {/* Navigation Links */}
             <div className="hidden sm:ml-8 sm:flex sm:space-x-8">
-              {navItems.map((item) => (
+              {navItems.map(item => (
                 <Link
                   key={item.href}
                   href={item.href}
@@ -61,4 +61,6 @@ export default function Navigation() {
       </div>
     </nav>
   );
-}
+};
+
+export default Navigation;

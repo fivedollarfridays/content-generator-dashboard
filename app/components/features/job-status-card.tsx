@@ -13,7 +13,7 @@ export const JobStatusCard: React.FC<JobStatusCardProps> = ({
   onViewDetails,
   compact = false,
 }) => {
-  const getStatusColor = (status: JobStatus) => {
+  const getStatusColor = (status: JobStatus): string => {
     switch (status) {
       case 'completed':
         return 'text-green-700 bg-green-100 border-green-200';
@@ -32,7 +32,7 @@ export const JobStatusCard: React.FC<JobStatusCardProps> = ({
     }
   };
 
-  const getStatusIcon = (status: JobStatus) => {
+  const getStatusIcon = (status: JobStatus): React.ReactNode => {
     switch (status) {
       case 'completed':
         return (
@@ -131,11 +131,11 @@ export const JobStatusCard: React.FC<JobStatusCardProps> = ({
     }
   };
 
-  const formatDate = (dateString: string) => {
+  const formatDate = (dateString: string): string => {
     return new Date(dateString).toLocaleString();
   };
 
-  const calculateDuration = () => {
+  const calculateDuration = (): string | null => {
     if (!job.started_at) return null;
     const start = new Date(job.started_at).getTime();
     const end = job.completed_at
@@ -151,7 +151,7 @@ export const JobStatusCard: React.FC<JobStatusCardProps> = ({
     return `${seconds}s`;
   };
 
-  const getChannelIcon = (channel: string) => {
+  const getChannelIcon = (channel: string): string => {
     switch (channel) {
       case 'email':
         return '📧';
@@ -178,9 +178,11 @@ export const JobStatusCard: React.FC<JobStatusCardProps> = ({
           <div className="flex items-center space-x-3">
             {getStatusIcon(job.status)}
             <div>
-              <div className="font-semibold text-sm">{job.status.toUpperCase()}</div>
+              <div className="font-semibold text-sm">
+                {job.status.toUpperCase()}
+              </div>
               <div className="text-xs opacity-75">
-                {job.channels.map((c) => getChannelIcon(c)).join(' ')}
+                {job.channels.map(c => getChannelIcon(c)).join(' ')}
               </div>
             </div>
           </div>
@@ -220,7 +222,7 @@ export const JobStatusCard: React.FC<JobStatusCardProps> = ({
       <div className="mb-4">
         <div className="text-sm font-medium opacity-75 mb-2">Channels</div>
         <div className="flex flex-wrap gap-2">
-          {job.channels.map((channel) => (
+          {job.channels.map(channel => (
             <div
               key={channel}
               className="px-3 py-1 bg-white bg-opacity-50 rounded-full text-sm font-medium flex items-center space-x-1"
@@ -282,7 +284,9 @@ export const JobStatusCard: React.FC<JobStatusCardProps> = ({
                 </div>
                 <div className="flex items-center space-x-2">
                   {result.status === 'success' ? (
-                    <span className="text-green-700 font-semibold">✓ Success</span>
+                    <span className="text-green-700 font-semibold">
+                      ✓ Success
+                    </span>
                   ) : (
                     <span className="text-red-700 font-semibold">✕ Failed</span>
                   )}
@@ -335,14 +339,15 @@ export const JobStatusCard: React.FC<JobStatusCardProps> = ({
             🔄 Retry
           </button>
         )}
-        {(job.status === 'pending' || job.status === 'in_progress') && onCancel && (
-          <button
-            onClick={() => onCancel(job.job_id)}
-            className="flex-1 px-4 py-2 bg-white bg-opacity-90 hover:bg-opacity-100 rounded-lg font-medium transition-colors"
-          >
-            ⊘ Cancel
-          </button>
-        )}
+        {(job.status === 'pending' || job.status === 'in_progress') &&
+          onCancel && (
+            <button
+              onClick={() => onCancel(job.job_id)}
+              className="flex-1 px-4 py-2 bg-white bg-opacity-90 hover:bg-opacity-100 rounded-lg font-medium transition-colors"
+            >
+              ⊘ Cancel
+            </button>
+          )}
         {onViewDetails && (
           <button
             onClick={() => onViewDetails(job.job_id)}

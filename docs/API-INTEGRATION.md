@@ -8,10 +8,12 @@
 ## Overview
 
 This dashboard integrates with the Content Generator FastAPI backend via:
+
 - **REST API** - HTTP requests for data operations
 - **WebSocket** - Real-time updates for jobs and health
 
 **Base URLs**:
+
 - Development: `http://localhost:8000`
 - Production: `https://api.content-generator.com`
 
@@ -101,13 +103,13 @@ const jobs = await apiClient.listJobs();
 // Response
 [
   {
-    id: "job-abc123",
-    title: "Newsletter Generation",
-    status: "completed",
-    created_at: "2025-10-02T10:00:00Z",
-    completed_at: "2025-10-02T10:05:00Z"
-  }
-]
+    id: 'job-abc123',
+    title: 'Newsletter Generation',
+    status: 'completed',
+    created_at: '2025-10-02T10:00:00Z',
+    completed_at: '2025-10-02T10:05:00Z',
+  },
+];
 ```
 
 **GET `/api/v2/jobs/{id}`**
@@ -138,12 +140,12 @@ const templates = await apiClient.listTemplates();
 // Response
 [
   {
-    id: "template-123",
-    name: "Modern Newsletter",
-    category: "email",
-    description: "Clean, modern newsletter design"
-  }
-]
+    id: 'template-123',
+    name: 'Modern Newsletter',
+    category: 'email',
+    description: 'Clean, modern newsletter design',
+  },
+];
 ```
 
 ### Cache Management
@@ -176,8 +178,8 @@ function useHealthCheck() {
   return useQuery({
     queryKey: ['health'],
     queryFn: () => apiClient.healthCheck(),
-    staleTime: 5000,         // Data fresh for 5s
-    refetchInterval: 10000,  // Refetch every 10s
+    staleTime: 5000, // Data fresh for 5s
+    refetchInterval: 10000, // Refetch every 10s
   });
 }
 
@@ -194,12 +196,12 @@ function useGenerateContent() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data) => apiClient.generateContent(data),
+    mutationFn: data => apiClient.generateContent(data),
     onSuccess: () => {
       // Invalidate jobs list to refetch
       queryClient.invalidateQueries({ queryKey: ['jobs'] });
     },
-    onError: (error) => {
+    onError: error => {
       console.error('Generation failed:', error);
     },
   });
@@ -234,7 +236,7 @@ export function useJobs(filters?: { status?: string }) {
 
       return jobs;
     },
-    staleTime: 30000,  // 30 seconds
+    staleTime: 30000, // 30 seconds
   });
 }
 
@@ -257,15 +259,13 @@ function useJobUpdates(clientId: string) {
   const [ws, setWs] = useState<WebSocket | null>(null);
 
   useEffect(() => {
-    const socket = new WebSocket(
-      getWebSocketUrl(`/ws/content/${clientId}`)
-    );
+    const socket = new WebSocket(getWebSocketUrl(`/ws/content/${clientId}`));
 
     socket.onopen = () => {
       console.log('WebSocket connected');
     };
 
-    socket.onmessage = (event) => {
+    socket.onmessage = event => {
       const data = JSON.parse(event.data);
 
       if (data.type === 'job_update') {
@@ -281,7 +281,7 @@ function useJobUpdates(clientId: string) {
       }
     };
 
-    socket.onerror = (error) => {
+    socket.onerror = error => {
       console.error('WebSocket error:', error);
     };
 
@@ -433,9 +433,11 @@ export class ContentGeneratorAPI {
   constructor(baseURL: string, apiKey?: string) {
     this.axios = axios.create({
       baseURL,
-      headers: apiKey ? {
-        'X-API-Key': apiKey,
-      } : {},
+      headers: apiKey
+        ? {
+            'X-API-Key': apiKey,
+          }
+        : {},
     });
   }
 
@@ -539,7 +541,7 @@ const health: HealthStatus = await apiClient.healthCheck();
 useQuery({
   queryKey: ['templates'],
   queryFn: () => apiClient.listTemplates(),
-  staleTime: 5 * 60 * 1000,  // 5 minutes
+  staleTime: 5 * 60 * 1000, // 5 minutes
   cacheTime: 30 * 60 * 1000, // 30 minutes
 });
 
@@ -547,8 +549,8 @@ useQuery({
 useQuery({
   queryKey: ['jobs'],
   queryFn: () => apiClient.listJobs(),
-  staleTime: 10000,  // 10 seconds
-  refetchInterval: 30000,  // Refetch every 30s
+  staleTime: 10000, // 10 seconds
+  refetchInterval: 30000, // Refetch every 30s
 });
 ```
 
@@ -556,8 +558,8 @@ useQuery({
 
 ```typescript
 const mutation = useMutation({
-  mutationFn: (newJob) => apiClient.createJob(newJob),
-  onMutate: async (newJob) => {
+  mutationFn: newJob => apiClient.createJob(newJob),
+  onMutate: async newJob => {
     // Cancel outgoing refetches
     await queryClient.cancelQueries({ queryKey: ['jobs'] });
 
@@ -667,6 +669,7 @@ app.add_middleware(
 **Error**: `Connection refused` or `ECONNREFUSED`
 
 **Check**:
+
 1. Backend is running: `curl http://localhost:8000/health`
 2. Correct API URL in `.env.local`
 3. No firewall blocking
@@ -676,6 +679,7 @@ app.add_middleware(
 **Error**: WebSocket connection to 'ws://...' failed
 
 **Check**:
+
 1. WebSocket URL is correct (ws:// or wss://)
 2. Backend supports WebSocket
 3. No proxy blocking WebSocket

@@ -24,12 +24,14 @@
 ### Testing Philosophy
 
 **Goals**:
+
 - Catch bugs before production
 - Enable confident refactoring
 - Document expected behavior
 - Improve code quality
 
 **Principles**:
+
 - Write tests first (TDD when practical)
 - Test behavior, not implementation
 - Keep tests simple and focused
@@ -56,6 +58,7 @@
 ### What to Test
 
 **✅ Do Test**:
+
 - Public APIs and interfaces
 - User interactions
 - Edge cases and error states
@@ -64,6 +67,7 @@
 - Accessibility
 
 **❌ Don't Test**:
+
 - Implementation details
 - Third-party libraries
 - Trivial code (getters/setters)
@@ -72,18 +76,21 @@
 ### Testing Levels
 
 **Unit Tests** (60%):
+
 - Pure functions
 - Custom hooks
 - Utility functions
 - Simple components
 
 **Integration Tests** (30%):
+
 - Component interactions
 - API integration
 - Form submissions
 - State management
 
 **E2E Tests** (10%):
+
 - Critical user flows
 - Happy paths
 - Error scenarios
@@ -95,6 +102,7 @@
 ### Test Environment
 
 **Installed** (already in package.json):
+
 - **Jest** - Test runner
 - **@testing-library/react** - Component testing
 - **@testing-library/jest-dom** - DOM matchers
@@ -104,6 +112,7 @@
 ### Configuration
 
 **jest.config.js**:
+
 ```javascript
 const nextJest = require('next/jest');
 
@@ -140,6 +149,7 @@ module.exports = createJestConfig(customJestConfig);
 ```
 
 **jest.setup.js**:
+
 ```javascript
 import '@testing-library/jest-dom';
 
@@ -170,6 +180,7 @@ process.env.NEXT_PUBLIC_WS_URL = 'ws://localhost:8000';
 ### Testing Pure Functions
 
 **Example utility function**:
+
 ```typescript
 // lib/utils/formatDate.ts
 export function formatDate(date: string): string {
@@ -182,6 +193,7 @@ export function formatDate(date: string): string {
 ```
 
 **Test**:
+
 ```typescript
 // lib/utils/formatDate.test.ts
 import { formatDate } from './formatDate';
@@ -205,6 +217,7 @@ describe('formatDate', () => {
 ### Testing Custom Hooks
 
 **Example hook**:
+
 ```typescript
 // hooks/useLocalStorage.ts
 import { useState, useEffect } from 'react';
@@ -226,6 +239,7 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
 ```
 
 **Test**:
+
 ```typescript
 // hooks/useLocalStorage.test.ts
 import { renderHook, act } from '@testing-library/react';
@@ -268,6 +282,7 @@ describe('useLocalStorage', () => {
 ### Testing UI Components
 
 **Example component**:
+
 ```typescript
 // components/ui/Button.tsx
 interface ButtonProps {
@@ -297,6 +312,7 @@ export default function Button({
 ```
 
 **Test**:
+
 ```typescript
 // components/ui/Button.test.tsx
 import { render, screen } from '@testing-library/react';
@@ -350,6 +366,7 @@ describe('Button', () => {
 ### Testing Feature Components
 
 **Example component with API**:
+
 ```typescript
 // components/features/JobsList.tsx
 'use client';
@@ -378,6 +395,7 @@ export default function JobsList() {
 ```
 
 **Test**:
+
 ```typescript
 // components/features/JobsList.test.tsx
 import { render, screen, waitFor } from '@testing-library/react';
@@ -479,6 +497,7 @@ describe('JobsList', () => {
 ### Testing Forms
 
 **Example form**:
+
 ```typescript
 // components/features/LoginForm.tsx
 'use client';
@@ -540,6 +559,7 @@ export default function LoginForm({ onSubmit }: LoginFormProps) {
 ```
 
 **Test**:
+
 ```typescript
 // components/features/LoginForm.test.tsx
 import { render, screen } from '@testing-library/react';
@@ -620,6 +640,7 @@ describe('LoginForm', () => {
 ### Testing Component Integration
 
 **Example integrated component**:
+
 ```typescript
 // Test JobsList with JobStatusCard integration
 import { render, screen, waitFor } from '@testing-library/react';
@@ -678,12 +699,14 @@ describe('Jobs Page Integration', () => {
 ### Setup (Playwright)
 
 **Install** (when implementing E2E tests in Phase 3):
+
 ```bash
 npm install -D @playwright/test
 npx playwright install
 ```
 
 **playwright.config.ts**:
+
 ```typescript
 import { defineConfig } from '@playwright/test';
 
@@ -767,12 +790,14 @@ All files          |   85.23 |    82.14 |   87.50 |   85.12 |
 ### Coverage Reports
 
 **HTML Report**:
+
 ```bash
 npm run test:coverage
 # Open coverage/lcov-report/index.html
 ```
 
 **VS Code Coverage**:
+
 - Install Coverage Gutters extension
 - Run coverage
 - View inline coverage
@@ -780,6 +805,7 @@ npm run test:coverage
 ### Coverage Thresholds
 
 **Configured in jest.config.js**:
+
 ```javascript
 coverageThresholds: {
   global: {
@@ -792,6 +818,7 @@ coverageThresholds: {
 ```
 
 **Enforce on CI**:
+
 ```bash
 npm run test:coverage -- --ci
 ```
@@ -803,6 +830,7 @@ npm run test:coverage -- --ci
 ### Writing Good Tests
 
 **✅ Do**:
+
 - Test user-facing behavior
 - Use descriptive test names
 - Arrange-Act-Assert pattern
@@ -810,6 +838,7 @@ npm run test:coverage -- --ci
 - Clean up after tests
 
 **❌ Don't**:
+
 - Test implementation details
 - Mock everything
 - Write fragile tests
@@ -819,6 +848,7 @@ npm run test:coverage -- --ci
 ### Test Structure
 
 **AAA Pattern**:
+
 ```typescript
 it('formats date correctly', () => {
   // Arrange
@@ -835,33 +865,37 @@ it('formats date correctly', () => {
 ### Test Naming
 
 **Good names**:
+
 ```typescript
-it('calls onSubmit with form data when submitted')
-it('shows error message when API call fails')
-it('disables button when form is invalid')
+it('calls onSubmit with form data when submitted');
+it('shows error message when API call fails');
+it('disables button when form is invalid');
 ```
 
 **Bad names**:
+
 ```typescript
-it('works')  // Too vague
-it('test1')  // Not descriptive
-it('should work correctly')  // Meaningless
+it('works'); // Too vague
+it('test1'); // Not descriptive
+it('should work correctly'); // Meaningless
 ```
 
 ### Mocking
 
 **Mock sparingly**:
+
 ```typescript
 // ✅ Good - Mock external dependencies
 jest.mock('@/lib/api/client');
 
 // ❌ Bad - Mocking internal logic
 jest.mock('./utils', () => ({
-  calculateTotal: () => 100,  // Testing mock, not real code
+  calculateTotal: () => 100, // Testing mock, not real code
 }));
 ```
 
 **Mock API calls**:
+
 ```typescript
 (apiClient.getData as jest.Mock).mockResolvedValue({ data: 'test' });
 (apiClient.getData as jest.Mock).mockRejectedValue(new Error('API Error'));
@@ -870,6 +904,7 @@ jest.mock('./utils', () => ({
 ### Async Testing
 
 **Always use async/await**:
+
 ```typescript
 // ✅ Good
 it('loads data', async () => {
@@ -894,6 +929,7 @@ it('loads data', () => {
 ### GitHub Actions
 
 **`.github/workflows/test.yml`**:
+
 ```yaml
 name: Tests
 
@@ -936,12 +972,14 @@ jobs:
 ### Pre-commit Hooks
 
 **Install Husky**:
+
 ```bash
 npm install -D husky lint-staged
 npx husky install
 ```
 
 **`.husky/pre-commit`**:
+
 ```bash
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
@@ -950,6 +988,7 @@ npx lint-staged
 ```
 
 **package.json**:
+
 ```json
 {
   "lint-staged": {

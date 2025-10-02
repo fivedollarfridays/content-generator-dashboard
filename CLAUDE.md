@@ -13,11 +13,13 @@ Your instructions are organized in the `/context` directory:
 ## Working in This Repository
 
 Before making any changes:
+
 - Review the Context Loop in `/context/development.md`
 - Understand the current phase and next actions
 - Check for any blockers or risks
 
 After making changes:
+
 - Update the Context Loop to maintain continuity
 - Use the provided CLI command or edit directly
 - Keep changes focused and well-documented
