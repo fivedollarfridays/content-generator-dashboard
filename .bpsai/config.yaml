@@ -1,0 +1,137 @@
+# BPS AI Pair Configuration for Content Generator Dashboard
+# Next.js 14 + TypeScript + Tailwind CSS
+
+project:
+  name: "Content Generator Dashboard"
+  type: "nextjs"
+  description: "AI-powered content generation platform dashboard"
+
+conventions:
+  naming:
+    files: "kebab-case"  # e.g., user-profile.tsx
+    components: "PascalCase"  # e.g., UserProfile
+    hooks: "camelCase with 'use' prefix"  # e.g., useContentGenerator
+    utilities: "camelCase"  # e.g., formatDate
+
+  structure:
+    components: "app/components/"
+    hooks: "app/hooks/"
+    lib: "lib/"
+    types: "types/"
+    utils: "lib/utils/"
+
+  typescript:
+    strict: true
+    prefer_interfaces_over_types: false
+    use_explicit_return_types: true
+    avoid_any: true
+
+  react:
+    functional_components_only: true
+    use_hooks: true
+    prefer_arrow_functions: true
+    component_file_extension: ".tsx"
+
+  styling:
+    framework: "tailwindcss"
+    prefer_utility_classes: true
+    avoid_inline_styles: true
+
+  api:
+    use_axios: true
+    use_react_query: true
+    error_handling: "centralized"
+
+best_practices:
+  - "Always use TypeScript strict mode"
+  - "Prefer functional components with hooks"
+  - "Use React Query for API state management"
+  - "Implement proper error boundaries"
+  - "Use environment variables for configuration"
+  - "Follow accessibility guidelines (WCAG 2.1)"
+  - "Implement proper loading and error states"
+  - "Use proper TypeScript types (avoid 'any')"
+  - "Implement responsive design (mobile-first)"
+  - "Use proper SEO meta tags"
+  - "Implement proper form validation with React Hook Form + Zod"
+  - "Use WebSocket for real-time updates"
+  - "Implement proper authentication flow"
+  - "Use proper error logging and monitoring"
+  - "Follow Next.js best practices (Server Components where appropriate)"
+
+code_quality:
+  linting: "eslint"
+  formatting: "prettier"
+  testing: "jest + react-testing-library"
+
+architecture:
+  patterns:
+    - "Feature-based folder structure"
+    - "Separation of concerns"
+    - "Single Responsibility Principle"
+    - "DRY (Don't Repeat Yourself)"
+    - "Composition over inheritance"
+
+  api_integration:
+    base_url: "http://localhost:8000"
+    use_env_variables: true
+    centralized_api_client: true
+
+dependencies:
+  required:
+    - "react"
+    - "react-dom"
+    - "next"
+    - "@tanstack/react-query"
+    - "axios"
+    - "react-hook-form"
+    - "zod"
+    - "date-fns"
+    - "recharts"
+
+  dev_dependencies:
+    - "typescript"
+    - "@types/react"
+    - "@types/react-dom"
+    - "@types/node"
+    - "eslint"
+    - "eslint-config-next"
+    - "tailwindcss"
+    - "postcss"
+
+file_structure:
+  - "app/           # Next.js app directory"
+  - "  layout.tsx   # Root layout"
+  - "  page.tsx     # Home page"
+  - "  globals.css  # Global styles"
+  - "  generate/    # Content generation pages"
+  - "  jobs/        # Job management pages"
+  - "  templates/   # Template management pages"
+  - "  settings/    # Settings pages"
+  - "components/    # React components"
+  - "  ui/          # Reusable UI components"
+  - "  features/    # Feature-specific components"
+  - "lib/           # Utilities and helpers"
+  - "  api/         # API client and helpers"
+  - "  utils/       # Utility functions"
+  - "hooks/         # Custom React hooks"
+  - "types/         # TypeScript type definitions"
+  - "public/        # Static assets"
+
+documentation:
+  required_for:
+    - "Complex components"
+    - "API integration functions"
+    - "Custom hooks"
+    - "Utility functions"
+    - "Type definitions"
+  format: "JSDoc"
+
+testing:
+  strategy: "Test user interactions, not implementation details"
+  coverage_target: 70
+  required_for:
+    - "API client functions"
+    - "Form validation logic"
+    - "Utility functions"
+    - "Critical user flows"
