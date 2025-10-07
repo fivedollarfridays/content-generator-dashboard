@@ -41,7 +41,7 @@ After making changes:
 
 ## Dashboard-Specific Context
 
-This is the **Content Generator Dashboard** - a standalone Next.js application that provides the UI for the Content Generator product.
+This is the **Toombos Frontend** - a standalone Next.js application that provides the UI for the Content Generator product.
 
 **Backend Repository**: `halcytone-content-generator` (FastAPI)
 **This Repository**: Frontend dashboard (Next.js + TypeScript + Tailwind)

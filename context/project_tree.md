@@ -1,14 +1,14 @@
-# Project Structure - Content Generator Dashboard
+# Project Structure - Toombos Frontend
 
 **Last Updated**: 2025-10-02
-**Repository**: https://github.com/fivedollarfridays/content-generator-dashboard
+**Repository**: https://github.com/fivedollarfridays/toombos-frontend
 
 ---
 
 ## Complete File Tree
 
 ```
-content-generator-dashboard/
+toombos-frontend/
 │
 ├── app/                                    # Next.js App Router
 │   ├── layout.tsx                         # Root layout with Inter font & navigation

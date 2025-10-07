@@ -1,4 +1,4 @@
-# Content Generator Dashboard
+# Toombos Frontend
 
 AI-powered content generation platform dashboard built with Next.js 14, TypeScript, and Tailwind CSS.
 
@@ -93,7 +93,7 @@ Backend will be available at [http://localhost:8000](http://localhost:8000)
 ## Project Structure
 
 ```
-content-generator-dashboard/
+toombos-frontend/
 ├── app/                    # Next.js app directory
 │   ├── layout.tsx         # Root layout
 │   ├── page.tsx           # Home page

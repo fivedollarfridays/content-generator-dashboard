@@ -1,6 +1,6 @@
-# Contributing to Content Generator Dashboard
+# Contributing to Toombos Frontend
 
-Thank you for your interest in contributing to the Content Generator Dashboard! This document provides guidelines and instructions for contributing to the project.
+Thank you for your interest in contributing to the Toombos Frontend! This document provides guidelines and instructions for contributing to the project.
 
 ---
 
@@ -32,14 +32,14 @@ Thank you for your interest in contributing to the Content Generator Dashboard! 
 2. **Clone your fork**:
 
    ```bash
-   git clone https://github.com/YOUR_USERNAME/content-generator-dashboard.git
-   cd content-generator-dashboard
+   git clone https://github.com/YOUR_USERNAME/toombos-frontend.git
+   cd toombos-frontend
    ```
 
 3. **Add upstream remote**:
 
    ```bash
-   git remote add upstream https://github.com/fivedollarfridays/content-generator-dashboard.git
+   git remote add upstream https://github.com/fivedollarfridays/toombos-frontend.git
    ```
 
 4. **Install dependencies**:

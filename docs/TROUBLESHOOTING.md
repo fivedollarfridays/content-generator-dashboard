@@ -1,4 +1,4 @@
-# Troubleshooting Guide - Content Generator Dashboard
+# Troubleshooting Guide - Toombos Frontend
 
 **Last Updated**: 2025-10-02
 

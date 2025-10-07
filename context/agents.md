@@ -1,6 +1,6 @@
-# AI Agents Playbook - Content Generator Dashboard
+# AI Agents Playbook - Toombos Frontend
 
-This playbook guides AI agents working on the Content Generator Dashboard - a standalone Next.js application providing the UI for the Content Generator product.
+This playbook guides AI agents working on the Toombos Frontend - a standalone Next.js application providing the UI for the Content Generator product.
 
 ## Context Loop Discipline (MANDATORY)
 
@@ -21,7 +21,7 @@ git add -A && git commit -m "feat: [component] - description" && git push
 
 ### CURRENT STATUS: Sprints 1-3 Complete - Sprint 4 In Progress
 
-**Repository**: https://github.com/fivedollarfridays/content-generator-dashboard
+**Repository**: https://github.com/fivedollarfridays/toombos-frontend
 **Progress**: Phase 2 - 60% Complete (3 of 6 sprints done)
 
 **Tech Stack**:

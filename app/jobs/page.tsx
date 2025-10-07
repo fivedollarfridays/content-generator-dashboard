@@ -4,7 +4,13 @@ import React, { useState, useEffect, useCallback, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import JobsList from '@/app/components/features/jobs-list';
 import JobStatusCard from '@/app/components/features/job-status-card';
+import AdvancedJobFilters, {
+  type JobFilterState,
+} from '@/app/components/features/advanced-job-filters';
+import BatchJobOperations from '@/app/components/features/batch-job-operations';
 import type { SyncJob } from '@/types/content-generator';
+import { useAuth, useToast } from '@/app/contexts';
+import { useWebSocket, WebSocketState } from '@/app/hooks';
 
 /**
  * Jobs Content Component
@@ -12,11 +18,217 @@ import type { SyncJob } from '@/types/content-generator';
  */
 const JobsContent = (): React.ReactElement => {
   const searchParams = useSearchParams();
+  const { apiKey } = useAuth();
+  const toast = useToast();
   const [selectedJob, setSelectedJob] = useState<SyncJob | null>(null);
   const [highlightJobId, setHighlightJobId] = useState<string | null>(null);
+  const [refreshTrigger, setRefreshTrigger] = useState<number>(0);
+  const [actionInProgress, setActionInProgress] = useState<{
+    jobId: string;
+    action: 'retry' | 'cancel';
+  } | null>(null);
+
+  // Advanced filters state
+  const [filters, setFilters] = useState<JobFilterState>({
+    search: '',
+    status: 'all',
+    channels: [],
+    dateRange: { from: '', to: '' },
+  });
+
+  // Batch operations state
+  const [selectedJobs, setSelectedJobs] = useState<SyncJob[]>([]);
+
+  const handleResetFilters = useCallback((): void => {
+    setFilters({
+      search: '',
+      status: 'all',
+      channels: [],
+      dateRange: { from: '', to: '' },
+    });
+  }, []);
+
+  const handleToggleJobSelection = useCallback((job: SyncJob): void => {
+    setSelectedJobs(prev => {
+      const isSelected = prev.some(j => j.job_id === job.job_id);
+      if (isSelected) {
+        return prev.filter(j => j.job_id !== job.job_id);
+      } else {
+        return [...prev, job];
+      }
+    });
+  }, []);
+
+  const handleClearSelection = useCallback((): void => {
+    setSelectedJobs([]);
+  }, []);
 
   // Get API configuration from environment
   const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+  const WS_URL = process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:8000';
+
+  /**
+   * Batch retry jobs
+   */
+  const handleBatchRetry = useCallback(
+    async (jobIds: string[]): Promise<void> => {
+      if (!apiKey) {
+        toast.error('No API key available for batch retry');
+        return;
+      }
+
+      toast.info(`Retrying ${jobIds.length} jobs...`);
+
+      try {
+        const { ContentGeneratorAPI } = await import('@/lib/api/api-client');
+        const api = new ContentGeneratorAPI(API_URL, apiKey);
+
+        const results = await Promise.allSettled(
+          jobIds.map(jobId => api.retryJob(jobId))
+        );
+
+        const successful = results.filter(r => r.status === 'fulfilled').length;
+        const failed = results.filter(r => r.status === 'rejected').length;
+
+        if (successful > 0) {
+          toast.success(`Successfully retried ${successful} jobs`);
+          setRefreshTrigger(prev => prev + 1);
+        }
+
+        if (failed > 0) {
+          toast.warning(`Failed to retry ${failed} jobs`);
+        }
+
+        setSelectedJobs([]);
+      } catch (err) {
+        toast.error(`Batch retry error: ${err instanceof Error ? err.message : 'Unknown error'}`);
+      }
+    },
+    [apiKey, API_URL, toast]
+  );
+
+  /**
+   * Batch cancel jobs
+   */
+  const handleBatchCancel = useCallback(
+    async (jobIds: string[]): Promise<void> => {
+      if (!apiKey) {
+        toast.error('No API key available for batch cancel');
+        return;
+      }
+
+      toast.info(`Cancelling ${jobIds.length} jobs...`);
+
+      try {
+        const { ContentGeneratorAPI } = await import('@/lib/api/api-client');
+        const api = new ContentGeneratorAPI(API_URL, apiKey);
+
+        const results = await Promise.allSettled(
+          jobIds.map(jobId => api.cancelJob(jobId))
+        );
+
+        const successful = results.filter(r => r.status === 'fulfilled').length;
+        const failed = results.filter(r => r.status === 'rejected').length;
+
+        if (successful > 0) {
+          toast.success(`Successfully cancelled ${successful} jobs`);
+          setRefreshTrigger(prev => prev + 1);
+        }
+
+        if (failed > 0) {
+          toast.warning(`Failed to cancel ${failed} jobs`);
+        }
+
+        setSelectedJobs([]);
+      } catch (err) {
+        toast.error(`Batch cancel error: ${err instanceof Error ? err.message : 'Unknown error'}`);
+      }
+    },
+    [apiKey, API_URL, toast]
+  );
+
+  /**
+   * Export jobs to CSV or JSON
+   */
+  const handleBatchExport = useCallback(
+    (jobs: SyncJob[], format: 'csv' | 'json'): void => {
+      const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+      let blob: Blob;
+      let filename: string;
+
+      if (format === 'csv') {
+        // CSV export
+        const csvHeaders = ['Job ID', 'Document ID', 'Status', 'Channels', 'Created At', 'Completed At'];
+        const csvRows = jobs.map(job => [
+          job.job_id,
+          job.document_id,
+          job.status,
+          job.channels.join('; '),
+          job.created_at,
+          job.completed_at || 'N/A',
+        ]);
+
+        const csvContent = [
+          csvHeaders.join(','),
+          ...csvRows.map(row => row.map(cell => `"${cell}"`).join(','))
+        ].join('\n');
+
+        blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        filename = `jobs_export_${timestamp}.csv`;
+      } else {
+        // JSON export
+        const jsonContent = JSON.stringify(jobs, null, 2);
+        blob = new Blob([jsonContent], { type: 'application/json;charset=utf-8;' });
+        filename = `jobs_export_${timestamp}.json`;
+      }
+
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      link.setAttribute('download', filename);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
+      toast.success(`Exported ${jobs.length} jobs to ${format.toUpperCase()}`);
+      setSelectedJobs([]);
+    },
+    [toast]
+  );
+
+  /**
+   * WebSocket connection for real-time job updates
+   */
+  const { state: wsState, lastMessage } = useWebSocket(`${WS_URL}/ws/jobs`, {
+    autoConnect: true,
+    autoReconnect: true,
+    reconnectDelay: 3000,
+    maxReconnectAttempts: 5,
+    onMessage: (event) => {
+      try {
+        const data = JSON.parse(event.data);
+        console.log('WebSocket job update:', data);
+
+        // Trigger refresh when job updates are received
+        if (data.type === 'job_update' || data.type === 'job_status_change') {
+          setRefreshTrigger(prev => prev + 1);
+        }
+      } catch (err) {
+        console.error('Failed to parse WebSocket message:', err);
+      }
+    },
+    onOpen: () => {
+      console.log('WebSocket connected - real-time job updates enabled');
+    },
+    onClose: () => {
+      console.log('WebSocket disconnected - falling back to polling');
+    },
+    onError: (event) => {
+      console.error('WebSocket error:', event);
+    },
+  });
 
   // Check for highlight parameter on mount
   useEffect(() => {
@@ -45,22 +257,86 @@ const JobsContent = (): React.ReactElement => {
   }, []);
 
   /**
-   * Handle job retry action
-   * TODO: Implement retry API call
+   * Handle job retry action with optimistic UI
    */
-  const handleRetry = useCallback((jobId: string): void => {
-    console.log('Retry job:', jobId);
-    // TODO: Implement retry logic with API
-  }, []);
+  const handleRetry = useCallback(
+    async (jobId: string): Promise<void> => {
+      if (!apiKey) {
+        toast.error('No API key available for retry');
+        return;
+      }
+
+      // Show optimistic state
+      setActionInProgress({ jobId, action: 'retry' });
+      toast.info('Retrying job...');
+
+      try {
+        const { ContentGeneratorAPI } = await import('@/lib/api/api-client');
+        const api = new ContentGeneratorAPI(API_URL, apiKey);
+
+        const response = await api.retryJob(jobId);
+
+        if (response.success && response.data) {
+          // Trigger refresh to show the new job
+          setRefreshTrigger(prev => prev + 1);
+          toast.success(`Job retried successfully! New job: ${response.data.job_id.substring(0, 8)}...`);
+
+          // Close modal if the selected job was retried
+          if (selectedJob?.job_id === jobId) {
+            setSelectedJob(null);
+          }
+        } else {
+          toast.error(`Retry failed: ${response.error?.message || 'Unknown error'}`);
+        }
+      } catch (err) {
+        toast.error(`Retry error: ${err instanceof Error ? err.message : 'Unknown error'}`);
+      } finally {
+        setActionInProgress(null);
+      }
+    },
+    [apiKey, API_URL, selectedJob, toast]
+  );
 
   /**
-   * Handle job cancel action
-   * TODO: Implement cancel API call
+   * Handle job cancel action with optimistic UI
    */
-  const handleCancel = useCallback((jobId: string): void => {
-    console.log('Cancel job:', jobId);
-    // TODO: Implement cancel logic with API
-  }, []);
+  const handleCancel = useCallback(
+    async (jobId: string): Promise<void> => {
+      if (!apiKey) {
+        toast.error('No API key available for cancel');
+        return;
+      }
+
+      // Show optimistic state
+      setActionInProgress({ jobId, action: 'cancel' });
+      toast.info('Cancelling job...');
+
+      try {
+        const { ContentGeneratorAPI } = await import('@/lib/api/api-client');
+        const api = new ContentGeneratorAPI(API_URL, apiKey);
+
+        const response = await api.cancelJob(jobId);
+
+        if (response.success && response.data?.cancelled) {
+          // Trigger refresh to show updated status
+          setRefreshTrigger(prev => prev + 1);
+          toast.success('Job cancelled successfully!');
+
+          // Close modal if the selected job was cancelled
+          if (selectedJob?.job_id === jobId) {
+            setSelectedJob(null);
+          }
+        } else {
+          toast.error(`Cancel failed: ${response.error?.message || 'Unknown error'}`);
+        }
+      } catch (err) {
+        toast.error(`Cancel error: ${err instanceof Error ? err.message : 'Unknown error'}`);
+      } finally {
+        setActionInProgress(null);
+      }
+    },
+    [apiKey, API_URL, selectedJob, toast]
+  );
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
@@ -72,6 +348,41 @@ const JobsContent = (): React.ReactElement => {
             Monitor and manage your content generation jobs
           </p>
         </div>
+
+        {/* Action In Progress Notice */}
+        {actionInProgress && (
+          <div className="mb-6 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+            <div className="flex items-center">
+              <svg
+                className="w-5 h-5 text-yellow-600 mr-3 animate-spin"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                />
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                />
+              </svg>
+              <p className="text-sm text-yellow-800">
+                {actionInProgress.action === 'retry'
+                  ? 'Retrying job...'
+                  : 'Cancelling job...'}{' '}
+                <span className="font-mono">
+                  {actionInProgress.jobId.substring(0, 12)}...
+                </span>
+              </p>
+            </div>
+          </div>
+        )}
 
         {/* Highlight Notice */}
         {highlightJobId && (
@@ -96,13 +407,25 @@ const JobsContent = (): React.ReactElement => {
           </div>
         )}
 
+        {/* Advanced Filters */}
+        <AdvancedJobFilters
+          filters={filters}
+          onFiltersChange={setFilters}
+          onReset={handleResetFilters}
+        />
+
         {/* Jobs List */}
         <div className="mb-6">
           <JobsList
             apiUrl={API_URL}
+            apiKey={apiKey || undefined}
             refreshInterval={10000}
             pageSize={20}
             onJobClick={handleJobClick}
+            refreshTrigger={refreshTrigger}
+            filters={filters}
+            selectedJobs={selectedJobs}
+            onToggleSelection={handleToggleJobSelection}
           />
         </div>
 
@@ -119,12 +442,28 @@ const JobsContent = (): React.ReactElement => {
           </div>
 
           <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-sm font-medium text-gray-600 mb-2">
-              WebSocket Support
+            <h3 className="text-sm font-medium text-gray-600 mb-2 flex items-center">
+              WebSocket Status
+              <span
+                className={`ml-2 inline-block w-2 h-2 rounded-full ${
+                  wsState === WebSocketState.CONNECTED
+                    ? 'bg-green-500'
+                    : wsState === WebSocketState.CONNECTING
+                    ? 'bg-yellow-500'
+                    : wsState === WebSocketState.ERROR
+                    ? 'bg-red-500'
+                    : 'bg-gray-400'
+                }`}
+              ></span>
             </h3>
             <p className="text-sm text-gray-500">
-              Future enhancement: Real-time WebSocket updates for instant job
-              status changes
+              {wsState === WebSocketState.CONNECTED
+                ? 'Real-time updates active - job changes appear instantly'
+                : wsState === WebSocketState.CONNECTING
+                ? 'Connecting to real-time updates...'
+                : wsState === WebSocketState.ERROR
+                ? 'Connection error - using polling fallback'
+                : 'Disconnected - using polling fallback'}
             </p>
           </div>
 
@@ -194,6 +533,15 @@ const JobsContent = (): React.ReactElement => {
           </div>
         </div>
       )}
+
+      {/* Batch Operations Toolbar */}
+      <BatchJobOperations
+        selectedJobs={selectedJobs}
+        onClearSelection={handleClearSelection}
+        onBatchRetry={handleBatchRetry}
+        onBatchCancel={handleBatchCancel}
+        onBatchExport={handleBatchExport}
+      />
     </div>
   );
 };

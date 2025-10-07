@@ -13,8 +13,10 @@ const Navigation = (): React.ReactElement => {
 
   const navItems = [
     { href: '/dashboard', label: 'Dashboard' },
+    { href: '/campaigns', label: 'Campaigns' },
     { href: '/generate', label: 'Generate' },
     { href: '/jobs', label: 'Jobs' },
+    { href: '/history', label: 'History' },
     { href: '/templates', label: 'Templates' },
     { href: '/settings', label: 'Settings' },
   ];

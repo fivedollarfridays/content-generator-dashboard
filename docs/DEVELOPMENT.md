@@ -1,4 +1,4 @@
-# Development Guide - Content Generator Dashboard
+# Development Guide - Toombos Frontend
 
 **Last Updated**: 2025-10-02
 

@@ -4,6 +4,7 @@ import React, { useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import ContentGenerationForm from '@/app/components/features/content-generation-form';
 import type { SyncJob, APIError } from '@/types/content-generator';
+import { useAuth } from '@/app/contexts';
 
 /**
  * Content Generation Page
@@ -20,6 +21,7 @@ import type { SyncJob, APIError } from '@/types/content-generator';
  */
 const GeneratePage = (): React.ReactElement => {
   const router = useRouter();
+  const { apiKey } = useAuth();
   const [submittedJob, setSubmittedJob] = useState<SyncJob | null>(null);
   const [error, setError] = useState<APIError | null>(null);
 
@@ -127,6 +129,7 @@ const GeneratePage = (): React.ReactElement => {
         {/* Content Generation Form */}
         <ContentGenerationForm
           apiUrl={API_URL}
+          apiKey={apiKey || undefined}
           onSubmit={handleSubmit}
           onError={handleError}
           defaultChannels={[]}

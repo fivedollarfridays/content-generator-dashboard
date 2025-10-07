@@ -1,4 +1,4 @@
-# Content Generator Dashboard - Setup Complete ✅
+# Toombos Frontend - Setup Complete ✅
 
 **Date**: 2025-10-02
 **Status**: ✅ Repository created and initialized
@@ -8,7 +8,7 @@
 
 ## Summary
 
-Successfully created the **Content Generator Dashboard** repository as a standalone Next.js application with all components migrated from the backend repository.
+Successfully created the **Toombos Frontend** repository as a standalone Next.js application with all components migrated from the backend repository.
 
 ---
 
@@ -17,7 +17,7 @@ Successfully created the **Content Generator Dashboard** repository as a standal
 ### Repository Structure
 
 ```
-content-generator-dashboard/
+toombos-frontend/
 ├── .bpsai/              # AI pair programming configuration
 │   └── config.yaml     # Coding conventions and best practices
 ├── app/                 # Next.js app directory
@@ -194,7 +194,7 @@ feat: Add bpsai-pair configuration
 ### 1. Install Dependencies
 
 ```bash
-cd /c/Users/kmast/PycharmProjects/content-generator-dashboard
+cd /c/Users/kmast/PycharmProjects/toombos-frontend
 npm install  # Already done ✅
 ```
 
@@ -210,7 +210,7 @@ Backend will be available at: http://localhost:8000
 ### 3. Start Dashboard
 
 ```bash
-cd /c/Users/kmast/PycharmProjects/content-generator-dashboard
+cd /c/Users/kmast/PycharmProjects/toombos-frontend
 npm run dev
 ```
 
@@ -328,7 +328,7 @@ Route (app)                    Size     First Load JS
 
 ### In Backend Repository
 
-- **docs/content-generator-dashboard.md** - Dashboard architecture guide
+- **docs/toombos-frontend.md** - Dashboard architecture guide
 - **docs/ARCHITECTURE-STANDALONE-PRODUCT.md** - Product overview
 - **docs/DOCUMENTATION-UPDATE-2025-10-02.md** - Recent changes summary
 
@@ -452,6 +452,6 @@ The Content Generator Dashboard is now a fully functional Next.js application wi
 
 **Setup Completed**: 2025-10-02
 **Created By**: Claude Code
-**Repository**: `/c/Users/kmast/PycharmProjects/content-generator-dashboard`
+**Repository**: `/c/Users/kmast/PycharmProjects/toombos-frontend`
 **Git Status**: 2 commits, all changes committed
 **Build Status**: ✅ Passing

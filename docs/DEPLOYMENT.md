@@ -1,4 +1,4 @@
-# Deployment Guide - Content Generator Dashboard
+# Deployment Guide - Toombos Frontend
 
 **Last Updated**: 2025-10-02
 
@@ -6,7 +6,7 @@
 
 ## Overview
 
-This guide covers deploying the Content Generator Dashboard to production environments.
+This guide covers deploying the Toombos Frontend to production environments.
 
 **Recommended Platform**: Vercel (optimized for Next.js)
 **Alternatives**: Netlify, AWS Amplify, Docker, Traditional hosting

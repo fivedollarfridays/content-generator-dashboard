@@ -1,14 +1,17 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import CacheStats from '@/app/components/features/cache-stats';
+import { useAuth } from '@/app/contexts';
+import { usePreferences } from '@/app/context/preferences-context';
+import { toast } from 'react-hot-toast';
 
 /**
  * Settings Page
  * Manage application settings, API configuration, and cache
  *
  * Features:
- * - API key management
+ * - API key management with authentication
  * - Environment configuration display
  * - Cache statistics and management
  * - User preferences
@@ -16,48 +19,55 @@ import CacheStats from '@/app/components/features/cache-stats';
  * @returns Settings page component
  */
 const SettingsPage = (): React.ReactElement => {
-  const [apiKey, setApiKey] = useState<string>('');
-  const [savedApiKey, setSavedApiKey] = useState<string>('');
+  const { apiKey: savedApiKey, setApiKey, clearApiKey, isLoading, error } = useAuth();
+  const {
+    preferences,
+    updateNotificationPreferences,
+    updateDisplayPreferences,
+    resetPreferences,
+  } = usePreferences();
+  const [apiKey, setApiKeyInput] = useState<string>(savedApiKey || '');
   const [showApiKey, setShowApiKey] = useState<boolean>(false);
   const [saveSuccess, setSaveSuccess] = useState<boolean>(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   // Get API configuration from environment
   const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
   const WS_URL = process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:8000';
 
   /**
-   * Load saved API key from localStorage on mount
+   * Save and validate API key
    */
-  useEffect(() => {
-    const storedApiKey = localStorage.getItem('api_key');
-    if (storedApiKey) {
-      setSavedApiKey(storedApiKey);
-      setApiKey(storedApiKey);
+  const handleSaveApiKey = useCallback(async (): Promise<void> => {
+    if (!apiKey.trim()) {
+      setSaveError('API key cannot be empty');
+      return;
     }
-  }, []);
 
-  /**
-   * Save API key to localStorage
-   */
-  const handleSaveApiKey = useCallback((): void => {
-    localStorage.setItem('api_key', apiKey);
-    setSavedApiKey(apiKey);
-    setSaveSuccess(true);
+    try {
+      await setApiKey(apiKey.trim());
+      setSaveSuccess(true);
+      setSaveError(null);
 
-    // Clear success message after 3 seconds
-    setTimeout(() => {
+      // Clear success message after 3 seconds
+      setTimeout(() => {
+        setSaveSuccess(false);
+      }, 3000);
+    } catch (err) {
+      setSaveError(err instanceof Error ? err.message : 'Failed to save API key');
       setSaveSuccess(false);
-    }, 3000);
-  }, [apiKey]);
+    }
+  }, [apiKey, setApiKey]);
 
   /**
-   * Clear API key from localStorage
+   * Clear API key and log out
    */
   const handleClearApiKey = useCallback((): void => {
-    localStorage.removeItem('api_key');
-    setApiKey('');
-    setSavedApiKey('');
-  }, []);
+    clearApiKey();
+    setApiKeyInput('');
+    setSaveSuccess(false);
+    setSaveError(null);
+  }, [clearApiKey]);
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
@@ -111,7 +121,7 @@ const SettingsPage = (): React.ReactElement => {
                     type={showApiKey ? 'text' : 'password'}
                     id="apiKey"
                     value={apiKey}
-                    onChange={e => setApiKey(e.target.value)}
+                    onChange={e => setApiKeyInput(e.target.value)}
                     placeholder="Enter your API key..."
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent pr-10"
                   />
@@ -193,7 +203,27 @@ const SettingsPage = (): React.ReactElement => {
                     />
                   </svg>
                   <span className="text-sm text-green-800">
-                    API key saved successfully!
+                    API key saved and validated successfully!
+                  </span>
+                </div>
+              )}
+
+              {/* Error Message */}
+              {saveError && (
+                <div className="mt-3 bg-red-50 border border-red-200 rounded-lg p-3 flex items-center">
+                  <svg
+                    className="w-5 h-5 text-red-600 mr-2"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                  <span className="text-sm text-red-800">
+                    {saveError}
                   </span>
                 </div>
               )}
@@ -207,7 +237,7 @@ const SettingsPage = (): React.ReactElement => {
             </h2>
             <CacheStats
               apiUrl={API_URL}
-              apiKey={savedApiKey}
+              apiKey={savedApiKey || undefined}
               refreshInterval={15000}
               onInvalidate={count => {
                 console.log(`Invalidated ${count} cache entries`);
@@ -217,57 +247,241 @@ const SettingsPage = (): React.ReactElement => {
 
           {/* User Preferences Section */}
           <div className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">
-              User Preferences
-            </h2>
-            <div className="space-y-4">
-              <div className="flex items-center justify-between py-3 border-b border-gray-200">
-                <div>
-                  <h3 className="text-sm font-medium text-gray-900">
-                    Auto-refresh Jobs
-                  </h3>
-                  <p className="text-sm text-gray-500">
-                    Automatically refresh job status every 10 seconds
-                  </p>
-                </div>
-                <label className="relative inline-flex items-center cursor-pointer">
-                  <input
-                    type="checkbox"
-                    className="sr-only peer"
-                    defaultChecked
-                  />
-                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-                </label>
-              </div>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-bold text-gray-900">
+                User Preferences
+              </h2>
+              <button
+                onClick={() => {
+                  resetPreferences();
+                  toast.success('Preferences reset to defaults');
+                }}
+                className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+              >
+                Reset to Defaults
+              </button>
+            </div>
 
-              <div className="flex items-center justify-between py-3 border-b border-gray-200">
-                <div>
-                  <h3 className="text-sm font-medium text-gray-900">
-                    Show Notifications
-                  </h3>
-                  <p className="text-sm text-gray-500">
-                    Display browser notifications for job completion
-                  </p>
+            {/* Notification Preferences */}
+            <div className="mb-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-3">
+                Notifications
+              </h3>
+              <div className="space-y-3">
+                <div className="flex items-center justify-between py-2">
+                  <div>
+                    <h4 className="text-sm font-medium text-gray-900">
+                      Enable Notifications
+                    </h4>
+                    <p className="text-xs text-gray-500">
+                      Master toggle for all notifications
+                    </p>
+                  </div>
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      className="sr-only peer"
+                      checked={preferences.notifications.enabled}
+                      onChange={e =>
+                        updateNotificationPreferences({
+                          enabled: e.target.checked,
+                        })
+                      }
+                    />
+                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                  </label>
                 </div>
-                <label className="relative inline-flex items-center cursor-pointer">
-                  <input type="checkbox" className="sr-only peer" />
-                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-                </label>
-              </div>
 
-              <div className="flex items-center justify-between py-3">
-                <div>
-                  <h3 className="text-sm font-medium text-gray-900">
-                    Dark Mode
-                  </h3>
-                  <p className="text-sm text-gray-500">
-                    Enable dark mode theme (Coming soon)
-                  </p>
+                <div className="flex items-center justify-between py-2">
+                  <div>
+                    <h4 className="text-sm font-medium text-gray-900">
+                      Success Notifications
+                    </h4>
+                    <p className="text-xs text-gray-500">
+                      Notify when jobs complete successfully
+                    </p>
+                  </div>
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      className="sr-only peer"
+                      checked={preferences.notifications.onSuccess}
+                      onChange={e =>
+                        updateNotificationPreferences({
+                          onSuccess: e.target.checked,
+                        })
+                      }
+                      disabled={!preferences.notifications.enabled}
+                    />
+                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"></div>
+                  </label>
                 </div>
-                <label className="relative inline-flex items-center cursor-not-allowed opacity-50">
-                  <input type="checkbox" className="sr-only peer" disabled />
-                  <div className="w-11 h-6 bg-gray-200 rounded-full peer after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
-                </label>
+
+                <div className="flex items-center justify-between py-2">
+                  <div>
+                    <h4 className="text-sm font-medium text-gray-900">
+                      Failure Notifications
+                    </h4>
+                    <p className="text-xs text-gray-500">
+                      Notify when jobs fail
+                    </p>
+                  </div>
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      className="sr-only peer"
+                      checked={preferences.notifications.onFailure}
+                      onChange={e =>
+                        updateNotificationPreferences({
+                          onFailure: e.target.checked,
+                        })
+                      }
+                      disabled={!preferences.notifications.enabled}
+                    />
+                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"></div>
+                  </label>
+                </div>
+
+                <div className="flex items-center justify-between py-2">
+                  <div>
+                    <h4 className="text-sm font-medium text-gray-900">
+                      Partial Success Notifications
+                    </h4>
+                    <p className="text-xs text-gray-500">
+                      Notify when jobs partially succeed
+                    </p>
+                  </div>
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      className="sr-only peer"
+                      checked={preferences.notifications.onPartial}
+                      onChange={e =>
+                        updateNotificationPreferences({
+                          onPartial: e.target.checked,
+                        })
+                      }
+                      disabled={!preferences.notifications.enabled}
+                    />
+                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"></div>
+                  </label>
+                </div>
+
+                <div className="flex items-center justify-between py-2">
+                  <div>
+                    <h4 className="text-sm font-medium text-gray-900">
+                      Real-time Updates
+                    </h4>
+                    <p className="text-xs text-gray-500">
+                      Show live notifications as jobs progress
+                    </p>
+                  </div>
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      className="sr-only peer"
+                      checked={preferences.notifications.realTimeUpdates}
+                      onChange={e =>
+                        updateNotificationPreferences({
+                          realTimeUpdates: e.target.checked,
+                        })
+                      }
+                      disabled={!preferences.notifications.enabled}
+                    />
+                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"></div>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            {/* Display Preferences */}
+            <div className="border-t border-gray-200 pt-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-3">
+                Display
+              </h3>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-900 mb-2">
+                    Table Density
+                  </label>
+                  <select
+                    value={preferences.display.tableDensity}
+                    onChange={e =>
+                      updateDisplayPreferences({
+                        tableDensity: e.target.value as 'compact' | 'comfortable' | 'spacious',
+                      })
+                    }
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  >
+                    <option value="compact">Compact</option>
+                    <option value="comfortable">Comfortable</option>
+                    <option value="spacious">Spacious</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-900 mb-2">
+                    Refresh Interval (seconds)
+                  </label>
+                  <select
+                    value={preferences.display.refreshInterval / 1000}
+                    onChange={e =>
+                      updateDisplayPreferences({
+                        refreshInterval: parseInt(e.target.value) * 1000,
+                      })
+                    }
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  >
+                    <option value="10">10 seconds</option>
+                    <option value="30">30 seconds</option>
+                    <option value="60">1 minute</option>
+                    <option value="300">5 minutes</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-900 mb-2">
+                    Page Size
+                  </label>
+                  <select
+                    value={preferences.display.pageSize}
+                    onChange={e =>
+                      updateDisplayPreferences({
+                        pageSize: parseInt(e.target.value),
+                      })
+                    }
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  >
+                    <option value="10">10 items</option>
+                    <option value="20">20 items</option>
+                    <option value="50">50 items</option>
+                    <option value="100">100 items</option>
+                  </select>
+                </div>
+
+                <div className="flex items-center justify-between py-2">
+                  <div>
+                    <h4 className="text-sm font-medium text-gray-900">
+                      Show Timestamps
+                    </h4>
+                    <p className="text-xs text-gray-500">
+                      Display creation and completion times
+                    </p>
+                  </div>
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      className="sr-only peer"
+                      checked={preferences.display.showTimestamps}
+                      onChange={e =>
+                        updateDisplayPreferences({
+                          showTimestamps: e.target.checked,
+                        })
+                      }
+                    />
+                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                  </label>
+                </div>
               </div>
             </div>
           </div>

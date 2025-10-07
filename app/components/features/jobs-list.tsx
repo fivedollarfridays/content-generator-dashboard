@@ -19,6 +19,10 @@ export const JobsList: React.FC<JobsListProps> = ({
   pageSize = 20,
   statusFilter,
   onJobClick,
+  refreshTrigger,
+  filters,
+  selectedJobs = [],
+  onToggleSelection,
 }) => {
   const [jobs, setJobs] = useState<SyncJob[]>([]);
   const [total, setTotal] = useState(0);
@@ -32,6 +36,58 @@ export const JobsList: React.FC<JobsListProps> = ({
 
   const api = new ContentGeneratorAPI(apiUrl, apiKey);
 
+  /**
+   * Apply advanced filters to jobs
+   */
+  const applyFilters = useCallback(
+    (jobsList: SyncJob[]): SyncJob[] => {
+      if (!filters) return jobsList;
+
+      return jobsList.filter(job => {
+        // Search filter
+        if (filters.search) {
+          const searchLower = filters.search.toLowerCase();
+          const matchesJobId = job.job_id.toLowerCase().includes(searchLower);
+          const matchesDocId = job.document_id
+            .toLowerCase()
+            .includes(searchLower);
+          if (!matchesJobId && !matchesDocId) return false;
+        }
+
+        // Status filter (handled by selectedStatus, but also check filters.status)
+        if (filters.status !== 'all' && job.status !== filters.status) {
+          return false;
+        }
+
+        // Channel filter
+        if (filters.channels.length > 0) {
+          const hasMatchingChannel = filters.channels.some(channel =>
+            job.channels.includes(channel)
+          );
+          if (!hasMatchingChannel) return false;
+        }
+
+        // Date range filter
+        if (filters.dateRange.from || filters.dateRange.to) {
+          const jobDate = new Date(job.created_at).getTime();
+
+          if (filters.dateRange.from) {
+            const fromDate = new Date(filters.dateRange.from).getTime();
+            if (jobDate < fromDate) return false;
+          }
+
+          if (filters.dateRange.to) {
+            const toDate = new Date(filters.dateRange.to).getTime();
+            if (jobDate > toDate) return false;
+          }
+        }
+
+        return true;
+      });
+    },
+    [filters]
+  );
+
   const fetchJobs = useCallback(async () => {
     try {
       const params: any = {
@@ -39,15 +95,19 @@ export const JobsList: React.FC<JobsListProps> = ({
         offset: (currentPage - 1) * pageSize,
       };
 
-      if (selectedStatus !== 'all') {
-        params.status = selectedStatus;
+      // Use filters.status if available, otherwise use selectedStatus
+      const statusToUse = filters?.status || selectedStatus;
+      if (statusToUse !== 'all') {
+        params.status = statusToUse;
       }
 
       const response = await api.listJobs(params);
 
       if (response.success && response.data) {
-        setJobs(response.data.jobs);
-        setTotal(response.data.total);
+        // Apply additional client-side filters
+        const filteredJobs = applyFilters(response.data.jobs);
+        setJobs(filteredJobs);
+        setTotal(filteredJobs.length);
         setError(null);
       } else {
         setError(response.error?.message || 'Failed to fetch jobs');
@@ -59,13 +119,13 @@ export const JobsList: React.FC<JobsListProps> = ({
     } finally {
       setLoading(false);
     }
-  }, [api, currentPage, pageSize, selectedStatus]);
+  }, [api, currentPage, pageSize, selectedStatus, filters, applyFilters]);
 
   useEffect(() => {
     fetchJobs();
     const interval = setInterval(fetchJobs, refreshInterval);
     return () => clearInterval(interval);
-  }, [fetchJobs, refreshInterval]);
+  }, [fetchJobs, refreshInterval, refreshTrigger]);
 
   const getStatusColor = (status: JobStatus): string => {
     switch (status) {
@@ -197,27 +257,29 @@ export const JobsList: React.FC<JobsListProps> = ({
         </button>
       </div>
 
-      {/* Status Filter */}
-      <div className="mb-6">
-        <div className="flex flex-wrap gap-2">
-          {statuses.map(status => (
-            <button
-              key={status.value}
-              onClick={() => {
-                setSelectedStatus(status.value);
-                setCurrentPage(1);
-              }}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                selectedStatus === status.value
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              {status.label}
-            </button>
-          ))}
+      {/* Status Filter - Hidden when advanced filters are used */}
+      {!filters && (
+        <div className="mb-6">
+          <div className="flex flex-wrap gap-2">
+            {statuses.map(status => (
+              <button
+                key={status.value}
+                onClick={() => {
+                  setSelectedStatus(status.value);
+                  setCurrentPage(1);
+                }}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  selectedStatus === status.value
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                {status.label}
+              </button>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Jobs List */}
       {jobs.length === 0 ? (
@@ -244,14 +306,36 @@ export const JobsList: React.FC<JobsListProps> = ({
         </div>
       ) : (
         <div className="space-y-3">
-          {jobs.map(job => (
-            <div
-              key={job.job_id}
-              onClick={() => onJobClick?.(job)}
-              className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer"
-            >
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
+          {jobs.map(job => {
+            const isSelected = selectedJobs.some(j => j.job_id === job.job_id);
+
+            return (
+              <div
+                key={job.job_id}
+                className={`border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow ${
+                  isSelected ? 'border-blue-500 bg-blue-50' : ''
+                }`}
+              >
+                <div className="flex items-start justify-between">
+                  {/* Checkbox for batch selection */}
+                  {onToggleSelection && (
+                    <div className="flex items-center mr-3">
+                      <input
+                        type="checkbox"
+                        checked={isSelected}
+                        onChange={(e) => {
+                          e.stopPropagation();
+                          onToggleSelection(job);
+                        }}
+                        className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                      />
+                    </div>
+                  )}
+
+                  <div
+                    className="flex-1 cursor-pointer"
+                    onClick={() => onJobClick?.(job)}
+                  >
                   <div className="flex items-center space-x-3 mb-2">
                     <span
                       className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(
@@ -286,46 +370,47 @@ export const JobsList: React.FC<JobsListProps> = ({
                       </div>
                     )}
                   </div>
+
+                  {/* Channel Results Indicator */}
+                  {job.results && (
+                    <div className="flex space-x-1 ml-4">
+                      {Object.entries(job.results).map(([channel, result]) => (
+                        <div
+                          key={channel}
+                          className={`w-8 h-8 rounded-full flex items-center justify-center text-xs ${
+                            result.status === 'success'
+                              ? 'bg-green-100 text-green-700'
+                              : 'bg-red-100 text-red-700'
+                          }`}
+                          title={`${channel}: ${result.status}`}
+                        >
+                          {result.status === 'success' ? '✓' : '✕'}
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
-                {/* Channel Results Indicator */}
-                {job.results && (
-                  <div className="flex space-x-1 ml-4">
-                    {Object.entries(job.results).map(([channel, result]) => (
-                      <div
-                        key={channel}
-                        className={`w-8 h-8 rounded-full flex items-center justify-center text-xs ${
-                          result.status === 'success'
-                            ? 'bg-green-100 text-green-700'
-                            : 'bg-red-100 text-red-700'
-                        }`}
-                        title={`${channel}: ${result.status}`}
-                      >
-                        {result.status === 'success' ? '✓' : '✕'}
-                      </div>
-                    ))}
+                {/* Errors */}
+                {job.errors && job.errors.length > 0 && (
+                  <div className="mt-3 pt-3 border-t border-gray-200">
+                    <div className="text-xs text-red-600">
+                      <span className="font-medium">Errors:</span>
+                      <ul className="list-disc list-inside mt-1">
+                        {job.errors.slice(0, 2).map((error, idx) => (
+                          <li key={idx}>{error}</li>
+                        ))}
+                        {job.errors.length > 2 && (
+                          <li>+{job.errors.length - 2} more...</li>
+                        )}
+                      </ul>
+                    </div>
                   </div>
                 )}
               </div>
-
-              {/* Errors */}
-              {job.errors && job.errors.length > 0 && (
-                <div className="mt-3 pt-3 border-t border-gray-200">
-                  <div className="text-xs text-red-600">
-                    <span className="font-medium">Errors:</span>
-                    <ul className="list-disc list-inside mt-1">
-                      {job.errors.slice(0, 2).map((error, idx) => (
-                        <li key={idx}>{error}</li>
-                      ))}
-                      {job.errors.length > 2 && (
-                        <li>+{job.errors.length - 2} more...</li>
-                      )}
-                    </ul>
-                  </div>
-                </div>
-              )}
             </div>
-          ))}
+          );
+          })}
         </div>
       )}
 

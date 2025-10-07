@@ -252,6 +252,16 @@ export interface ContentGenerationFormProps {
   defaultTemplate?: TemplateStyle;
 }
 
+export interface JobFilterState {
+  search: string;
+  status: JobStatus | 'all';
+  channels: Channel[];
+  dateRange: {
+    from: string;
+    to: string;
+  };
+}
+
 export interface JobsListProps {
   apiUrl: string;
   apiKey?: string;
@@ -259,6 +269,10 @@ export interface JobsListProps {
   pageSize?: number;
   statusFilter?: JobStatus[];
   onJobClick?: (job: SyncJob) => void;
+  refreshTrigger?: number;
+  filters?: JobFilterState;
+  selectedJobs?: SyncJob[];
+  onToggleSelection?: (job: SyncJob) => void;
 }
 
 export interface JobStatusCardProps {
