@@ -1,9 +1,9 @@
 # Development Context - Toombos Frontend
 
-**Last Updated**: 2025-10-08 (Session 12 - Test Fixes & Pass Rate Improvement)
+**Last Updated**: 2025-10-08 (Session 14 - Analytics & Error Boundary Test Fixes)
 **Project**: Toombos Frontend
 **Repository**: https://github.com/fivedollarfridays/toombos-frontend
-**Status**: Sprint 10 Session 12 Complete - 57.56% Coverage, 85.9% Pass Rate ✅
+**Status**: Sprint 10 Session 14 In Progress - 88.3% Pass Rate (728/824 tests) ✅
 
 ---
 
@@ -14,6 +14,48 @@
 Build a production-ready dashboard for the Content Generator product that provides an intuitive, accessible interface for content creation and management.
 
 ### Last action was:
+
+**Sprint 10 Session 14: Analytics & Error-Boundary Test Fixes** ✅ (In Progress):
+- **Pass Rate Progress**: 85.9% → 88.3% (+2.4 percentage points)
+- **Passing Tests**: 670 → 728 (+58 tests passing)
+- **Total Tests**: 780 → 824 (+44 new tests, net improvement)
+- **Failures Reduced**: 108 → 94 (-14 failures fixed)
+
+**Analytics Page Tests** (Complete Fix):
+- **Status**: All 33 tests passing (100%) ✅
+- **Failures Fixed**: 10 → 0
+- **Approach**: Fixed async timing issues with explicit 3000ms timeouts
+- **Fixes Applied**:
+  - Added waitFor timeouts to all metric display tests
+  - Fixed Recent Activity tests with scoped selectors
+  - Fixed charts test to check for non-loading state
+  - Fixed refresh button test to wait for initial load
+  - Fixed rapid time range switches with button-specific selectors
+- **Coverage**: 97.5% (excellent)
+
+**Error-Boundary Tests** (Complete Fix):
+- **Status**: All 33 tests passing (100%) ✅
+- **Failures Fixed**: 4 → 0
+- **Approach**: Fixed test logic to rerender before clicking reset
+- **Fixes Applied**:
+  - Moved rerender() calls before clicking "Try Again" buttons
+  - Added 100ms delay after rerender for prop updates
+  - Added explicit 3000ms timeouts to waitFor calls
+  - Fixed all 4 reset functionality tests
+- **Coverage**: 94% (excellent)
+
+**Key Achievements**:
+- Fixed 14 tests total (10 Analytics + 4 Error-Boundary)
+- Both test suites now 100% passing
+- Pass rate improved significantly: 85.9% → 88.3%
+- 94 test failures remaining (down from 108)
+- Test quality continues to improve
+
+**Commits**:
+1. c78caa8 - fix: Fix all 10 Analytics page test failures
+2. 5411744 - fix: Fix all 4 error-boundary test failures
+
+---
 
 **Sprint 10 Session 12: Test Fixes & Pass Rate Improvement** ✅ (Complete):
 - **Pass Rate Progress**: 83.2% → 85.9% (+2.7 percentage points)
