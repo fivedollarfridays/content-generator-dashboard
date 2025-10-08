@@ -202,10 +202,9 @@ jest.mock('@/lib/api/api-client', () => ({
 
 // Import after mocks
 import JobsPage from '../page';
-
-const { useSearchParams } = require('next/navigation');
-const { useAuth, useToast } = require('@/app/contexts');
-const { useWebSocket, WebSocketState } = require('@/app/hooks');
+import { useSearchParams } from 'next/navigation';
+import { useAuth, useToast } from '@/app/contexts';
+import { useWebSocket, WebSocketState } from '@/app/hooks';
 
 describe('JobsPage', () => {
   let mockToast: any;

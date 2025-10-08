@@ -29,8 +29,8 @@ jest.mock('@/app/components/features/cache-stats', () => {
   };
 });
 
-const { useAuth } = require('@/app/contexts');
-const { usePreferences } = require('@/app/context/preferences-context');
+import { useAuth } from '@/app/contexts';
+import { usePreferences } from '@/app/context/preferences-context';
 
 describe('SettingsPage', () => {
   let mockSetApiKey: jest.Mock;
