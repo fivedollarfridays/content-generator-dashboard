@@ -539,6 +539,151 @@ All files:              31.79% (was 23.46%)
 
 ---
 
-**Archive Updated**: 2025-10-08 (Sprint 9 Added)
+## Sprint 10: Strategic Test Coverage Plan 📋
+
+**Duration**: 4-5 sessions estimated (18-24 hours)
+**Started**: 2025-10-08 (Planning Complete)
+**Status**: 📋 Planning Complete, Ready to Execute
+
+### Objectives
+Execute comprehensive test coverage strategy to reach 70% Definition-of-Done target.
+
+### Strategic Plan
+- **Baseline**: 33.36% coverage (311/353 tests passing, 88.1%)
+- **Target**: 70% coverage (+36.64 percentage points)
+- **Approach**: 4-phase priority-based execution
+- **Document**: `docs/SPRINT-10-COVERAGE-PLAN.md`
+
+### Phase Breakdown
+
+**Phase 1A - Critical Infrastructure** (Session 7, 4-5h):
+- Auth Context (35-40 tests) - BLOCKER for all page tests
+- Preferences Context (20-25 tests) - Used across all pages
+- Generate Page (25-30 tests) - Primary user flow
+- **Target**: 33.36% → 42% (+9%)
+
+**Phase 1B - Core Pages** (Session 8, 4-5h):
+- Jobs Page (35-40 tests) - Main application page
+- Settings Page (30-35 tests) - Critical configuration
+- **Target**: 42% → 52% (+10%)
+
+**Phase 2 - Remaining Pages** (Session 9, 4-5h):
+- Use-websocket Hook (25-30 tests) - Real-time updates
+- History Page (25-30 tests)
+- Templates Page (25-30 tests)
+- Home Page (15-20 tests)
+- **Target**: 52% → 62% (+10%)
+
+**Phase 3 - Components & Polish** (Session 10, 4-5h):
+- Error Boundary (15-20 tests)
+- Campaigns Page (25-30 tests)
+- Feature Components (40-50 tests)
+- **Target**: 62% → 71% (+9%)
+
+**Phase 4 - Optional Stretch** (Session 11, 2-3h):
+- Utilities (20-25 tests)
+- Remaining components
+- Fix failing tests
+- **Target**: 71% → 75% (+4%)
+
+### Success Criteria
+1. **Test Coverage**: ≥ 70% (statements, branches, lines, functions)
+2. **Tests Passing**: ≥ 95% pass rate (< 20 failing tests)
+3. **Build Status**: 0 errors, 0 warnings
+4. **Quality**: All critical paths tested
+5. **Documentation**: All test strategies documented
+6. **Maintainability**: Tests follow consistent patterns
+7. **Performance**: Test suite runs in < 60 seconds
+8. **CI/CD Ready**: Tests run reliably in CI environment
+
+### Coverage Goals by Area
+| Area | Current | Target | Stretch |
+|------|---------|--------|---------|
+| Pages | 0-10% | 70% | 75% |
+| Contexts | 37.4% | 85% | 90% |
+| Hooks | 58% | 80% | 85% |
+| Components | 34.64% | 65% | 70% |
+| API Client | 56.75% | 70% | 75% |
+| Utilities | 44.15% | 70% | 75% |
+
+### Testing Strategy
+
+**Priority Matrix**:
+1. **High Impact, Low Effort**: Core pages (generate, jobs, settings), Auth context
+2. **High Impact, Medium Effort**: Remaining pages, use-websocket, error boundary
+3. **Medium Impact, Medium Effort**: Feature components, utilities
+4. **Low Priority**: Mock utilities, advanced features (defer if needed)
+
+**Quality Standards**:
+- Critical pages: 70-80% coverage
+- Other pages: 60-70% coverage
+- Contexts: 85-95% coverage (high value, small)
+- Hooks: 80-90% coverage
+- Components: 60-70% coverage (focus on critical paths)
+- Utilities: 70-80% coverage
+
+**Test Templates**:
+- Page tests: Rendering, authentication, data loading, user interactions
+- Context tests: Provider, hook, state management, persistence
+- Hook tests: Basic functionality, side effects, error handling
+- Component tests: Rendering, props, interactions, accessibility
+
+### Risk Management
+
+**Identified Risks**:
+1. **Time Estimates**: 18-24h may be optimistic based on Sprint 9 experience
+   - Mitigation: 4-5h sessions (not 2-3h), lower quality bar (70% not 95%)
+
+2. **Fake Timers Complexity**: Dashboard tests had timing issues
+   - Mitigation: Consistent timer strategy, document patterns
+
+3. **WebSocket Testing**: use-websocket may be complex to test
+   - Mitigation: Comprehensive WebSocket mock, test lifecycle in isolation
+
+4. **Test Flakiness**: Async tests may become unreliable
+   - Mitigation: Use waitFor with timeouts, avoid brittle selectors, clean mocks
+
+**Contingency Plans**:
+- If behind schedule: Accept 55-60% coverage, deploy with monitoring
+- If tests too flaky: Focus on unit tests over integration tests
+- If coverage not improving: Review reports, focus on high-LOC files
+
+### Lessons from Sprint 9
+
+**Apply**:
+- ✅ Phased approach with clear targets
+- ✅ Comprehensive test suites (catch bugs)
+- ✅ Consistent patterns (speed development)
+- ✅ Well-defined mocks (reduce setup)
+
+**Improve**:
+- ❌ Better time estimates (4-5h not 2-3h per session)
+- ❌ Test blockers first (Auth context before pages)
+- ❌ Lower quality bar (60-70% not 95%)
+- ❌ Skip low-value items (mock campaigns, complex components)
+
+### Expected Outcome
+- **Coverage**: 33.36% → 70%+ (may reach 75% with stretch phase)
+- **Tests**: 353 → 550+ tests
+- **Pass Rate**: 88.1% → 95%+
+- **Production Ready**: Full Definition-of-Done compliance (10/10 criteria)
+- **Timeline**: 4-5 sessions over 1-2 weeks
+
+### Progress Tracking
+**To be updated after each session**:
+
+| Phase | Target Coverage | Estimated Hours | Status | Actual Coverage | Actual Hours |
+|-------|----------------|-----------------|--------|-----------------|--------------|
+| Baseline | 33.36% | - | ✅ Complete | 33.36% | - |
+| Phase 1A | 42% | 4-5h | 📋 Planned | TBD | TBD |
+| Phase 1B | 52% | 4-5h | 📋 Planned | TBD | TBD |
+| Phase 2 | 62% | 4-5h | 📋 Planned | TBD | TBD |
+| Phase 3 | 71% | 4-5h | 📋 Planned | TBD | TBD |
+| Phase 4 | 75% | 2-3h | 📋 Optional | TBD | TBD |
+
+---
+
+**Archive Updated**: 2025-10-08 (Sprint 10 Planning Added)
 **For Current Status**: See `context/development.md`
+**For Sprint 10 Plan**: See `docs/SPRINT-10-COVERAGE-PLAN.md`
 **For Sprint 9 Details**: See `docs/SPRINT-9-SESSION-LOG.md`
