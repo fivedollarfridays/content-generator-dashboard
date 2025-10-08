@@ -19,7 +19,13 @@ import { toast } from 'react-hot-toast';
  * @returns Settings page component
  */
 const SettingsPage = (): React.ReactElement => {
-  const { apiKey: savedApiKey, setApiKey, clearApiKey, isLoading, error } = useAuth();
+  const {
+    apiKey: savedApiKey,
+    setApiKey,
+    clearApiKey,
+    isLoading,
+    error,
+  } = useAuth();
   const {
     preferences,
     updateNotificationPreferences,
@@ -54,7 +60,9 @@ const SettingsPage = (): React.ReactElement => {
         setSaveSuccess(false);
       }, 3000);
     } catch (err) {
-      setSaveError(err instanceof Error ? err.message : 'Failed to save API key');
+      setSaveError(
+        err instanceof Error ? err.message : 'Failed to save API key'
+      );
       setSaveSuccess(false);
     }
   }, [apiKey, setApiKey]);
@@ -185,7 +193,7 @@ const SettingsPage = (): React.ReactElement => {
               </div>
               <p className="mt-2 text-xs text-gray-500">
                 Store your API key locally for authenticated requests. This key
-                is stored in your browser's localStorage.
+                is stored in your browser&apos;s localStorage.
               </p>
 
               {/* Success Message */}
@@ -222,9 +230,7 @@ const SettingsPage = (): React.ReactElement => {
                       clipRule="evenodd"
                     />
                   </svg>
-                  <span className="text-sm text-red-800">
-                    {saveError}
-                  </span>
+                  <span className="text-sm text-red-800">{saveError}</span>
                 </div>
               )}
             </div>
@@ -239,8 +245,8 @@ const SettingsPage = (): React.ReactElement => {
               apiUrl={API_URL}
               apiKey={savedApiKey || undefined}
               refreshInterval={15000}
-              onInvalidate={count => {
-                console.log(`Invalidated ${count} cache entries`);
+              onInvalidate={() => {
+                // Cache invalidated successfully
               }}
             />
           </div>
@@ -408,7 +414,10 @@ const SettingsPage = (): React.ReactElement => {
                     value={preferences.display.tableDensity}
                     onChange={e =>
                       updateDisplayPreferences({
-                        tableDensity: e.target.value as 'compact' | 'comfortable' | 'spacious',
+                        tableDensity: e.target.value as
+                          | 'compact'
+                          | 'comfortable'
+                          | 'spacious',
                       })
                     }
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"

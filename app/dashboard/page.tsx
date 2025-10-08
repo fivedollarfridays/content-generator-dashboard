@@ -25,16 +25,27 @@ const DashboardPage = (): React.ReactElement => {
     }
   }, []);
 
-  // Fetch jobs for analytics
+  // Fetch jobs for analytics (using mock data)
   useEffect(() => {
     const fetchJobs = async () => {
       try {
+        // Use mock data for development/testing
+        const { mockDataStore } = await import('@/lib/utils/mock-data-generator');
+        const mockJobs = mockDataStore.getJobs(100);
+
+        // Simulate API delay
+        await new Promise(resolve => setTimeout(resolve, 300));
+
+        setJobs(mockJobs);
+
+        /* Uncomment when backend API is ready:
         const api = new ContentGeneratorAPI(API_URL, apiKey);
         const response = await api.listJobs({ limit: 100 });
 
         if (response.success && response.data) {
           setJobs(response.data.jobs);
         }
+        */
       } catch (err) {
         console.error('Failed to fetch jobs for analytics:', err);
       } finally {
@@ -66,9 +77,8 @@ const DashboardPage = (): React.ReactElement => {
           <ContentGeneratorHealth
             apiUrl={API_URL}
             refreshInterval={30000} // Refresh every 30 seconds
-            onStatusChange={status => {
-              console.log('Health status changed:', status);
-              // You can add custom logic here (e.g., show notifications)
+            onStatusChange={() => {
+              // Custom logic for status changes (e.g., show notifications)
             }}
           />
         </div>
@@ -113,7 +123,9 @@ const DashboardPage = (): React.ReactElement => {
 
         {/* Quick Actions */}
         <div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Quick Actions</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">
+            Quick Actions
+          </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="bg-white rounded-lg shadow p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-2">

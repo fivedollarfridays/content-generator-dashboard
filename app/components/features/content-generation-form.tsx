@@ -147,7 +147,7 @@ export const ContentGenerationForm: React.FC<ContentGenerationFormProps> = ({
   return (
     <div className="bg-white rounded-lg shadow-lg p-6">
       <div className="mb-6">
-        <h2 className="text-2xl font-bold text-gray-900">Generate Content</h2>
+        <h2 className="text-2xl font-bold text-gray-900">Content Generator</h2>
         <p className="text-sm text-gray-600 mt-1">
           Create and publish content across multiple channels
         </p>
@@ -156,11 +156,12 @@ export const ContentGenerationForm: React.FC<ContentGenerationFormProps> = ({
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Document ID */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="documentId" className="block text-sm font-medium text-gray-700 mb-2">
             Document ID
             <span className="text-red-500 ml-1">*</span>
           </label>
           <input
+            id="documentId"
             type="text"
             value={documentId}
             onChange={e => setDocumentId(e.target.value)}
@@ -176,7 +177,7 @@ export const ContentGenerationForm: React.FC<ContentGenerationFormProps> = ({
         {/* Channels */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Channels
+            Select Channels
             <span className="text-red-500 ml-1">*</span>
           </label>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -188,7 +189,7 @@ export const ContentGenerationForm: React.FC<ContentGenerationFormProps> = ({
                 disabled={loading}
                 className={`px-4 py-3 rounded-lg border-2 transition-all ${
                   channels.includes(channel.value)
-                    ? 'border-blue-500 bg-blue-50 text-blue-900'
+                    ? 'border-blue-600 bg-blue-50 text-blue-900'
                     : 'border-gray-300 bg-white text-gray-700 hover:border-gray-400'
                 } disabled:opacity-50 disabled:cursor-not-allowed`}
               >
@@ -237,7 +238,7 @@ export const ContentGenerationForm: React.FC<ContentGenerationFormProps> = ({
                 disabled={loading}
                 className={`px-4 py-3 rounded-lg border-2 transition-all text-left ${
                   templateStyle === template.value
-                    ? 'border-blue-500 bg-blue-50'
+                    ? 'border-blue-600 bg-blue-50'
                     : 'border-gray-300 bg-white hover:border-gray-400'
                 } disabled:opacity-50 disabled:cursor-not-allowed`}
               >
@@ -254,10 +255,11 @@ export const ContentGenerationForm: React.FC<ContentGenerationFormProps> = ({
 
         {/* Schedule Time */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="scheduleTime" className="block text-sm font-medium text-gray-700 mb-2">
             Schedule Time (Optional)
           </label>
           <input
+            id="scheduleTime"
             type="datetime-local"
             value={scheduleTime}
             onChange={e => setScheduleTime(e.target.value)}
@@ -341,7 +343,7 @@ export const ContentGenerationForm: React.FC<ContentGenerationFormProps> = ({
         <div className="flex space-x-4">
           <button
             type="submit"
-            disabled={loading || channels.length === 0 || !documentId.trim()}
+            disabled={loading}
             className="flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
           >
             {loading ? (
@@ -365,10 +367,10 @@ export const ContentGenerationForm: React.FC<ContentGenerationFormProps> = ({
                     d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                   />
                 </svg>
-                {dryRun ? 'Generating Preview...' : 'Generating...'}
+                Generating Content...
               </span>
             ) : (
-              <span>{dryRun ? 'Generate Preview' : 'Generate & Publish'}</span>
+              <span>Generate Content</span>
             )}
           </button>
           {success && (

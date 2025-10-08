@@ -33,6 +33,8 @@ import type {
   CacheInvalidationResponse,
   ValidationResult,
   APIResponse,
+  AnalyticsOverview,
+  JobAnalytics,
 } from '@/types/content-generator';
 
 /**
@@ -453,6 +455,94 @@ export class ContentGeneratorAPI {
     return this.request('/api/v2/cache/clear', {
       method: 'POST',
     });
+  }
+
+  // ========== Analytics ==========
+
+  /**
+   * Get analytics overview
+   *
+   * Retrieve comprehensive analytics including job statistics, performance metrics,
+   * channel performance, and recent activity.
+   *
+   * @param params - Query parameters for analytics
+   * @param params.start_date - Start date for analytics period (ISO format)
+   * @param params.end_date - End date for analytics period (ISO format)
+   * @param params.granularity - Time granularity (hour, day, week, month)
+   * @returns Analytics overview
+   *
+   * @example
+   * ```typescript
+   * const analytics = await api.getAnalytics({
+   *   start_date: '2025-10-01T00:00:00Z',
+   *   end_date: '2025-10-07T23:59:59Z',
+   *   granularity: 'day'
+   * });
+   *
+   * if (analytics.success) {
+   *   console.log('Total jobs:', analytics.data.job_analytics.total_jobs);
+   *   console.log('Success rate:', analytics.data.job_analytics.success_rate);
+   * }
+   * ```
+   */
+  async getAnalytics(params?: {
+    start_date?: string;
+    end_date?: string;
+    granularity?: 'hour' | 'day' | 'week' | 'month';
+  }): Promise<APIResponse<AnalyticsOverview>> {
+    const queryParams = new URLSearchParams();
+    if (params?.start_date) queryParams.set('start_date', params.start_date);
+    if (params?.end_date) queryParams.set('end_date', params.end_date);
+    if (params?.granularity) queryParams.set('granularity', params.granularity);
+
+    const query = queryParams.toString();
+    return this.request<AnalyticsOverview>(
+      `/api/v2/analytics${query ? `?${query}` : ''}`
+    );
+  }
+
+  /**
+   * Get job analytics
+   *
+   * Retrieve detailed job-specific analytics including status distribution,
+   * channel usage, and time-series data.
+   *
+   * @param params - Query parameters for job analytics
+   * @param params.start_date - Start date for analytics period
+   * @param params.end_date - End date for analytics period
+   * @param params.status - Filter by job status
+   * @param params.channel - Filter by channel
+   * @returns Job analytics
+   *
+   * @example
+   * ```typescript
+   * const jobAnalytics = await api.getJobAnalytics({
+   *   start_date: '2025-10-01T00:00:00Z',
+   *   end_date: '2025-10-07T23:59:59Z',
+   *   status: 'completed'
+   * });
+   *
+   * if (jobAnalytics.success) {
+   *   console.log('Completed jobs:', jobAnalytics.data.completed_jobs);
+   * }
+   * ```
+   */
+  async getJobAnalytics(params?: {
+    start_date?: string;
+    end_date?: string;
+    status?: string;
+    channel?: string;
+  }): Promise<APIResponse<JobAnalytics>> {
+    const queryParams = new URLSearchParams();
+    if (params?.start_date) queryParams.set('start_date', params.start_date);
+    if (params?.end_date) queryParams.set('end_date', params.end_date);
+    if (params?.status) queryParams.set('status', params.status);
+    if (params?.channel) queryParams.set('channel', params.channel);
+
+    const query = queryParams.toString();
+    return this.request<JobAnalytics>(
+      `/api/v2/analytics/jobs${query ? `?${query}` : ''}`
+    );
   }
 
   // ========== Batch Operations ==========

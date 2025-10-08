@@ -8,9 +8,6 @@ import '@testing-library/jest-dom';
 import JobsList from '../jobs-list';
 import type { SyncJob } from '@/types/content-generator';
 
-// Mock API client
-jest.mock('@/lib/api/api-client');
-
 describe('JobsList', () => {
   const mockApiUrl = 'http://localhost:8000';
   const mockOnJobClick = jest.fn();
@@ -47,7 +44,7 @@ describe('JobsList', () => {
         {
           job_id: 'job-2',
           document_id: 'doc-2',
-          status: 'processing',
+          status: 'in_progress',
           channels: ['website'],
           content_type: 'blog',
           template_style: 'classic',
@@ -150,12 +147,12 @@ describe('JobsList', () => {
       });
     });
 
-    it('should display processing status with blue color', async () => {
+    it('should display in_progress status with blue color', async () => {
       const mockJobs: SyncJob[] = [
         {
           job_id: 'job-1',
           document_id: 'doc-1',
-          status: 'processing',
+          status: 'in_progress',
           channels: ['email'],
           content_type: 'update',
           template_style: 'modern',
@@ -171,7 +168,7 @@ describe('JobsList', () => {
       render(<JobsList apiUrl={mockApiUrl} />);
 
       await waitFor(() => {
-        const statusElement = screen.getByText('processing');
+        const statusElement = screen.getByText('in_progress');
         expect(statusElement).toHaveClass('text-blue-600');
       });
     });
@@ -254,7 +251,7 @@ describe('JobsList', () => {
         {
           job_id: 'job-1',
           document_id: 'doc-1',
-          status: 'processing',
+          status: 'in_progress',
           channels: ['email'],
           content_type: 'update',
           template_style: 'modern',

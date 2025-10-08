@@ -172,12 +172,16 @@ export const useLocalStorage = <T>(
   }, [key, initialValue, syncData, onError]);
 
   /**
-   * Sync state with localStorage on mount and storage events
+   * Sync state with localStorage when key changes
    */
   useEffect(() => {
     // Update state if key changes
-    setStoredValue(readValue());
-  }, [key, readValue]);
+    const newValue = readValue();
+    // Only update if value actually changed to prevent infinite loops
+    if (JSON.stringify(newValue) !== JSON.stringify(storedValue)) {
+      setStoredValue(newValue);
+    }
+  }, [key]); // Only depend on key, not readValue
 
   /**
    * Listen for storage events (cross-tab synchronization)

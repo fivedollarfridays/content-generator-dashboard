@@ -6,11 +6,29 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
-import JobTimeline from '@/app/components/features/job-timeline';
-import JobDetailModal from '@/app/components/features/job-detail-modal';
+import dynamic from 'next/dynamic';
 import { ContentGeneratorAPI } from '@/lib/api/api-client';
 import type { SyncJob, JobStatus } from '@/types/content-generator';
 import { toast } from 'react-hot-toast';
+
+// Code splitting: Dynamically import timeline components
+const JobTimeline = dynamic(
+  () => import('@/app/components/features/job-timeline'),
+  {
+    loading: () => (
+      <div className="animate-pulse space-y-4">
+        {[1, 2, 3].map(i => (
+          <div key={i} className="h-24 bg-gray-200 rounded"></div>
+        ))}
+      </div>
+    ),
+  }
+);
+
+const JobDetailModal = dynamic(
+  () => import('@/app/components/features/job-detail-modal'),
+  { ssr: false }
+);
 
 const HistoryPage = (): React.ReactElement => {
   const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
@@ -35,15 +53,26 @@ const HistoryPage = (): React.ReactElement => {
     }
   }, []);
 
-  // Fetch all jobs
+  // Fetch all jobs (using mock data)
   const fetchJobs = useCallback(async () => {
     try {
       setLoading(true);
+
+      // Use mock data for development/testing
+      const { mockDataStore } = await import('@/lib/utils/mock-data-generator');
+      const mockJobs = mockDataStore.getJobs(500);
+
+      // Simulate API delay
+      await new Promise(resolve => setTimeout(resolve, 300));
+
+      setJobs(mockJobs);
+      setFilteredJobs(mockJobs);
+
+      /* Uncomment when backend API is ready:
       const api = new ContentGeneratorAPI(API_URL, apiKey);
-      const response = await api.listJobs({ limit: 500 }); // Get more jobs for history
+      const response = await api.listJobs({ limit: 500 });
 
       if (response.success && response.data) {
-        // Sort by created_at descending (newest first)
         const sortedJobs = response.data.jobs.sort(
           (a, b) =>
             new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
@@ -53,13 +82,14 @@ const HistoryPage = (): React.ReactElement => {
       } else {
         toast.error('Failed to load job history');
       }
+      */
     } catch (err) {
       console.error('Failed to fetch jobs:', err);
       toast.error('Error loading job history');
     } finally {
       setLoading(false);
     }
-  }, [API_URL, apiKey]);
+  }, [apiKey]);
 
   useEffect(() => {
     fetchJobs();

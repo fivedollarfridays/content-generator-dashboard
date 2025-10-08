@@ -130,19 +130,19 @@ export const JobsList: React.FC<JobsListProps> = ({
   const getStatusColor = (status: JobStatus): string => {
     switch (status) {
       case 'completed':
-        return 'text-green-700 bg-green-100';
+        return 'text-green-600 bg-green-100';
       case 'in_progress':
-        return 'text-blue-700 bg-blue-100';
+        return 'text-blue-600 bg-blue-100';
       case 'pending':
-        return 'text-yellow-700 bg-yellow-100';
+        return 'text-yellow-600 bg-yellow-100';
       case 'failed':
-        return 'text-red-700 bg-red-100';
+        return 'text-red-600 bg-red-100';
       case 'partial':
-        return 'text-orange-700 bg-orange-100';
+        return 'text-orange-600 bg-orange-100';
       case 'cancelled':
-        return 'text-gray-700 bg-gray-100';
+        return 'text-gray-600 bg-gray-100';
       default:
-        return 'text-gray-700 bg-gray-100';
+        return 'text-gray-600 bg-gray-100';
     }
   };
 
@@ -194,12 +194,10 @@ export const JobsList: React.FC<JobsListProps> = ({
 
   if (loading && jobs.length === 0) {
     return (
-      <div className="animate-pulse bg-white rounded-lg shadow p-6">
-        <div className="h-8 bg-gray-200 rounded w-1/4 mb-4"></div>
-        <div className="space-y-3">
-          {[1, 2, 3].map(i => (
-            <div key={i} className="h-20 bg-gray-200 rounded"></div>
-          ))}
+      <div className="bg-white rounded-lg shadow p-6">
+        <div className="text-center py-12">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading jobs...</p>
         </div>
       </div>
     );
@@ -220,7 +218,7 @@ export const JobsList: React.FC<JobsListProps> = ({
               clipRule="evenodd"
             />
           </svg>
-          <span className="text-red-800 font-medium">Failed to Load Jobs</span>
+          <span className="text-red-800 font-medium">Failed to load jobs</span>
         </div>
         <p className="text-red-700 text-sm mt-2">{error}</p>
         <button
@@ -312,7 +310,7 @@ export const JobsList: React.FC<JobsListProps> = ({
             return (
               <div
                 key={job.job_id}
-                className={`border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow ${
+                className={`job-card border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow ${
                   isSelected ? 'border-blue-500 bg-blue-50' : ''
                 }`}
               >
@@ -323,7 +321,7 @@ export const JobsList: React.FC<JobsListProps> = ({
                       <input
                         type="checkbox"
                         checked={isSelected}
-                        onChange={(e) => {
+                        onChange={e => {
                           e.stopPropagation();
                           onToggleSelection(job);
                         }}
@@ -336,80 +334,82 @@ export const JobsList: React.FC<JobsListProps> = ({
                     className="flex-1 cursor-pointer"
                     onClick={() => onJobClick?.(job)}
                   >
-                  <div className="flex items-center space-x-3 mb-2">
-                    <span
-                      className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(
-                        job.status
-                      )}`}
-                    >
-                      {getStatusIcon(job.status)} {job.status.toUpperCase()}
-                    </span>
-                    <span className="text-xs text-gray-500 font-mono">
-                      {job.job_id.substring(0, 12)}...
-                    </span>
-                  </div>
-
-                  <div className="text-sm text-gray-700 mb-2">
-                    <span className="font-medium">Document:</span>{' '}
-                    {job.document_id}
-                  </div>
-
-                  <div className="flex items-center space-x-4 text-xs text-gray-600">
-                    <div className="flex items-center space-x-1">
-                      <span>📍</span>
-                      <span>{job.channels.join(', ')}</span>
+                    <div className="flex items-center space-x-3 mb-2">
+                      <span
+                        className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(
+                          job.status
+                        )}`}
+                      >
+                        {getStatusIcon(job.status)} {job.status}
+                      </span>
+                      <span className="text-xs text-gray-500 font-mono">
+                        {job.job_id}
+                      </span>
                     </div>
-                    <div className="flex items-center space-x-1">
-                      <span>🕐</span>
-                      <span>{formatDate(job.created_at)}</span>
+
+                    <div className="text-sm text-gray-700 mb-2">
+                      <span className="font-medium">Document:</span>{' '}
+                      {job.document_id}
                     </div>
-                    {job.completed_at && (
+
+                    <div className="flex items-center space-x-4 text-xs text-gray-600">
                       <div className="flex items-center space-x-1">
-                        <span>✓</span>
-                        <span>{formatDate(job.completed_at)}</span>
+                        <span>📍</span>
+                        <span>{job.channels.join(', ')}</span>
+                      </div>
+                      <div className="flex items-center space-x-1">
+                        <span>🕐</span>
+                        <span>{formatDate(job.created_at)}</span>
+                      </div>
+                      {job.completed_at && (
+                        <div className="flex items-center space-x-1">
+                          <span>✓</span>
+                          <span>{formatDate(job.completed_at)}</span>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Channel Results Indicator */}
+                    {job.results && (
+                      <div className="flex space-x-1 ml-4">
+                        {Object.entries(job.results).map(
+                          ([channel, result]) => (
+                            <div
+                              key={channel}
+                              className={`w-8 h-8 rounded-full flex items-center justify-center text-xs ${
+                                result.status === 'success'
+                                  ? 'bg-green-100 text-green-700'
+                                  : 'bg-red-100 text-red-700'
+                              }`}
+                              title={`${channel}: ${result.status}`}
+                            >
+                              {result.status === 'success' ? '✓' : '✕'}
+                            </div>
+                          )
+                        )}
                       </div>
                     )}
                   </div>
 
-                  {/* Channel Results Indicator */}
-                  {job.results && (
-                    <div className="flex space-x-1 ml-4">
-                      {Object.entries(job.results).map(([channel, result]) => (
-                        <div
-                          key={channel}
-                          className={`w-8 h-8 rounded-full flex items-center justify-center text-xs ${
-                            result.status === 'success'
-                              ? 'bg-green-100 text-green-700'
-                              : 'bg-red-100 text-red-700'
-                          }`}
-                          title={`${channel}: ${result.status}`}
-                        >
-                          {result.status === 'success' ? '✓' : '✕'}
-                        </div>
-                      ))}
+                  {/* Errors */}
+                  {job.errors && job.errors.length > 0 && (
+                    <div className="mt-3 pt-3 border-t border-gray-200">
+                      <div className="text-xs text-red-600">
+                        <span className="font-medium">Errors:</span>
+                        <ul className="list-disc list-inside mt-1">
+                          {job.errors.slice(0, 2).map((error, idx) => (
+                            <li key={idx}>{error}</li>
+                          ))}
+                          {job.errors.length > 2 && (
+                            <li>+{job.errors.length - 2} more...</li>
+                          )}
+                        </ul>
+                      </div>
                     </div>
                   )}
                 </div>
-
-                {/* Errors */}
-                {job.errors && job.errors.length > 0 && (
-                  <div className="mt-3 pt-3 border-t border-gray-200">
-                    <div className="text-xs text-red-600">
-                      <span className="font-medium">Errors:</span>
-                      <ul className="list-disc list-inside mt-1">
-                        {job.errors.slice(0, 2).map((error, idx) => (
-                          <li key={idx}>{error}</li>
-                        ))}
-                        {job.errors.length > 2 && (
-                          <li>+{job.errors.length - 2} more...</li>
-                        )}
-                      </ul>
-                    </div>
-                  </div>
-                )}
               </div>
-            </div>
-          );
+            );
           })}
         </div>
       )}

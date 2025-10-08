@@ -205,6 +205,53 @@ export interface EmailAnalytics {
   unsubscribe_rate: number;
 }
 
+export interface JobAnalytics {
+  total_jobs: number;
+  completed_jobs: number;
+  failed_jobs: number;
+  pending_jobs: number;
+  in_progress_jobs: number;
+  cancelled_jobs: number;
+  success_rate: number;
+  avg_processing_time_seconds: number;
+  jobs_by_channel: {
+    [key in Channel]?: number;
+  };
+  jobs_by_status: {
+    [key in JobStatus]?: number;
+  };
+  jobs_over_time: TimeSeriesDataPoint[];
+}
+
+export interface TimeSeriesDataPoint {
+  timestamp: string;
+  count: number;
+  status?: JobStatus;
+}
+
+export interface AnalyticsOverview {
+  job_analytics: JobAnalytics;
+  performance_metrics: {
+    avg_response_time_ms: number;
+    p95_response_time_ms: number;
+    p99_response_time_ms: number;
+    error_rate: number;
+    success_rate: number;
+  };
+  channel_performance: {
+    [key in Channel]?: {
+      total_jobs: number;
+      success_rate: number;
+      avg_processing_time_seconds: number;
+    };
+  };
+  recent_activity: {
+    last_24h: number;
+    last_7d: number;
+    last_30d: number;
+  };
+}
+
 // ========== Validation ==========
 
 export interface ValidationResult {

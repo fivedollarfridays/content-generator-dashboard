@@ -28,7 +28,7 @@ describe('ContentGenerationForm', () => {
     it('should render form with all fields', () => {
       render(<ContentGenerationForm apiUrl={mockApiUrl} />);
 
-      expect(screen.getByText('Generate Content')).toBeInTheDocument();
+      expect(screen.getByText('Content Generator')).toBeInTheDocument();
       expect(screen.getByLabelText(/Document ID/i)).toBeInTheDocument();
       expect(screen.getByText('Select Channels')).toBeInTheDocument();
       expect(screen.getByText('Content Type')).toBeInTheDocument();
@@ -176,7 +176,8 @@ describe('ContentGenerationForm', () => {
         content_type: 'update',
         template_style: 'modern',
         created_at: '2025-10-02T12:00:00Z',
-        result: {
+        updated_at: '2025-10-02T12:00:00Z',
+        results: {
           email: {
             subject: 'Test Subject',
             body: 'Test Body',
@@ -185,7 +186,7 @@ describe('ContentGenerationForm', () => {
         },
       };
 
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
+      (global.fetch as jest.Mock).mockResolvedValue({
         ok: true,
         json: async () => mockJob,
       });
@@ -271,7 +272,7 @@ describe('ContentGenerationForm', () => {
 
       // Should show loading state
       await waitFor(() => {
-        expect(submitButton).toHaveTextContent('Generating...');
+        expect(submitButton).toHaveTextContent('Generating Content...');
       });
     });
 
@@ -284,9 +285,10 @@ describe('ContentGenerationForm', () => {
         content_type: 'update',
         template_style: 'modern',
         created_at: '2025-10-02T12:00:00Z',
+        updated_at: '2025-10-02T12:00:00Z',
       };
 
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
+      (global.fetch as jest.Mock).mockResolvedValue({
         ok: true,
         json: async () => mockJob,
       });
@@ -357,7 +359,9 @@ describe('ContentGenerationForm', () => {
 
       // The API client is instantiated with the API key
       // This test verifies component renders without errors
-      expect(screen.getByText('Generate Content')).toBeInTheDocument();
+      expect(
+        screen.getByRole('button', { name: /Generate Content/i })
+      ).toBeInTheDocument();
     });
   });
 });

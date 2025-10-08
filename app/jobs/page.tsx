@@ -8,6 +8,7 @@ import AdvancedJobFilters, {
   type JobFilterState,
 } from '@/app/components/features/advanced-job-filters';
 import BatchJobOperations from '@/app/components/features/batch-job-operations';
+import FilterPresets from '@/app/components/features/filter-presets';
 import type { SyncJob } from '@/types/content-generator';
 import { useAuth, useToast } from '@/app/contexts';
 import { useWebSocket, WebSocketState } from '@/app/hooks';
@@ -101,7 +102,9 @@ const JobsContent = (): React.ReactElement => {
 
         setSelectedJobs([]);
       } catch (err) {
-        toast.error(`Batch retry error: ${err instanceof Error ? err.message : 'Unknown error'}`);
+        toast.error(
+          `Batch retry error: ${err instanceof Error ? err.message : 'Unknown error'}`
+        );
       }
     },
     [apiKey, API_URL, toast]
@@ -141,7 +144,9 @@ const JobsContent = (): React.ReactElement => {
 
         setSelectedJobs([]);
       } catch (err) {
-        toast.error(`Batch cancel error: ${err instanceof Error ? err.message : 'Unknown error'}`);
+        toast.error(
+          `Batch cancel error: ${err instanceof Error ? err.message : 'Unknown error'}`
+        );
       }
     },
     [apiKey, API_URL, toast]
@@ -158,7 +163,14 @@ const JobsContent = (): React.ReactElement => {
 
       if (format === 'csv') {
         // CSV export
-        const csvHeaders = ['Job ID', 'Document ID', 'Status', 'Channels', 'Created At', 'Completed At'];
+        const csvHeaders = [
+          'Job ID',
+          'Document ID',
+          'Status',
+          'Channels',
+          'Created At',
+          'Completed At',
+        ];
         const csvRows = jobs.map(job => [
           job.job_id,
           job.document_id,
@@ -170,7 +182,7 @@ const JobsContent = (): React.ReactElement => {
 
         const csvContent = [
           csvHeaders.join(','),
-          ...csvRows.map(row => row.map(cell => `"${cell}"`).join(','))
+          ...csvRows.map(row => row.map(cell => `"${cell}"`).join(',')),
         ].join('\n');
 
         blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -178,7 +190,9 @@ const JobsContent = (): React.ReactElement => {
       } else {
         // JSON export
         const jsonContent = JSON.stringify(jobs, null, 2);
-        blob = new Blob([jsonContent], { type: 'application/json;charset=utf-8;' });
+        blob = new Blob([jsonContent], {
+          type: 'application/json;charset=utf-8;',
+        });
         filename = `jobs_export_${timestamp}.json`;
       }
 
@@ -206,10 +220,9 @@ const JobsContent = (): React.ReactElement => {
     autoReconnect: true,
     reconnectDelay: 3000,
     maxReconnectAttempts: 5,
-    onMessage: (event) => {
+    onMessage: event => {
       try {
         const data = JSON.parse(event.data);
-        console.log('WebSocket job update:', data);
 
         // Trigger refresh when job updates are received
         if (data.type === 'job_update' || data.type === 'job_status_change') {
@@ -220,12 +233,12 @@ const JobsContent = (): React.ReactElement => {
       }
     },
     onOpen: () => {
-      console.log('WebSocket connected - real-time job updates enabled');
+      // WebSocket connected - real-time job updates enabled
     },
     onClose: () => {
-      console.log('WebSocket disconnected - falling back to polling');
+      // WebSocket disconnected - falling back to polling
     },
-    onError: (event) => {
+    onError: event => {
       console.error('WebSocket error:', event);
     },
   });
@@ -279,17 +292,23 @@ const JobsContent = (): React.ReactElement => {
         if (response.success && response.data) {
           // Trigger refresh to show the new job
           setRefreshTrigger(prev => prev + 1);
-          toast.success(`Job retried successfully! New job: ${response.data.job_id.substring(0, 8)}...`);
+          toast.success(
+            `Job retried successfully! New job: ${response.data.job_id.substring(0, 8)}...`
+          );
 
           // Close modal if the selected job was retried
           if (selectedJob?.job_id === jobId) {
             setSelectedJob(null);
           }
         } else {
-          toast.error(`Retry failed: ${response.error?.message || 'Unknown error'}`);
+          toast.error(
+            `Retry failed: ${response.error?.message || 'Unknown error'}`
+          );
         }
       } catch (err) {
-        toast.error(`Retry error: ${err instanceof Error ? err.message : 'Unknown error'}`);
+        toast.error(
+          `Retry error: ${err instanceof Error ? err.message : 'Unknown error'}`
+        );
       } finally {
         setActionInProgress(null);
       }
@@ -327,10 +346,14 @@ const JobsContent = (): React.ReactElement => {
             setSelectedJob(null);
           }
         } else {
-          toast.error(`Cancel failed: ${response.error?.message || 'Unknown error'}`);
+          toast.error(
+            `Cancel failed: ${response.error?.message || 'Unknown error'}`
+          );
         }
       } catch (err) {
-        toast.error(`Cancel error: ${err instanceof Error ? err.message : 'Unknown error'}`);
+        toast.error(
+          `Cancel error: ${err instanceof Error ? err.message : 'Unknown error'}`
+        );
       } finally {
         setActionInProgress(null);
       }
@@ -408,6 +431,12 @@ const JobsContent = (): React.ReactElement => {
         )}
 
         {/* Advanced Filters */}
+        {/* Filter Presets */}
+        <div className="mb-6">
+          <FilterPresets currentFilters={filters} onApplyPreset={setFilters} />
+        </div>
+
+        {/* Advanced Filters */}
         <AdvancedJobFilters
           filters={filters}
           onFiltersChange={setFilters}
@@ -449,10 +478,10 @@ const JobsContent = (): React.ReactElement => {
                   wsState === WebSocketState.CONNECTED
                     ? 'bg-green-500'
                     : wsState === WebSocketState.CONNECTING
-                    ? 'bg-yellow-500'
-                    : wsState === WebSocketState.ERROR
-                    ? 'bg-red-500'
-                    : 'bg-gray-400'
+                      ? 'bg-yellow-500'
+                      : wsState === WebSocketState.ERROR
+                        ? 'bg-red-500'
+                        : 'bg-gray-400'
                 }`}
               ></span>
             </h3>
@@ -460,10 +489,10 @@ const JobsContent = (): React.ReactElement => {
               {wsState === WebSocketState.CONNECTED
                 ? 'Real-time updates active - job changes appear instantly'
                 : wsState === WebSocketState.CONNECTING
-                ? 'Connecting to real-time updates...'
-                : wsState === WebSocketState.ERROR
-                ? 'Connection error - using polling fallback'
-                : 'Disconnected - using polling fallback'}
+                  ? 'Connecting to real-time updates...'
+                  : wsState === WebSocketState.ERROR
+                    ? 'Connection error - using polling fallback'
+                    : 'Disconnected - using polling fallback'}
             </p>
           </div>
 
@@ -526,7 +555,9 @@ const JobsContent = (): React.ReactElement => {
                 job={selectedJob}
                 onRetry={handleRetry}
                 onCancel={handleCancel}
-                onViewDetails={jobId => console.log('View details:', jobId)}
+                onViewDetails={() => {
+                  // View details handler
+                }}
                 compact={false}
               />
             </div>

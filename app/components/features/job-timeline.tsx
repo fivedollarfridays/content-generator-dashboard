@@ -245,19 +245,21 @@ export const JobTimeline: React.FC<JobTimelineProps> = ({
                       {/* Channel Results */}
                       {job.results && (
                         <div className="flex space-x-1 ml-4">
-                          {Object.entries(job.results).map(([channel, result]) => (
-                            <div
-                              key={channel}
-                              className={`w-6 h-6 rounded-full flex items-center justify-center text-xs ${
-                                result.status === 'success'
-                                  ? 'bg-green-100 text-green-700'
-                                  : 'bg-red-100 text-red-700'
-                              }`}
-                              title={`${channel}: ${result.status}`}
-                            >
-                              {result.status === 'success' ? '✓' : '✕'}
-                            </div>
-                          ))}
+                          {Object.entries(job.results).map(
+                            ([channel, result]) => (
+                              <div
+                                key={channel}
+                                className={`w-6 h-6 rounded-full flex items-center justify-center text-xs ${
+                                  result.status === 'success'
+                                    ? 'bg-green-100 text-green-700'
+                                    : 'bg-red-100 text-red-700'
+                                }`}
+                                title={`${channel}: ${result.status}`}
+                              >
+                                {result.status === 'success' ? '✓' : '✕'}
+                              </div>
+                            )
+                          )}
                         </div>
                       )}
                     </div>
@@ -274,7 +276,8 @@ export const JobTimeline: React.FC<JobTimelineProps> = ({
         <div className="flex items-center justify-between pt-6 border-t border-gray-200">
           <div className="text-sm text-gray-600">
             Showing {(currentPage - 1) * pageSize + 1} to{' '}
-            {Math.min(currentPage * pageSize, jobs.length)} of {jobs.length} jobs
+            {Math.min(currentPage * pageSize, jobs.length)} of {jobs.length}{' '}
+            jobs
           </div>
 
           <div className="flex space-x-2">

@@ -75,7 +75,11 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({
    * Show a toast notification
    */
   const showToast = useCallback(
-    (message: string, type: ToastType = 'info', duration: number = 5000): void => {
+    (
+      message: string,
+      type: ToastType = 'info',
+      duration: number = 5000
+    ): void => {
       const id = Math.random().toString(36).substring(2, 9);
       const newToast: Toast = { id, type, message, duration };
 

@@ -14,7 +14,11 @@ export interface ErrorBoundaryProps {
   /**
    * Fallback component to render when an error occurs
    */
-  fallback?: (error: Error, errorInfo: ErrorInfo, reset: () => void) => ReactNode;
+  fallback?: (
+    error: Error,
+    errorInfo: ErrorInfo,
+    reset: () => void
+  ) => ReactNode;
 
   /**
    * Callback when an error is caught

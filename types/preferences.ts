@@ -3,7 +3,7 @@
  * Type definitions for user settings and preferences
  */
 
-import type { JobStatus, Channel } from './content-generator';
+import type { JobStatus, Channel, JobFilterState } from './content-generator';
 
 export interface NotificationPreferences {
   enabled: boolean;
@@ -16,13 +16,8 @@ export interface NotificationPreferences {
 export interface FilterPreset {
   id: string;
   name: string;
-  search: string;
-  status: JobStatus | 'all';
-  channels: Channel[];
-  dateRange: {
-    from: string;
-    to: string;
-  };
+  filters: JobFilterState;
+  createdAt: string;
 }
 
 export interface DisplayPreferences {

@@ -173,7 +173,7 @@ const GeneratePage = (): React.ReactElement => {
             <li className="flex items-start">
               <span className="mr-2">5.</span>
               <span>
-                Click "Generate & Publish" - you'll be redirected to the jobs
+                Click &ldquo;Generate &amp; Publish&rdquo; - you&apos;ll be redirected to the jobs
                 page to monitor progress
               </span>
             </li>

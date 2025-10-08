@@ -266,7 +266,7 @@ export const AdvancedJobFilters: React.FC<AdvancedJobFiltersProps> = ({
               <div className="flex flex-wrap gap-2">
                 {filters.search && (
                   <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded">
-                    Search: "{filters.search}"
+                    Search: &ldquo;{filters.search}&rdquo;
                   </span>
                 )}
                 {filters.status !== 'all' && (
