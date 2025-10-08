@@ -25,27 +25,18 @@ const DashboardPage = (): React.ReactElement => {
     }
   }, []);
 
-  // Fetch jobs for analytics (using mock data)
+  // Fetch jobs for analytics from toombos-backend API
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-        // Use mock data for development/testing
-        const { mockDataStore } = await import('@/lib/utils/mock-data-generator');
-        const mockJobs = mockDataStore.getJobs(100);
-
-        // Simulate API delay
-        await new Promise(resolve => setTimeout(resolve, 300));
-
-        setJobs(mockJobs);
-
-        /* Uncomment when backend API is ready:
         const api = new ContentGeneratorAPI(API_URL, apiKey);
         const response = await api.listJobs({ limit: 100 });
 
         if (response.success && response.data) {
           setJobs(response.data.jobs);
+        } else {
+          console.error('Failed to fetch jobs:', response.error?.message);
         }
-        */
       } catch (err) {
         console.error('Failed to fetch jobs for analytics:', err);
       } finally {

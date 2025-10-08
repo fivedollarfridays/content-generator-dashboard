@@ -53,22 +53,11 @@ const HistoryPage = (): React.ReactElement => {
     }
   }, []);
 
-  // Fetch all jobs (using mock data)
+  // Fetch all jobs from toombos-backend API
   const fetchJobs = useCallback(async () => {
     try {
       setLoading(true);
 
-      // Use mock data for development/testing
-      const { mockDataStore } = await import('@/lib/utils/mock-data-generator');
-      const mockJobs = mockDataStore.getJobs(500);
-
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 300));
-
-      setJobs(mockJobs);
-      setFilteredJobs(mockJobs);
-
-      /* Uncomment when backend API is ready:
       const api = new ContentGeneratorAPI(API_URL, apiKey);
       const response = await api.listJobs({ limit: 500 });
 
@@ -82,14 +71,13 @@ const HistoryPage = (): React.ReactElement => {
       } else {
         toast.error('Failed to load job history');
       }
-      */
     } catch (err) {
       console.error('Failed to fetch jobs:', err);
       toast.error('Error loading job history');
     } finally {
       setLoading(false);
     }
-  }, [apiKey]);
+  }, [API_URL, apiKey]);
 
   useEffect(() => {
     fetchJobs();

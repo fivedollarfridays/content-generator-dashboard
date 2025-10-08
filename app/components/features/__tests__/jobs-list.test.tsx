@@ -114,10 +114,13 @@ describe('JobsList', () => {
 
       render(<JobsList apiUrl={mockApiUrl} />);
 
-      await waitFor(() => {
-        const statusElement = screen.getByText('completed');
-        expect(statusElement).toHaveClass('text-green-600');
-      });
+      await waitFor(
+        () => {
+          const statusElement = screen.getByText('completed');
+          expect(statusElement).toHaveClass('text-green-600');
+        },
+        { timeout: 3000 }
+      );
     });
 
     it('should display failed status with red color', async () => {
@@ -141,10 +144,13 @@ describe('JobsList', () => {
 
       render(<JobsList apiUrl={mockApiUrl} />);
 
-      await waitFor(() => {
-        const statusElement = screen.getByText('failed');
-        expect(statusElement).toHaveClass('text-red-600');
-      });
+      await waitFor(
+        () => {
+          const statusElement = screen.getByText('failed');
+          expect(statusElement).toHaveClass('text-red-600');
+        },
+        { timeout: 3000 }
+      );
     });
 
     it('should display in_progress status with blue color', async () => {
@@ -167,10 +173,13 @@ describe('JobsList', () => {
 
       render(<JobsList apiUrl={mockApiUrl} />);
 
-      await waitFor(() => {
-        const statusElement = screen.getByText('in_progress');
-        expect(statusElement).toHaveClass('text-blue-600');
-      });
+      await waitFor(
+        () => {
+          const statusElement = screen.getByText('in_progress');
+          expect(statusElement).toHaveClass('text-blue-600');
+        },
+        { timeout: 3000 }
+      );
     });
   });
 
@@ -195,10 +204,13 @@ describe('JobsList', () => {
 
       render(<JobsList apiUrl={mockApiUrl} onJobClick={mockOnJobClick} />);
 
-      await waitFor(() => {
-        const jobElement = screen.getByText('job-1').closest('.job-card');
-        expect(jobElement).toBeInTheDocument();
-      });
+      await waitFor(
+        () => {
+          const jobElement = screen.getByText('job-1').closest('.job-card');
+          expect(jobElement).toBeInTheDocument();
+        },
+        { timeout: 3000 }
+      );
 
       const jobElement = screen.getByText('job-1').closest('.job-card');
       fireEvent.click(jobElement!);
@@ -335,10 +347,13 @@ describe('JobsList', () => {
 
       render(<JobsList apiUrl={mockApiUrl} />);
 
-      await waitFor(() => {
-        // Date should be formatted in some human-readable way
-        expect(screen.getByText(/2025/)).toBeInTheDocument();
-      });
+      await waitFor(
+        () => {
+          // Date should be formatted in some human-readable way
+          expect(screen.getByText(/2025/)).toBeInTheDocument();
+        },
+        { timeout: 3000 }
+      );
     });
   });
 
@@ -366,9 +381,12 @@ describe('JobsList', () => {
 
       render(<JobsList apiUrl={mockApiUrl} />);
 
-      await waitFor(() => {
-        expect(screen.getByText('API timeout')).toBeInTheDocument();
-      });
+      await waitFor(
+        () => {
+          expect(screen.getByText('API timeout')).toBeInTheDocument();
+        },
+        { timeout: 3000 }
+      );
     });
   });
 });

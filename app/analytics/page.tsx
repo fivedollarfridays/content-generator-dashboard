@@ -37,23 +37,13 @@ const AnalyticsPage: React.FC = (): JSX.Element => {
   const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
   /**
-   * Fetch analytics data from API or use mock data
+   * Fetch analytics data from toombos-backend API
    */
   const fetchAnalytics = useCallback(async (): Promise<void> => {
     setLoading(true);
     setError(null);
 
     try {
-      // Use mock data for development/testing
-      const { mockDataStore } = await import('@/lib/utils/mock-data-generator');
-      const mockAnalyticsOverview = mockDataStore.getAnalyticsOverview();
-
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 500));
-
-      setAnalytics(mockAnalyticsOverview);
-
-      /* Uncomment this block when backend API is ready:
       const apiKey = localStorage.getItem('api_key') || '';
       const { ContentGeneratorAPI } = await import('@/lib/api/api-client');
       const api = new ContentGeneratorAPI(API_URL, apiKey);
@@ -84,13 +74,12 @@ const AnalyticsPage: React.FC = (): JSX.Element => {
       } else {
         setError(response.error?.message || 'Failed to fetch analytics');
       }
-      */
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unknown error occurred');
     } finally {
       setLoading(false);
     }
-  }, [timeRange]);
+  }, [API_URL, timeRange]);
 
   /**
    * Fetch analytics on mount and when time range changes

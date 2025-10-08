@@ -3,7 +3,14 @@
     "allow": [
       "Bash(git commit:*)",
       "Bash(npm test:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(npm run test:coverage:*)",
+      "Bash(if [ -f coverage/coverage-summary.json ])",
+      "Bash(then cat coverage/coverage-summary.json)",
+      "Bash(else echo \"No coverage file found\")",
+      "Bash(fi)",
+      "Bash(xargs:*)",
+      "Bash(Select-String -Pattern \"Tests:|PASS|FAIL|✓|✕\" -Context 0,1)"
     ],
     "deny": [],
     "ask": []
