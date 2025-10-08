@@ -106,19 +106,25 @@ describe('ErrorBoundary', () => {
       // Update to not throw error
       shouldThrow = false;
 
-      const tryAgainButton = screen.getByText('Try Again');
-      await user.click(tryAgainButton);
-
-      // Should attempt to re-render children
+      // Rerender with updated prop BEFORE clicking Try Again
       rerender(
         <ErrorBoundary>
           <ThrowError shouldThrow={shouldThrow} />
         </ErrorBoundary>
       );
 
-      await waitFor(() => {
-        expect(screen.getByText('No error')).toBeInTheDocument();
-      });
+      // Wait a bit for rerender to complete
+      await new Promise(resolve => setTimeout(resolve, 100));
+
+      const tryAgainButton = screen.getByText('Try Again');
+      await user.click(tryAgainButton);
+
+      await waitFor(
+        () => {
+          expect(screen.getByText('No error')).toBeInTheDocument();
+        },
+        { timeout: 3000 }
+      );
     });
 
     it('should have Go to Home button', () => {
@@ -182,19 +188,27 @@ describe('ErrorBoundary', () => {
         </ErrorBoundary>
       );
 
-      const resetButton = screen.getByText('Custom Reset');
-      await user.click(resetButton);
-
       shouldThrow = false;
+
+      // Rerender with updated prop BEFORE clicking
       rerender(
         <ErrorBoundary fallback={customFallback}>
           <ThrowError shouldThrow={shouldThrow} />
         </ErrorBoundary>
       );
 
-      await waitFor(() => {
-        expect(screen.getByText('No error')).toBeInTheDocument();
-      });
+      // Wait a bit for rerender to complete
+      await new Promise(resolve => setTimeout(resolve, 100));
+
+      const resetButton = screen.getByText('Custom Reset');
+      await user.click(resetButton);
+
+      await waitFor(
+        () => {
+          expect(screen.getByText('No error')).toBeInTheDocument();
+        },
+        { timeout: 3000 }
+      );
     });
   });
 
@@ -446,18 +460,26 @@ describe('SimpleErrorBoundary', () => {
       expect(screen.getByText(/Error:/)).toBeInTheDocument();
 
       shouldThrow = false;
-      const tryAgainButton = screen.getByText('Try again');
-      await user.click(tryAgainButton);
 
+      // Rerender with updated prop BEFORE clicking Try again
       rerender(
         <SimpleErrorBoundary>
           <ThrowError shouldThrow={shouldThrow} />
         </SimpleErrorBoundary>
       );
 
-      await waitFor(() => {
-        expect(screen.getByText('No error')).toBeInTheDocument();
-      });
+      // Wait a bit for rerender to complete
+      await new Promise(resolve => setTimeout(resolve, 100));
+
+      const tryAgainButton = screen.getByText('Try again');
+      await user.click(tryAgainButton);
+
+      await waitFor(
+        () => {
+          expect(screen.getByText('No error')).toBeInTheDocument();
+        },
+        { timeout: 3000 }
+      );
     });
   });
 
@@ -551,21 +573,29 @@ describe('ErrorBoundary Edge Cases', () => {
       </ErrorBoundary>
     );
 
-    // Rapid clicks
-    const tryAgainButton = screen.getByText('Try Again');
-    await user.click(tryAgainButton);
-    await user.click(tryAgainButton);
-    await user.click(tryAgainButton);
-
     shouldThrow = false;
+
+    // Rerender with updated prop BEFORE clicking
     rerender(
       <ErrorBoundary>
         <ThrowError shouldThrow={shouldThrow} />
       </ErrorBoundary>
     );
 
-    await waitFor(() => {
-      expect(screen.getByText('No error')).toBeInTheDocument();
-    });
+    // Wait a bit for rerender to complete
+    await new Promise(resolve => setTimeout(resolve, 100));
+
+    // Rapid clicks
+    const tryAgainButton = screen.getByText('Try Again');
+    await user.click(tryAgainButton);
+    await user.click(tryAgainButton);
+    await user.click(tryAgainButton);
+
+    await waitFor(
+      () => {
+        expect(screen.getByText('No error')).toBeInTheDocument();
+      },
+      { timeout: 3000 }
+    );
   });
 });
