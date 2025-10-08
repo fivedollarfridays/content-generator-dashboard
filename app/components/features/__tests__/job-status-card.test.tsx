@@ -570,7 +570,8 @@ describe('JobStatusCard', () => {
 
       render(<JobStatusCard job={job} />);
 
-      expect(screen.getByText('correlati')).toBeInTheDocument();
+      // correlation_id is displayed as first 8 characters only
+      expect(screen.getByText('correlat')).toBeInTheDocument();
       expect(screen.getByText('Scheduled')).toBeInTheDocument();
       expect(screen.getByText('Started')).toBeInTheDocument();
       expect(screen.getByText('Completed')).toBeInTheDocument();
