@@ -1,13 +1,14 @@
 /**
  * Jobs Page Tests
  *
- * Test suite for jobs listing and management page
+ * Comprehensive test suite for jobs listing and management page
  */
 
 import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
+import type { SyncJob } from '@/types/content-generator';
 
 // Mock all dependencies before imports
 jest.mock('next/navigation', () => ({
@@ -23,55 +24,197 @@ jest.mock('@/app/hooks', () => ({
   useWebSocket: jest.fn(),
   WebSocketState: {
     CONNECTING: 0,
-    OPEN: 1,
-    CLOSING: 2,
-    CLOSED: 3,
+    CONNECTED: 1,
+    DISCONNECTED: 2,
+    ERROR: 3,
   },
 }));
 
+// Mock child components with testable props
 jest.mock('@/app/components/features/jobs-list', () => {
-  return function MockJobsList() {
-    return <div data-testid="jobs-list">Jobs List Component</div>;
+  return function MockJobsList({
+    onJobClick,
+    onToggleSelection,
+    selectedJobs,
+  }: any) {
+    const mockJob: SyncJob = {
+      job_id: 'test-job-123',
+      document_id: 'doc-123',
+      status: 'completed',
+      channels: ['email'],
+      created_at: '2025-01-01T00:00:00Z',
+      completed_at: '2025-01-01T00:05:00Z',
+      progress: { percent: 100, message: 'Done' },
+    };
+
+    return (
+      <div data-testid="jobs-list">
+        <div data-testid="selected-count">{selectedJobs?.length || 0}</div>
+        <button
+          data-testid="job-click-btn"
+          onClick={() => onJobClick?.(mockJob)}
+        >
+          Click Job
+        </button>
+        <button
+          data-testid="toggle-selection-btn"
+          onClick={() => onToggleSelection?.(mockJob)}
+        >
+          Toggle Selection
+        </button>
+      </div>
+    );
   };
 });
 
 jest.mock('@/app/components/features/job-status-card', () => {
-  return function MockJobStatusCard() {
-    return <div data-testid="job-status-card">Job Status Card</div>;
+  return function MockJobStatusCard({ job, onRetry, onCancel }: any) {
+    return (
+      <div data-testid="job-status-card">
+        <div data-testid="card-job-id">{job?.job_id}</div>
+        <button data-testid="retry-btn" onClick={() => onRetry?.(job?.job_id)}>
+          Retry
+        </button>
+        <button
+          data-testid="cancel-btn"
+          onClick={() => onCancel?.(job?.job_id)}
+        >
+          Cancel
+        </button>
+      </div>
+    );
   };
 });
 
 jest.mock('@/app/components/features/advanced-job-filters', () => {
-  return function MockAdvancedJobFilters() {
-    return <div data-testid="advanced-job-filters">Advanced Filters</div>;
+  return function MockAdvancedJobFilters({
+    filters,
+    onFiltersChange,
+    onReset,
+  }: any) {
+    return (
+      <div data-testid="advanced-job-filters">
+        <div data-testid="filter-status">{filters?.status || 'all'}</div>
+        <button
+          data-testid="change-filter-btn"
+          onClick={() =>
+            onFiltersChange?.({
+              ...filters,
+              status: 'pending',
+              search: 'test-search',
+            })
+          }
+        >
+          Change Filter
+        </button>
+        <button data-testid="reset-filter-btn" onClick={onReset}>
+          Reset
+        </button>
+      </div>
+    );
   };
 });
 
 jest.mock('@/app/components/features/batch-job-operations', () => {
-  return function MockBatchJobOperations() {
-    return <div data-testid="batch-job-operations">Batch Operations</div>;
+  return function MockBatchJobOperations({
+    selectedJobs,
+    onClearSelection,
+    onBatchRetry,
+    onBatchCancel,
+    onBatchExport,
+  }: any) {
+    return (
+      <div data-testid="batch-job-operations">
+        <div data-testid="batch-selected-count">
+          {selectedJobs?.length || 0}
+        </div>
+        <button data-testid="clear-selection-btn" onClick={onClearSelection}>
+          Clear
+        </button>
+        <button
+          data-testid="batch-retry-btn"
+          onClick={() =>
+            onBatchRetry?.(selectedJobs?.map((j: any) => j.job_id) || [])
+          }
+        >
+          Batch Retry
+        </button>
+        <button
+          data-testid="batch-cancel-btn"
+          onClick={() =>
+            onBatchCancel?.(selectedJobs?.map((j: any) => j.job_id) || [])
+          }
+        >
+          Batch Cancel
+        </button>
+        <button
+          data-testid="batch-export-csv-btn"
+          onClick={() => onBatchExport?.(selectedJobs || [], 'csv')}
+        >
+          Export CSV
+        </button>
+        <button
+          data-testid="batch-export-json-btn"
+          onClick={() => onBatchExport?.(selectedJobs || [], 'json')}
+        >
+          Export JSON
+        </button>
+      </div>
+    );
   };
 });
 
 jest.mock('@/app/components/features/filter-presets', () => {
-  return function MockFilterPresets() {
-    return <div data-testid="filter-presets">Filter Presets</div>;
+  return function MockFilterPresets({ currentFilters, onApplyPreset }: any) {
+    return (
+      <div data-testid="filter-presets">
+        <button
+          data-testid="apply-preset-btn"
+          onClick={() =>
+            onApplyPreset?.({
+              search: 'preset-search',
+              status: 'failed',
+              channels: ['email'],
+              dateRange: { from: '', to: '' },
+            })
+          }
+        >
+          Apply Preset
+        </button>
+      </div>
+    );
   };
 });
+
+// Mock API client
+jest.mock('@/lib/api/api-client', () => ({
+  ContentGeneratorAPI: jest.fn().mockImplementation(() => ({
+    retryJob: jest.fn().mockResolvedValue({
+      success: true,
+      data: { job_id: 'new-job-456' },
+    }),
+    cancelJob: jest.fn().mockResolvedValue({
+      success: true,
+      data: { cancelled: true },
+    }),
+  })),
+}));
 
 // Import after mocks
 import JobsPage from '../page';
 
 const { useSearchParams } = require('next/navigation');
 const { useAuth, useToast } = require('@/app/contexts');
-const { useWebSocket } = require('@/app/hooks');
+const { useWebSocket, WebSocketState } = require('@/app/hooks');
 
 describe('JobsPage', () => {
   let mockToast: any;
   let mockSearchParams: any;
+  let mockUseWebSocket: any;
 
   beforeEach(() => {
     jest.clearAllMocks();
+    jest.useFakeTimers();
 
     // Mock toast
     mockToast = {
@@ -90,162 +233,498 @@ describe('JobsPage', () => {
 
     // Mock search params
     mockSearchParams = {
-      get: jest.fn(),
+      get: jest.fn().mockReturnValue(null),
     };
     useSearchParams.mockReturnValue(mockSearchParams);
 
     // Mock WebSocket
-    useWebSocket.mockReturnValue({
-      isConnected: true,
-      connectionState: 1,
-      send: jest.fn(),
+    mockUseWebSocket = {
+      state: WebSocketState.CONNECTED,
       lastMessage: null,
-    });
+    };
+    useWebSocket.mockReturnValue(mockUseWebSocket);
+  });
+
+  afterEach(() => {
+    jest.runOnlyPendingTimers();
+    jest.useRealTimers();
   });
 
   describe('Page Rendering', () => {
-    it('should render jobs page', () => {
+    it('should render jobs page with title', () => {
       render(<JobsPage />);
 
-      expect(screen.getByTestId('jobs-list')).toBeInTheDocument();
+      expect(screen.getByText('Content Jobs')).toBeInTheDocument();
+      expect(
+        screen.getByText('Monitor and manage your content generation jobs')
+      ).toBeInTheDocument();
     });
 
     it('should render all major components', () => {
       render(<JobsPage />);
 
       expect(screen.getByTestId('jobs-list')).toBeInTheDocument();
-      expect(screen.getByTestId('job-status-card')).toBeInTheDocument();
       expect(screen.getByTestId('advanced-job-filters')).toBeInTheDocument();
       expect(screen.getByTestId('batch-job-operations')).toBeInTheDocument();
       expect(screen.getByTestId('filter-presets')).toBeInTheDocument();
     });
 
-    it('should render within Suspense boundary', () => {
+    it('should render info cards', () => {
       render(<JobsPage />);
 
-      // Should render without throwing
-      expect(screen.getByTestId('jobs-list')).toBeInTheDocument();
+      expect(screen.getByText('Real-time Updates')).toBeInTheDocument();
+      expect(screen.getByText('WebSocket Status')).toBeInTheDocument();
+      expect(screen.getByText('Job Actions')).toBeInTheDocument();
+    });
+
+    it('should render generate new content link', () => {
+      render(<JobsPage />);
+
+      const link = screen.getByText('+ Generate New Content');
+      expect(link).toBeInTheDocument();
+      expect(link.closest('a')).toHaveAttribute('href', '/generate');
     });
   });
 
-  describe('Authentication Integration', () => {
-    it('should handle authenticated state', () => {
-      useAuth.mockReturnValue({
-        apiKey: 'valid-key',
-        isAuthenticated: true,
+  describe('WebSocket Status Display', () => {
+    it('should show connected status', () => {
+      useWebSocket.mockReturnValue({
+        state: WebSocketState.CONNECTED,
+        lastMessage: null,
       });
 
       render(<JobsPage />);
 
-      expect(screen.getByTestId('jobs-list')).toBeInTheDocument();
+      expect(
+        screen.getByText('Real-time updates active - job changes appear instantly')
+      ).toBeInTheDocument();
     });
 
-    it('should handle missing API key', () => {
+    it('should show connecting status', () => {
+      useWebSocket.mockReturnValue({
+        state: WebSocketState.CONNECTING,
+        lastMessage: null,
+      });
+
+      render(<JobsPage />);
+
+      expect(
+        screen.getByText('Connecting to real-time updates...')
+      ).toBeInTheDocument();
+    });
+
+    it('should show error status', () => {
+      useWebSocket.mockReturnValue({
+        state: WebSocketState.ERROR,
+        lastMessage: null,
+      });
+
+      render(<JobsPage />);
+
+      expect(
+        screen.getByText('Connection error - using polling fallback')
+      ).toBeInTheDocument();
+    });
+
+    it('should show disconnected status', () => {
+      useWebSocket.mockReturnValue({
+        state: WebSocketState.DISCONNECTED,
+        lastMessage: null,
+      });
+
+      render(<JobsPage />);
+
+      expect(
+        screen.getByText('Disconnected - using polling fallback')
+      ).toBeInTheDocument();
+    });
+  });
+
+  describe('Job Highlighting', () => {
+    it('should show highlight notice when highlight param present', () => {
+      mockSearchParams.get.mockReturnValue('job-highlight-123');
+
+      render(<JobsPage />);
+
+      expect(screen.getByText(/Looking for job:/)).toBeInTheDocument();
+      expect(screen.getByText('job-highlight-123')).toBeInTheDocument();
+    });
+
+    it('should clear highlight after 5 seconds', () => {
+      mockSearchParams.get.mockReturnValue('job-highlight-123');
+
+      render(<JobsPage />);
+
+      expect(screen.getByText(/Looking for job:/)).toBeInTheDocument();
+
+      act(() => {
+        jest.advanceTimersByTime(5000);
+      });
+
+      expect(screen.queryByText(/Looking for job:/)).not.toBeInTheDocument();
+    });
+
+    it('should not show highlight notice when no param', () => {
+      mockSearchParams.get.mockReturnValue(null);
+
+      render(<JobsPage />);
+
+      expect(screen.queryByText(/Looking for job:/)).not.toBeInTheDocument();
+    });
+  });
+
+  describe('Filter Management', () => {
+    it('should initialize with default filters', () => {
+      render(<JobsPage />);
+
+      expect(screen.getByTestId('filter-status')).toHaveTextContent('all');
+    });
+
+    it('should update filters when changed', async () => {
+      const user = userEvent.setup({ delay: null });
+      render(<JobsPage />);
+
+      const changeBtn = screen.getByTestId('change-filter-btn');
+      await user.click(changeBtn);
+
+      await waitFor(() => {
+        expect(screen.getByTestId('filter-status')).toHaveTextContent('pending');
+      });
+    });
+
+    it('should reset filters when reset clicked', async () => {
+      const user = userEvent.setup({ delay: null });
+      render(<JobsPage />);
+
+      // First change the filters
+      const changeBtn = screen.getByTestId('change-filter-btn');
+      await user.click(changeBtn);
+
+      await waitFor(() => {
+        expect(screen.getByTestId('filter-status')).toHaveTextContent('pending');
+      });
+
+      // Then reset
+      const resetBtn = screen.getByTestId('reset-filter-btn');
+      await user.click(resetBtn);
+
+      await waitFor(() => {
+        expect(screen.getByTestId('filter-status')).toHaveTextContent('all');
+      });
+    });
+
+    it('should apply preset filters', async () => {
+      const user = userEvent.setup({ delay: null });
+      render(<JobsPage />);
+
+      const applyPresetBtn = screen.getByTestId('apply-preset-btn');
+      await user.click(applyPresetBtn);
+
+      await waitFor(() => {
+        expect(screen.getByTestId('filter-status')).toHaveTextContent('failed');
+      });
+    });
+  });
+
+  describe('Job Selection', () => {
+    it('should toggle job selection', async () => {
+      const user = userEvent.setup({ delay: null });
+      render(<JobsPage />);
+
+      const toggleBtn = screen.getByTestId('toggle-selection-btn');
+
+      // Check initial state
+      expect(screen.getByTestId('selected-count')).toHaveTextContent('0');
+
+      // Select job
+      await user.click(toggleBtn);
+
+      await waitFor(() => {
+        expect(screen.getByTestId('selected-count')).toHaveTextContent('1');
+      });
+
+      // Deselect job
+      await user.click(toggleBtn);
+
+      await waitFor(() => {
+        expect(screen.getByTestId('selected-count')).toHaveTextContent('0');
+      });
+    });
+
+    it('should clear all selections', async () => {
+      const user = userEvent.setup({ delay: null });
+      render(<JobsPage />);
+
+      // Select a job
+      const toggleBtn = screen.getByTestId('toggle-selection-btn');
+      await user.click(toggleBtn);
+
+      await waitFor(() => {
+        expect(screen.getByTestId('batch-selected-count')).toHaveTextContent('1');
+      });
+
+      // Clear selection
+      const clearBtn = screen.getByTestId('clear-selection-btn');
+      await user.click(clearBtn);
+
+      await waitFor(() => {
+        expect(screen.getByTestId('batch-selected-count')).toHaveTextContent('0');
+      });
+    });
+  });
+
+  describe('Job Details Modal', () => {
+    it('should open modal when job clicked', async () => {
+      const user = userEvent.setup({ delay: null });
+      render(<JobsPage />);
+
+      const jobClickBtn = screen.getByTestId('job-click-btn');
+      await user.click(jobClickBtn);
+
+      await waitFor(() => {
+        expect(screen.getByText('Job Details')).toBeInTheDocument();
+        expect(screen.getByTestId('card-job-id')).toHaveTextContent(
+          'test-job-123'
+        );
+      });
+    });
+
+    it('should close modal when close button clicked', async () => {
+      const user = userEvent.setup({ delay: null });
+      render(<JobsPage />);
+
+      // Open modal
+      const jobClickBtn = screen.getByTestId('job-click-btn');
+      await user.click(jobClickBtn);
+
+      await waitFor(() => {
+        expect(screen.getByText('Job Details')).toBeInTheDocument();
+      });
+
+      // Close modal
+      const closeBtn = screen.getAllByRole('button').find(btn => {
+        const svg = btn.querySelector('svg');
+        return svg !== null && btn.getAttribute('class')?.includes('text-gray-500');
+      });
+      if (closeBtn) {
+        await user.click(closeBtn);
+      }
+
+      await waitFor(() => {
+        expect(screen.queryByText('Job Details')).not.toBeInTheDocument();
+      });
+    });
+
+    it('should close modal when backdrop clicked', async () => {
+      const user = userEvent.setup({ delay: null });
+      render(<JobsPage />);
+
+      // Open modal
+      const jobClickBtn = screen.getByTestId('job-click-btn');
+      await user.click(jobClickBtn);
+
+      await waitFor(() => {
+        expect(screen.getByText('Job Details')).toBeInTheDocument();
+      });
+
+      // Click backdrop (the outer div with fixed positioning)
+      const backdrop = screen
+        .getByText('Job Details')
+        .closest('.bg-white')
+        ?.parentElement;
+      if (backdrop) {
+        await user.click(backdrop);
+      }
+
+      await waitFor(() => {
+        expect(screen.queryByText('Job Details')).not.toBeInTheDocument();
+      });
+    });
+  });
+
+  describe('Job Actions', () => {
+    it('should handle job retry without API key', async () => {
       useAuth.mockReturnValue({
         apiKey: null,
         isAuthenticated: false,
       });
 
+      const user = userEvent.setup({ delay: null });
       render(<JobsPage />);
 
-      expect(screen.getByTestId('jobs-list')).toBeInTheDocument();
+      // Open modal
+      const jobClickBtn = screen.getByTestId('job-click-btn');
+      await user.click(jobClickBtn);
+
+      await waitFor(() => {
+        expect(screen.getByTestId('retry-btn')).toBeInTheDocument();
+      });
+
+      // Try to retry
+      const retryBtn = screen.getByTestId('retry-btn');
+      await user.click(retryBtn);
+
+      await waitFor(() => {
+        expect(mockToast.error).toHaveBeenCalledWith(
+          'No API key available for retry'
+        );
+      });
+    });
+
+    it('should handle job cancel without API key', async () => {
+      useAuth.mockReturnValue({
+        apiKey: null,
+        isAuthenticated: false,
+      });
+
+      const user = userEvent.setup({ delay: null });
+      render(<JobsPage />);
+
+      // Open modal
+      const jobClickBtn = screen.getByTestId('job-click-btn');
+      await user.click(jobClickBtn);
+
+      await waitFor(() => {
+        expect(screen.getByTestId('cancel-btn')).toBeInTheDocument();
+      });
+
+      // Try to cancel
+      const cancelBtn = screen.getByTestId('cancel-btn');
+      await user.click(cancelBtn);
+
+      await waitFor(() => {
+        expect(mockToast.error).toHaveBeenCalledWith(
+          'No API key available for cancel'
+        );
+      });
     });
   });
 
-  describe('Search Params Integration', () => {
-    it('should read highlight parameter from URL', () => {
-      mockSearchParams.get.mockReturnValue('job-123');
-
-      render(<JobsPage />);
-
-      expect(mockSearchParams.get).toHaveBeenCalledWith('highlight');
-    });
-
-    it('should handle missing highlight parameter', () => {
-      mockSearchParams.get.mockReturnValue(null);
-
-      render(<JobsPage />);
-
-      expect(mockSearchParams.get).toHaveBeenCalled();
-    });
-  });
-
-  describe('WebSocket Integration', () => {
-    it('should connect to WebSocket', () => {
-      render(<JobsPage />);
-
-      expect(useWebSocket).toHaveBeenCalled();
-    });
-
-    it('should handle WebSocket connected state', () => {
-      useWebSocket.mockReturnValue({
-        isConnected: true,
-        connectionState: 1,
-        send: jest.fn(),
-        lastMessage: null,
+  describe('Batch Operations', () => {
+    it('should handle batch retry without API key', async () => {
+      useAuth.mockReturnValue({
+        apiKey: null,
+        isAuthenticated: false,
       });
 
+      const user = userEvent.setup({ delay: null });
       render(<JobsPage />);
 
-      expect(screen.getByTestId('jobs-list')).toBeInTheDocument();
-    });
+      // Select a job first
+      const toggleBtn = screen.getByTestId('toggle-selection-btn');
+      await user.click(toggleBtn);
 
-    it('should handle WebSocket disconnected state', () => {
-      useWebSocket.mockReturnValue({
-        isConnected: false,
-        connectionState: 3,
-        send: jest.fn(),
-        lastMessage: null,
+      await waitFor(() => {
+        expect(screen.getByTestId('batch-selected-count')).toHaveTextContent('1');
       });
 
-      render(<JobsPage />);
+      // Try batch retry
+      const batchRetryBtn = screen.getByTestId('batch-retry-btn');
+      await user.click(batchRetryBtn);
 
-      expect(screen.getByTestId('jobs-list')).toBeInTheDocument();
+      await waitFor(() => {
+        expect(mockToast.error).toHaveBeenCalledWith(
+          'No API key available for batch retry'
+        );
+      });
     });
 
-    it('should handle WebSocket messages', () => {
-      useWebSocket.mockReturnValue({
-        isConnected: true,
-        connectionState: 1,
-        send: jest.fn(),
-        lastMessage: { type: 'job_update', data: {} },
+    it('should handle batch cancel without API key', async () => {
+      useAuth.mockReturnValue({
+        apiKey: null,
+        isAuthenticated: false,
       });
 
+      const user = userEvent.setup({ delay: null });
       render(<JobsPage />);
 
-      expect(screen.getByTestId('jobs-list')).toBeInTheDocument();
-    });
-  });
+      // Select a job first
+      const toggleBtn = screen.getByTestId('toggle-selection-btn');
+      await user.click(toggleBtn);
 
-  describe('Component Integration', () => {
-    it('should render JobsList component', () => {
-      render(<JobsPage />);
+      // Try batch cancel
+      const batchCancelBtn = screen.getByTestId('batch-cancel-btn');
+      await user.click(batchCancelBtn);
 
-      expect(screen.getByTestId('jobs-list')).toBeInTheDocument();
-    });
-
-    it('should render JobStatusCard component', () => {
-      render(<JobsPage />);
-
-      expect(screen.getByTestId('job-status-card')).toBeInTheDocument();
-    });
-
-    it('should render AdvancedJobFilters component', () => {
-      render(<JobsPage />);
-
-      expect(screen.getByTestId('advanced-job-filters')).toBeInTheDocument();
+      await waitFor(() => {
+        expect(mockToast.error).toHaveBeenCalledWith(
+          'No API key available for batch cancel'
+        );
+      });
     });
 
-    it('should render BatchJobOperations component', () => {
+    it('should export jobs to CSV', async () => {
+      // Mock document methods
+      const mockCreateElement = jest.spyOn(document, 'createElement');
+      const mockCreateObjectURL = jest
+        .fn()
+        .mockReturnValue('blob:mock-url');
+      const mockRevokeObjectURL = jest.fn();
+      global.URL.createObjectURL = mockCreateObjectURL;
+      global.URL.revokeObjectURL = mockRevokeObjectURL;
+
+      const mockLink = {
+        click: jest.fn(),
+        setAttribute: jest.fn(),
+        style: {},
+      };
+      mockCreateElement.mockReturnValue(mockLink as any);
+
+      const user = userEvent.setup({ delay: null });
       render(<JobsPage />);
 
-      expect(screen.getByTestId('batch-job-operations')).toBeInTheDocument();
+      // Select a job
+      const toggleBtn = screen.getByTestId('toggle-selection-btn');
+      await user.click(toggleBtn);
+
+      // Export to CSV
+      const exportCsvBtn = screen.getByTestId('batch-export-csv-btn');
+      await user.click(exportCsvBtn);
+
+      await waitFor(() => {
+        expect(mockToast.success).toHaveBeenCalledWith(
+          expect.stringContaining('Exported 1 jobs to CSV')
+        );
+      });
+
+      mockCreateElement.mockRestore();
     });
 
-    it('should render FilterPresets component', () => {
+    it('should export jobs to JSON', async () => {
+      // Mock document methods
+      const mockCreateElement = jest.spyOn(document, 'createElement');
+      const mockCreateObjectURL = jest
+        .fn()
+        .mockReturnValue('blob:mock-url');
+      const mockRevokeObjectURL = jest.fn();
+      global.URL.createObjectURL = mockCreateObjectURL;
+      global.URL.revokeObjectURL = mockRevokeObjectURL;
+
+      const mockLink = {
+        click: jest.fn(),
+        setAttribute: jest.fn(),
+        style: {},
+      };
+      mockCreateElement.mockReturnValue(mockLink as any);
+
+      const user = userEvent.setup({ delay: null });
       render(<JobsPage />);
 
-      expect(screen.getByTestId('filter-presets')).toBeInTheDocument();
+      // Select a job
+      const toggleBtn = screen.getByTestId('toggle-selection-btn');
+      await user.click(toggleBtn);
+
+      // Export to JSON
+      const exportJsonBtn = screen.getByTestId('batch-export-json-btn');
+      await user.click(exportJsonBtn);
+
+      await waitFor(() => {
+        expect(mockToast.success).toHaveBeenCalledWith(
+          expect.stringContaining('Exported 1 jobs to JSON')
+        );
+      });
+
+      mockCreateElement.mockRestore();
     });
   });
 
@@ -273,6 +752,24 @@ describe('JobsPage', () => {
     });
   });
 
+  describe('Suspense Behavior', () => {
+    it('should render within Suspense boundary', () => {
+      render(<JobsPage />);
+
+      expect(screen.getByTestId('jobs-list')).toBeInTheDocument();
+    });
+
+    it('should handle multiple renders', () => {
+      const { rerender } = render(<JobsPage />);
+
+      expect(screen.getByTestId('jobs-list')).toBeInTheDocument();
+
+      rerender(<JobsPage />);
+
+      expect(screen.getByTestId('jobs-list')).toBeInTheDocument();
+    });
+  });
+
   describe('Error Handling', () => {
     it('should handle render without crashing', () => {
       expect(() => {
@@ -288,91 +785,21 @@ describe('JobsPage', () => {
         render(<JobsPage />);
       }).not.toThrow();
     });
-
-    it('should handle WebSocket errors gracefully', () => {
-      useWebSocket.mockReturnValue({
-        isConnected: false,
-        connectionState: 3,
-        send: jest.fn(),
-        lastMessage: null,
-        error: new Error('Connection failed'),
-      });
-
-      render(<JobsPage />);
-
-      expect(screen.getByTestId('jobs-list')).toBeInTheDocument();
-    });
-  });
-
-  describe('State Management', () => {
-    it('should initialize with default state', () => {
-      render(<JobsPage />);
-
-      // Page renders successfully with default state
-      expect(screen.getByTestId('jobs-list')).toBeInTheDocument();
-    });
-
-    it('should handle multiple renders', () => {
-      const { rerender } = render(<JobsPage />);
-
-      expect(screen.getByTestId('jobs-list')).toBeInTheDocument();
-
-      rerender(<JobsPage />);
-
-      expect(screen.getByTestId('jobs-list')).toBeInTheDocument();
-    });
-  });
-
-  describe('Toast Integration', () => {
-    it('should have toast context available', () => {
-      render(<JobsPage />);
-
-      expect(useToast).toHaveBeenCalled();
-    });
-
-    it('should handle toast methods', () => {
-      const customToast = {
-        success: jest.fn(),
-        error: jest.fn(),
-        warning: jest.fn(),
-        info: jest.fn(),
-      };
-      useToast.mockReturnValue(customToast);
-
-      render(<JobsPage />);
-
-      expect(screen.getByTestId('jobs-list')).toBeInTheDocument();
-    });
-  });
-
-  describe('Suspense Behavior', () => {
-    it('should wrap content in Suspense', () => {
-      render(<JobsPage />);
-
-      // Should render without Suspense errors
-      expect(screen.getByTestId('jobs-list')).toBeInTheDocument();
-    });
-
-    it('should handle Suspense fallback', () => {
-      // Mock to trigger Suspense
-      const { container } = render(<JobsPage />);
-
-      expect(container).toBeInTheDocument();
-    });
   });
 
   describe('Accessibility', () => {
-    it('should render accessible structure', () => {
-      const { container } = render(<JobsPage />);
-
-      expect(container).toBeInTheDocument();
-    });
-
-    it('should have proper component hierarchy', () => {
+    it('should have semantic heading structure', () => {
       render(<JobsPage />);
 
-      expect(screen.getByTestId('jobs-list')).toBeInTheDocument();
-      expect(screen.getByTestId('advanced-job-filters')).toBeInTheDocument();
+      const mainHeading = screen.getByRole('heading', { level: 1 });
+      expect(mainHeading).toHaveTextContent('Content Jobs');
+    });
+
+    it('should have accessible link', () => {
+      render(<JobsPage />);
+
+      const link = screen.getByRole('link', { name: /Generate New Content/i });
+      expect(link).toBeInTheDocument();
     });
   });
 });

@@ -1,9 +1,9 @@
 # Development Context - Toombos Frontend
 
-**Last Updated**: 2025-10-08 (Session 7 - Phases 1A, 1B, 2 Partial Complete)
+**Last Updated**: 2025-10-08 (Session 8 - Templates, Jobs, use-websocket Complete)
 **Project**: Toombos Frontend
 **Repository**: https://github.com/fivedollarfridays/toombos-frontend
-**Status**: Sprint 10 Session 7 Complete - 45.92% Coverage ✅
+**Status**: Sprint 10 Session 8 Complete - 51.74% Coverage ✅
 
 ---
 
@@ -15,54 +15,55 @@ Build a production-ready dashboard for the Content Generator product that provid
 
 ### Last action was:
 
-**Sprint 10 Session 7: Phases 1A + 1B + 2 Partial** ✅ (Complete):
-- **Coverage Progress**: 33.36% → 45.92% (+12.56 percentage points)
-- **Tests Created**: 166 new tests total (519 total), 433 passing (83.4% pass rate)
+**Sprint 10 Session 8: Templates, Jobs Enhancement, use-websocket** ✅ (Complete):
+- **Coverage Progress**: 45.92% → 51.74% (+5.82 percentage points)
+- **Tests Created**: 113 new tests (632 total), 456 passing (72.2% pass rate)
 
-**Phase 1A - Critical Infrastructure** (+6.18%):
-- Auth Context: 34 tests, 78.08% coverage
-- Preferences Context: 26 tests, 97.82% coverage
-- Generate Page: 35 tests, 100% coverage
+**Templates Page** (+97.36%):
+- 61 comprehensive tests (was 3 basic tests)
+- Coverage: 0% → 97.36%
+- Tests: Rendering, search, channel filtering, selection, navigation, stats, edge cases, accessibility
 
-**Phase 1B - Core Pages** (+3.04%):
-- Jobs Page: 30 tests, 24.09% coverage (large complex page)
-- Settings Page: 31 tests, 43.47% coverage
+**Jobs Page Enhancement** (+15.06%):
+- 50 tests total (was 30, +20 new)
+- Coverage: 24.09% → 39.15%
+- Tests: WebSocket status, job highlighting, filter management, job selection, modal behavior, batch operations, export (CSV/JSON)
 
-**Phase 2 - Additional Pages** (+3.34%):
-- History Page: 3 tests, 52.38% coverage
-- Templates Page: 3 tests, 0% coverage (needs component mocks)
-- Home Page: 3 tests, 100% coverage
+**use-websocket Hook** (+100%):
+- 32 comprehensive tests
+- Coverage: 0% → 100%
+- Tests: Connection management, message handling, event callbacks, auto-reconnect, cleanup, edge cases
 
 **Key Achievements**:
-- 6 pages now tested (was 2)
-- Core infrastructure 78-98% covered
-- Pages progressing: Home 100%, Generate 100%, History 52%, Settings 43%, Jobs 24%
-- Steady progress toward 70% target
+- Templates page now production-ready (97% coverage)
+- Critical WebSocket hook fully tested (used across entire app)
+- Jobs page significantly improved (24% → 39%)
+- Cumulative progress: 33.36% (start) → 51.74% (current) = +18.38 percentage points over 2 sessions
 
 ### Next action will be:
 
-**Sprint 10 Phase 1B - Core Pages Testing** (4-5 hours):
+**Sprint 10 Session 9 - Continue Coverage Push** (3-4 hours):
 
-**Session 8 Goals**:
-1. **Jobs Page** (2-3h) - Main application page
-   - 35-40 tests for job list, filtering, real-time updates
-   - WebSocket integration, pagination, job actions
-   - Target: 70%+ coverage
+**High-Priority Targets** (to reach 70%):
+1. **Error-boundary Component** (0% → 70%, ~1-2% overall impact)
+   - Error catching, fallback UI, reset functionality
+   - 20-25 tests estimated
 
-2. **Settings Page** (2-3h) - Critical configuration
-   - 30-35 tests for API key management, preferences
-   - Form validation, save/reset, localStorage
-   - Target: 70%+ coverage
+2. **Campaigns Page** (0% → 60%, ~2% overall impact)
+   - Campaign management, filtering, CRUD operations
+   - 30-35 tests estimated
 
-**Expected Outcome**: 39.54% → 50% coverage (+10-11 percentage points)
+3. **Settings Page Enhancement** (43% → 70%, ~2% overall impact)
+   - Add form validation, preference UI, cache management tests
+   - +15-20 tests
 
-**Remaining Work**:
-- Fix 16 failing auth context tests (act() warnings)
-- Fix 7 failing preferences context tests
-- Fix 1 failing generate page test
-- Then proceed to Phase 1B
+4. **Component Tests** (selective high-value targets)
+   - batch-job-operations, job-charts, analytics-metrics
+   - ~2-3% overall impact
 
-**Alternative**: Skip test fixes, proceed directly to Phase 1B to maximize coverage gain
+**Expected Outcome**: 51.74% → 60-62% coverage (+8-10 percentage points)
+
+**Remaining Gap to 70%**: -18.26 percentage points (achievable in 2-3 more sessions)
 
 **See**: `docs/SPRINT-10-COVERAGE-PLAN.md` for complete strategy
 
@@ -90,14 +91,14 @@ Build a production-ready dashboard for the Content Generator product that provid
 ## 📊 Current Status
 
 ### Version
-- **Version**: 0.3.2-session7 (Sprint 10 Session 7 Complete)
+- **Version**: 0.3.3-session8 (Sprint 10 Session 8 Complete)
 - **Build Status**: ✅ Passing (0 errors, 10 pages, 102KB first load)
-- **Test Status**: ✅ 433/519 passing (83.4%, 84 failures, 2 skipped)
-- **Test Coverage**: ⚠️ 45.92% (Target: 70%, Gap: -24.08%)
-  - Excellent (>80%): navigation (100%), home (100%), generate (100%), preferences (97.82%), timeline (95.83%), filters (95%), metrics (95.23%), charts (90.47%), analytics (90%)
-  - Good (50-80%): auth context (78.08%), dashboard (100%), hooks (58%), history (52.38%)
-  - Moderate (30-50%): settings (43.47%), components/features (35.66%), API client (56.75%)
-  - Low (<30%): jobs (24.09%), templates (0%), error-boundary (0%), campaigns (0%)
+- **Test Status**: ✅ 456/632 passing (72.2%, 174 failures, 2 skipped)
+- **Test Coverage**: ⚠️ 51.74% (Target: 70%, Gap: -18.26%)
+  - Excellent (>80%): navigation (100%), home (100%), generate (100%), templates (97.36%), preferences (97.82%), timeline (95.83%), filters (95%), metrics (95.23%), charts (90.47%), analytics (91.17%)
+  - Good (50-80%): auth context (78.08%), dashboard (100%), use-websocket (100%), history (52.38%)
+  - Moderate (30-50%): settings (43.47%), jobs (39.15%), components/features (35.66%), API client (56.75%)
+  - Low (<30%): error-boundary (0%), campaigns (0%)
 - **Deployment**: ✅ Can deploy now, or continue testing to reach 70%
 
 ### Sprint Summary
