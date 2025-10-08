@@ -1,25 +1,7 @@
 {
   "permissions": {
     "allow": [
-      "Bash(npm install:*)",
-      "Bash(npx tsc:*)",
-      "Bash(npm run format:*)",
-      "Bash(npm run build:*)",
-      "Bash(test:*)",
-      "Bash(awk:*)",
-      "Bash(npm test:*)",
-      "Bash(npm run test:coverage:*)",
-      "Bash(git add:*)",
-      "Bash(git commit:*)",
-      "Bash(git checkout:*)",
-      "Bash(npm run dev:*)",
-      "Bash(git remote set-url:*)",
-      "Bash(npm run lint:*)",
-      "Bash(vercel:*)",
-      "Bash(git push:*)",
-      "Bash(git branch:*)",
-      "Bash(git commit -m \"$(cat <<''EOF''\ndocs: Create Sprint 10 Strategic Test Coverage Plan\n\nSprint 10 Planning Complete:\n- Created comprehensive 18-24h plan to reach 70% coverage\n- Analyzed coverage gaps: 33.36% baseline, need +36.64%\n- Designed 4-phase priority-based strategy\n- Identified blockers, risks, and contingency plans\n\nDocumentation Created:\n- docs/SPRINT-10-COVERAGE-PLAN.md (800+ lines, comprehensive strategy)\n  - Phase 1A: Auth context, Preferences context, Generate page → 42%\n  - Phase 1B: Jobs page, Settings page → 52%\n  - Phase 2: Use-websocket, History, Templates, Home pages → 62%\n  - Phase 3: Error boundary, Campaigns, Feature components → 71%\n  - Phase 4: Optional utilities and remaining components → 75%\n\nDocumentation Updated:\n- context/development.md - Sprint 10 status, Phase 1A goals\n- docs/SPRINTS-ARCHIVE.md - Sprint 10 preview and progress tracking\n\nStrategic Approach:\n- Priority matrix: High impact, low effort first\n- Test templates for consistency\n- Quality standards by file type (60-95% coverage targets)\n- Risk management and contingency plans\n- Lessons applied from Sprint 9\n\nNext Steps:\n- Session 7 (Phase 1A): Auth context (BLOCKER) + Preferences + Generate page\n- Target: 33.36% → 42% coverage (+9 percentage points)\n- Estimated: 4-5 hours\n\n🤖 Generated with Claude Code (https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
-      "Bash(git commit -m \"$(cat <<''EOF''\nfeat: Sprint 10 Phase 1A - Critical Infrastructure Tests\n\nPhase 1A Complete - Coverage: 33.36% → 39.54% (+6.18%)\n\nTest Suites Created:\n1. Auth Context Tests (34 tests)\n   - 18/34 passing (53%), 78.08% coverage\n   - Provider rendering and configuration tests\n   - API key management (set, clear, validate)\n   - localStorage persistence\n   - Error handling and edge cases\n   - withAuth HOC tests\n   - Issues: 16 tests failing (async/act timing)\n\n2. Preferences Context Tests (26 tests)\n   - 19/26 passing (73%), 97.82% coverage\n   - Provider and hook tests\n   - Notification preferences CRUD\n   - Filter preset management\n   - Display preferences (theme, itemsPerPage)\n   - localStorage persistence and cross-mount\n   - Edge cases and error handling\n   - Issues: 7 tests failing (reset/remount timing)\n\n3. Generate Page Tests (35 tests)\n   - 34/35 passing (97%), 100% coverage\n   - Page rendering and layout tests\n   - API configuration and auth integration\n   - Success/error state handling\n   - Navigation and redirects\n   - Form integration tests\n   - Help section content verification\n   - Edge cases (rapid submissions, state alternation)\n   - Issue: 1 test failing (rapid submission timing)\n\nResults:\n- Total Tests: 353 → 448 (+95 new tests)\n- Passing Tests: 311 → 382 (+71)\n- Test Pass Rate: 88.1% → 85.3%\n- Overall Coverage: 33.36% → 39.54% (+6.18%)\n\nCoverage by Area:\n- Auth Context: 0% → 78.08% ✅\n- Preferences Context: 0% → 97.82% ✅\n- Generate Page: 0% → 100% ✅\n- Overall Contexts: 37.4% → 80.91% ✅\n\nTarget vs Actual:\n- Phase 1A Target: 42% coverage\n- Actual Achieved: 39.54% coverage\n- Gap: -2.46% (missed by small margin)\n\nTechnical Approach:\n- Followed toast-context test pattern\n- Comprehensive test coverage per file\n- Mocked dependencies (useAuth, useRouter, API client)\n- localStorage mocking for persistence tests\n- userEvent for interaction testing\n- waitFor for async assertions\n\nKnown Issues:\n- 16 auth context tests: act() warnings on async validation\n- 7 preferences tests: timing issues on reset/remount\n- 1 generate page test: rapid click timing\n- Total: 24/95 tests need refinement (25% failure rate)\n\nNext Steps:\n- Phase 1B: Jobs page + Settings page tests\n- Target: 39.54% → 50% coverage (+10-11%)\n- Alternative: Fix failing tests first\n\nDocumentation:\n- Updated context/development.md with Phase 1A results\n- Session 7 complete\n\n🤖 Generated with Claude Code (https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")"
+      "Bash(git commit:*)"
     ],
     "deny": [],
     "ask": []

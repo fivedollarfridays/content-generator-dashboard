@@ -517,7 +517,7 @@ describe('JobsPage', () => {
 
     it('should close modal when backdrop clicked', async () => {
       const user = userEvent.setup({ delay: null });
-      render(<JobsPage />);
+      const { container } = render(<JobsPage />);
 
       // Open modal
       const jobClickBtn = screen.getByTestId('job-click-btn');
@@ -527,12 +527,10 @@ describe('JobsPage', () => {
         expect(screen.getByText('Job Details')).toBeInTheDocument();
       });
 
-      // Click backdrop (the outer div with fixed positioning)
-      const backdrop = screen
-        .getByText('Job Details')
-        .closest('.bg-white')
-        ?.parentElement;
+      // Click backdrop (the fixed div with bg-black bg-opacity-50)
+      const backdrop = container.querySelector('.fixed.inset-0.bg-black');
       if (backdrop) {
+        // Click at an edge to avoid hitting the modal content
         await user.click(backdrop);
       }
 
@@ -654,23 +652,20 @@ describe('JobsPage', () => {
     });
 
     it('should export jobs to CSV', async () => {
-      // Mock document methods
-      const mockCreateElement = jest.spyOn(document, 'createElement');
-      const mockCreateObjectURL = jest
-        .fn()
-        .mockReturnValue('blob:mock-url');
-      const mockRevokeObjectURL = jest.fn();
-      global.URL.createObjectURL = mockCreateObjectURL;
-      global.URL.revokeObjectURL = mockRevokeObjectURL;
-
-      const mockLink = {
-        click: jest.fn(),
-        setAttribute: jest.fn(),
-        style: {},
-      };
-      mockCreateElement.mockReturnValue(mockLink as any);
-
       const user = userEvent.setup({ delay: null });
+
+      // Mock URL methods for blob download
+      const mockCreateObjectURL = jest.fn().mockReturnValue('blob:mock-url');
+      const mockRevokeObjectURL = jest.fn();
+      const originalCreateObjectURL = URL.createObjectURL;
+      const originalRevokeObjectURL = URL.revokeObjectURL;
+      URL.createObjectURL = mockCreateObjectURL;
+      URL.revokeObjectURL = mockRevokeObjectURL;
+
+      // Mock link click
+      const mockClick = jest.fn();
+      HTMLAnchorElement.prototype.click = mockClick;
+
       render(<JobsPage />);
 
       // Select a job
@@ -687,27 +682,26 @@ describe('JobsPage', () => {
         );
       });
 
-      mockCreateElement.mockRestore();
+      // Restore original implementations
+      URL.createObjectURL = originalCreateObjectURL;
+      URL.revokeObjectURL = originalRevokeObjectURL;
     });
 
     it('should export jobs to JSON', async () => {
-      // Mock document methods
-      const mockCreateElement = jest.spyOn(document, 'createElement');
-      const mockCreateObjectURL = jest
-        .fn()
-        .mockReturnValue('blob:mock-url');
-      const mockRevokeObjectURL = jest.fn();
-      global.URL.createObjectURL = mockCreateObjectURL;
-      global.URL.revokeObjectURL = mockRevokeObjectURL;
-
-      const mockLink = {
-        click: jest.fn(),
-        setAttribute: jest.fn(),
-        style: {},
-      };
-      mockCreateElement.mockReturnValue(mockLink as any);
-
       const user = userEvent.setup({ delay: null });
+
+      // Mock URL methods for blob download
+      const mockCreateObjectURL = jest.fn().mockReturnValue('blob:mock-url');
+      const mockRevokeObjectURL = jest.fn();
+      const originalCreateObjectURL = URL.createObjectURL;
+      const originalRevokeObjectURL = URL.revokeObjectURL;
+      URL.createObjectURL = mockCreateObjectURL;
+      URL.revokeObjectURL = mockRevokeObjectURL;
+
+      // Mock link click
+      const mockClick = jest.fn();
+      HTMLAnchorElement.prototype.click = mockClick;
+
       render(<JobsPage />);
 
       // Select a job
@@ -724,7 +718,9 @@ describe('JobsPage', () => {
         );
       });
 
-      mockCreateElement.mockRestore();
+      // Restore original implementations
+      URL.createObjectURL = originalCreateObjectURL;
+      URL.revokeObjectURL = originalRevokeObjectURL;
     });
   });
 
@@ -798,7 +794,7 @@ describe('JobsPage', () => {
     it('should have accessible link', () => {
       render(<JobsPage />);
 
-      const link = screen.getByRole('link', { name: /Generate New Content/i });
+      const link = screen.getByRole('link', { name: /\+ Generate New Content/i });
       expect(link).toBeInTheDocument();
     });
   });
