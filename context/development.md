@@ -526,88 +526,102 @@ Build a production-ready dashboard for the Content Generator product that provid
 
 ### Next action will be:
 
-**Sprint 12: Toombos Design System Implementation** (In Progress)
+**Sprint 13: Test Suite Remediation** (Planned - Ready to Start)
 
-**Objective**: Implement the Toombos design system from `docs/style/toombos.css` throughout the application
+**Branch**: `feature/test-suite-remediation`
 
-**Scope**:
-1. **CSS Custom Properties Setup** (Phase 1 - 2 hours)
-   - Implement CSS variables for light/dark themes
-   - Add color tokens: bg, surface, text, accent, borders
-   - Configure typography scale with serif fonts for headings
-   - Set up theme switching with data-theme attribute
+**Objective**: Fix failing tests and achieve 100% DoD compliance by reaching 95%+ test pass rate and 70%+ coverage on all metrics.
 
-2. **Component Migration** (Phase 2 - 4 hours)
-   - Replace Tailwind utilities with tb-* classes:
-     - Cards: `.tb-card`, `.tb-surface-muted`
-     - Buttons: `.tb-btn`, `.tb-btn.primary`, `.tb-btn.ghost`
-     - Inputs: `.tb-input`, `.tb-select`, `.tb-textarea`
-     - Navigation: `.tb-sidebar`, `.tb-nav`, `.tb-topbar`
-   - Update all feature components to use new classes
-   - Maintain consistent spacing with utility classes
+**Current Test Health Status**:
+- **Total Tests**: 1,076
+- **Passing**: 981 (91.16%)
+- **Failing**: 93 (8.64%)
+- **Skipped**: 2 (0.19%)
+- **Target**: 95%+ pass rate (1,022+ passing tests)
 
-3. **Typography System** (Phase 3 - 1 hour)
-   - Apply serif font (Georgia) to all headings
-   - Use `.h1`, `.h2` classes for heading styles
-   - Apply `.subtle` for muted text
-   - Implement proper font scaling with clamp()
+**Coverage Status**:
+- Statements: 73.75% ✅ (Target: 70%)
+- Branches: 69.92% 🟡 (Target: 70%, Gap: -0.08%)
+- Functions: 76.5% ✅ (Target: 70%)
+- Lines: 75.79% ✅ (Target: 70%)
 
-4. **Color Palette Migration** (Phase 4 - 2 hours)
-   - Light mode: Beige/warm palette (#F7F1E8 bg, #A25A2A accent)
-   - Dark mode: Violet/navy with gold (#1E1A1C bg, #E2C48D accent)
-   - Update chart colors to match design system
-   - Apply new shadow and radius tokens
+**Root Causes of Test Failures**:
+1. **Global fetch not mocked** (~56 tests, 60% of failures)
+   - Error: "fetch is not defined"
+   - Impact: Page components, hooks that use fetch
+2. **Act() warnings** (~28 tests, 30% of failures)
+   - Error: Async state updates not wrapped
+   - Impact: Dashboard, hooks, form tests
+3. **Mock inconsistencies** (~9 tests, 10% of failures)
+   - localStorage timing issues
+   - WebSocket connection timing
+   - Mock configuration conflicts
 
-5. **Layout Primitives** (Phase 5 - 1 hour)
-   - Implement `.tb-container` for max-width layouts
-   - Apply `.tb-grid` with responsive column classes
-   - Use `.toombos-app` layout structure
-   - Configure sidebar width (260px)
+**Sprint 13 Tasks**:
 
-6. **Dashboard Widgets** (Phase 6 - 2 hours)
-   - Update stat cards with `.tb-stat` classes
-   - Implement chips with `.tb-chip` styling
-   - Apply `.tb-table` for data tables
-   - Update action cards with `.tb-actions`
+1. **Fix Global Fetch Mocking** (Phase 1 - 1.5-2 hours)
+   - Add global fetch mock to `jest.setup.js`
+   - Configure fetch mock for all test environments
+   - Fix ~56 tests with "fetch is not defined" errors
+   - Target: 95.5% pass rate after completion
 
-7. **Theme Toggle Feature** (Phase 7 - 1 hour)
-   - Add theme switcher to settings/nav
-   - Persist theme preference in localStorage
-   - Respect OS preference with prefers-color-scheme
-   - Smooth theme transitions
+2. **Resolve Act() Warnings** (Phase 2 - 1-1.5 hours)
+   - Identify async state updates in tests
+   - Wrap updates in `act()` or `waitFor()`
+   - Fix dashboard, hooks, and form tests
+   - Fix ~28 tests with timing issues
+   - Target: 98% pass rate after completion
 
-**Estimated Duration**: 13 hours (2-3 days)
+3. **Fix Mock Inconsistencies** (Phase 3 - 0.5-1 hour)
+   - Fix localStorage mocks in affected tests
+   - Fix WebSocket timing issues
+   - Resolve mock configuration conflicts
+   - Fix remaining ~9 tests
+   - Target: 99%+ pass rate after completion
+
+4. **Close Branch Coverage Gap** (Phase 4 - 0.5 hour)
+   - Identify uncovered branches (likely 1-2 edge cases)
+   - Add targeted tests for uncovered branches
+   - Reach 70%+ on all 4 coverage metrics
+   - Target: Branches ≥70%
+
+**Estimated Duration**: 3.5-4.5 hours (1 working session)
 
 **Success Criteria**:
-- All components use design system classes
-- Light/dark theme fully functional
-- Consistent visual design across all pages
-- No Tailwind utility classes in components (only spacing utilities)
-- Typography follows serif/sans-serif hierarchy
+- ✅ Test pass rate ≥95% (1,022+ tests passing)
+- ✅ All 4 coverage metrics ≥70%
+- ✅ Zero act() warnings in test output
+- ✅ Zero "fetch is not defined" errors
+- ✅ 100% DoD compliance achieved
 
-**Files to Update**:
-- `app/globals.css` - Import design system
-- `app/layout.tsx` - Theme provider setup
-- All components in `app/components/features/*`
-- All page components in `app/*/page.tsx`
-- Navigation and layout components
+**Files to Modify**:
+- `jest.setup.js` - Add global fetch mock
+- `app/dashboard/__tests__/page.test.tsx` - Fix act() warnings
+- `app/hooks/__tests__/*.test.tsx` - Fix async timing
+- `app/components/features/__tests__/*.test.tsx` - Fix mocks
+- Edge case tests for branch coverage
 
-**After Sprint 12** (Previous Options):
+**After Sprint 13** (Next Sprint Options):
 
-**Option A: Test Suite Remediation** (3-4 hours):
-1. Fix failing tests (global fetch mock, act() warnings)
-2. Close branch coverage gap
-3. Achieve 100% DoD compliance
+**Option A: Additional Design System Migration** (4-6 hours):
+1. Migrate remaining page components (jobs, history, generate, settings)
+2. Migrate feature components (analytics, charts, templates)
+3. Full tb-* class coverage across all pages
+4. Consistent design system application
 
-**Option B: Production Monitoring** (Infrastructure):
-1. Set up error tracking (Sentry)
-2. Configure analytics
-3. Performance monitoring
+**Option B: Production Monitoring & Observability** (4-6 hours):
+1. Set up error tracking (Sentry integration)
+2. Configure analytics (Google Analytics or Plausible)
+3. Performance monitoring (Web Vitals)
+4. Uptime monitoring and alerts
+5. Log aggregation
 
-**Option C: Feature Enhancements**:
-1. Advanced analytics dashboard
-2. Content scheduling
-3. Multi-user support
+**Option C: Feature Enhancements** (Variable - 1-2 weeks):
+1. Advanced analytics dashboard with custom metrics
+2. Content scheduling and campaign management
+3. Multi-user support with role-based access
+4. Template marketplace
+5. API rate limiting and quotas
 
 ### Blockers/Risks:
 
