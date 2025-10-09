@@ -51,14 +51,14 @@ const DashboardPage = (): React.ReactElement => {
   }, [API_URL, apiKey]);
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen py-8">
+      <div className="tb-container">
         {/* Page Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">
+        <div className="mb-6">
+          <h1 className="h1">
             Content Generator Dashboard
           </h1>
-          <p className="mt-2 text-sm text-gray-600">
+          <p className="mt-2 text-sm subtle">
             Monitor system health, manage content generation, and view analytics
           </p>
         </div>
@@ -77,7 +77,7 @@ const DashboardPage = (): React.ReactElement => {
         {/* Analytics Metrics */}
         {!loading && jobs.length > 0 && (
           <div className="mb-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Analytics</h2>
+            <h2 className="h2 mb-4">Analytics</h2>
             <AnalyticsMetrics jobs={jobs} showTimePeriods={true} />
           </div>
         )}
@@ -91,12 +91,12 @@ const DashboardPage = (): React.ReactElement => {
 
         {/* Loading State */}
         {loading && (
-          <div className="bg-white rounded-lg shadow p-6 mb-8">
+          <div className="tb-card pad mb-8">
             <div className="animate-pulse">
-              <div className="h-8 bg-gray-200 rounded w-1/4 mb-4"></div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="h-8 rounded w-1/4 mb-4" style={{ backgroundColor: 'var(--surface-muted)' }}></div>
+              <div className="tb-grid cols-3">
                 {[1, 2, 3].map(i => (
-                  <div key={i} className="h-24 bg-gray-200 rounded"></div>
+                  <div key={i} className="h-24 rounded" style={{ backgroundColor: 'var(--surface-muted)' }}></div>
                 ))}
               </div>
             </div>
@@ -105,8 +105,8 @@ const DashboardPage = (): React.ReactElement => {
 
         {/* Empty State */}
         {!loading && jobs.length === 0 && (
-          <div className="bg-white rounded-lg shadow p-6 mb-8 text-center">
-            <p className="text-gray-600">
+          <div className="tb-card pad mb-8 text-center">
+            <p className="subtle">
               No jobs found. Start by generating some content to see analytics.
             </p>
           </div>
@@ -114,50 +114,50 @@ const DashboardPage = (): React.ReactElement => {
 
         {/* Quick Actions */}
         <div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">
+          <h2 className="h2 mb-4">
             Quick Actions
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-white rounded-lg shadow p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+          <div className="tb-grid cols-3">
+            <div className="tb-action">
+              <h3 className="title text-lg">
                 Generate Content
               </h3>
-              <p className="text-sm text-gray-600 mb-4">
+              <p className="text-sm subtle">
                 Create new AI-powered content for your campaigns
               </p>
               <a
                 href="/generate"
-                className="inline-block px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                className="tb-btn primary mt-3"
               >
                 Start Generating
               </a>
             </div>
 
-            <div className="bg-white rounded-lg shadow p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            <div className="tb-action">
+              <h3 className="title text-lg">
                 View Jobs
               </h3>
-              <p className="text-sm text-gray-600 mb-4">
+              <p className="text-sm subtle">
                 Monitor active and completed content generation jobs
               </p>
               <a
                 href="/jobs"
-                className="inline-block px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                className="tb-btn primary mt-3"
               >
                 View Jobs
               </a>
             </div>
 
-            <div className="bg-white rounded-lg shadow p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            <div className="tb-action">
+              <h3 className="title text-lg">
                 Templates
               </h3>
-              <p className="text-sm text-gray-600 mb-4">
+              <p className="text-sm subtle">
                 Browse and manage content generation templates
               </p>
               <a
                 href="/templates"
-                className="inline-block px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                className="tb-btn primary mt-3"
               >
                 Browse Templates
               </a>
