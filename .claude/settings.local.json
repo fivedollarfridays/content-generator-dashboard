@@ -16,7 +16,10 @@
       "Bash(cat:*)",
       "Bash(npm install:*)",
       "Bash(start https://toombos-frontend-1dvdoaozf-kevin-mastersons-projects.vercel.app)",
-      "Bash(git checkout:*)"
+      "Bash(git checkout:*)",
+      "Bash(curl:*)",
+      "Bash(Select-String -Pattern \"FAIL|PASS\")",
+      "Bash(Select-Object -First 30)"
     ],
     "deny": [],
     "ask": []
