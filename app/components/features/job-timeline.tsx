@@ -6,6 +6,7 @@
 'use client';
 
 import React, { useMemo } from 'react';
+import { Check, RefreshCw, Clock, X, AlertTriangle, Ban } from 'lucide-react';
 import type { SyncJob, JobStatus } from '@/types/content-generator';
 import { formatTimeAgo } from '@/lib/utils/job-analytics';
 import {
@@ -29,22 +30,23 @@ interface JobGroup {
   jobs: SyncJob[];
 }
 
-const getStatusIcon = (status: JobStatus): string => {
+const getStatusIcon = (status: JobStatus): React.ReactElement => {
+  const iconClass = "w-4 h-4";
   switch (status) {
     case 'completed':
-      return '✓';
+      return <Check className={iconClass} />;
     case 'in_progress':
-      return '⟳';
+      return <RefreshCw className={iconClass} />;
     case 'pending':
-      return '⏱';
+      return <Clock className={iconClass} />;
     case 'failed':
-      return '✕';
+      return <X className={iconClass} />;
     case 'partial':
-      return '⚠';
+      return <AlertTriangle className={iconClass} />;
     case 'cancelled':
-      return '⊘';
+      return <Ban className={iconClass} />;
     default:
-      return '•';
+      return <span className="w-4 h-4 flex items-center justify-center">•</span>;
   }
 };
 
@@ -256,7 +258,7 @@ export const JobTimeline: React.FC<JobTimelineProps> = ({
                                 }`}
                                 title={`${channel}: ${result.status}`}
                               >
-                                {result.status === 'success' ? '✓' : '✕'}
+                                {result.status === 'success' ? <Check className="w-3 h-3" /> : <X className="w-3 h-3" />}
                               </div>
                             )
                           )}

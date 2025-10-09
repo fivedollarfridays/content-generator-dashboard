@@ -4,6 +4,7 @@
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
+import { Check, RefreshCw, Clock, X, AlertTriangle, Ban, MapPin } from 'lucide-react';
 import type {
   JobsListProps,
   SyncJob,
@@ -146,22 +147,23 @@ export const JobsList: React.FC<JobsListProps> = ({
     }
   };
 
-  const getStatusIcon = (status: JobStatus): string => {
+  const getStatusIcon = (status: JobStatus): React.ReactElement => {
+    const iconClass = "w-4 h-4";
     switch (status) {
       case 'completed':
-        return '✓';
+        return <Check className={iconClass} />;
       case 'in_progress':
-        return '⟳';
+        return <RefreshCw className={iconClass} />;
       case 'pending':
-        return '⏱';
+        return <Clock className={iconClass} />;
       case 'failed':
-        return '✕';
+        return <X className={iconClass} />;
       case 'partial':
-        return '⚠';
+        return <AlertTriangle className={iconClass} />;
       case 'cancelled':
-        return '⊘';
+        return <Ban className={iconClass} />;
       default:
-        return '•';
+        return <span className="w-4 h-4 flex items-center justify-center">•</span>;
     }
   };
 
@@ -354,16 +356,16 @@ export const JobsList: React.FC<JobsListProps> = ({
 
                     <div className="flex items-center space-x-4 text-xs text-gray-600">
                       <div className="flex items-center space-x-1">
-                        <span>📍</span>
+                        <MapPin className="w-3 h-3" />
                         <span>{job.channels.join(', ')}</span>
                       </div>
                       <div className="flex items-center space-x-1">
-                        <span>🕐</span>
+                        <Clock className="w-3 h-3" />
                         <span>{formatDate(job.created_at)}</span>
                       </div>
                       {job.completed_at && (
                         <div className="flex items-center space-x-1">
-                          <span>✓</span>
+                          <Check className="w-3 h-3" />
                           <span>{formatDate(job.completed_at)}</span>
                         </div>
                       )}
@@ -383,7 +385,7 @@ export const JobsList: React.FC<JobsListProps> = ({
                               }`}
                               title={`${channel}: ${result.status}`}
                             >
-                              {result.status === 'success' ? '✓' : '✕'}
+                              {result.status === 'success' ? <Check className="w-4 h-4" /> : <X className="w-4 h-4" />}
                             </div>
                           )
                         )}

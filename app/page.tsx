@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { Zap, Target, BarChart3 } from 'lucide-react';
 
 const Home = (): React.ReactElement => {
   return (
@@ -31,7 +32,9 @@ const Home = (): React.ReactElement => {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
           <div className="bg-white rounded-lg shadow-md p-6">
-            <div className="text-4xl mb-3">⚡</div>
+            <div className="flex justify-center mb-3">
+              <Zap className="w-10 h-10 text-blue-600" />
+            </div>
             <h3 className="text-lg font-semibold text-gray-900 mb-2">
               Fast Generation
             </h3>
@@ -41,7 +44,9 @@ const Home = (): React.ReactElement => {
           </div>
 
           <div className="bg-white rounded-lg shadow-md p-6">
-            <div className="text-4xl mb-3">🎯</div>
+            <div className="flex justify-center mb-3">
+              <Target className="w-10 h-10 text-blue-600" />
+            </div>
             <h3 className="text-lg font-semibold text-gray-900 mb-2">
               Multi-Channel
             </h3>
@@ -51,7 +56,9 @@ const Home = (): React.ReactElement => {
           </div>
 
           <div className="bg-white rounded-lg shadow-md p-6">
-            <div className="text-4xl mb-3">📊</div>
+            <div className="flex justify-center mb-3">
+              <BarChart3 className="w-10 h-10 text-blue-600" />
+            </div>
             <h3 className="text-lg font-semibold text-gray-900 mb-2">
               Real-Time Monitoring
             </h3>

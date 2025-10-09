@@ -4,6 +4,7 @@
  */
 
 import React from 'react';
+import { Check, X, RefreshCw, Ban } from 'lucide-react';
 import type { JobStatusCardProps, JobStatus } from '@/types/content-generator';
 
 export const JobStatusCard: React.FC<JobStatusCardProps> = ({
@@ -284,11 +285,15 @@ export const JobStatusCard: React.FC<JobStatusCardProps> = ({
                 </div>
                 <div className="flex items-center space-x-2">
                   {result.status === 'success' ? (
-                    <span className="text-green-700 font-semibold">
-                      ✓ Success
+                    <span className="text-green-700 font-semibold flex items-center space-x-1">
+                      <Check className="w-4 h-4" />
+                      <span>Success</span>
                     </span>
                   ) : (
-                    <span className="text-red-700 font-semibold">✕ Failed</span>
+                    <span className="text-red-700 font-semibold flex items-center space-x-1">
+                      <X className="w-4 h-4" />
+                      <span>Failed</span>
+                    </span>
                   )}
                   {result.url && (
                     <a
@@ -334,9 +339,10 @@ export const JobStatusCard: React.FC<JobStatusCardProps> = ({
         {job.status === 'failed' && onRetry && (
           <button
             onClick={() => onRetry(job.job_id)}
-            className="flex-1 px-4 py-2 bg-white bg-opacity-90 hover:bg-opacity-100 rounded-lg font-medium transition-colors"
+            className="flex-1 px-4 py-2 bg-white bg-opacity-90 hover:bg-opacity-100 rounded-lg font-medium transition-colors flex items-center justify-center space-x-2"
           >
-            🔄 Retry
+            <RefreshCw className="w-4 h-4" />
+            <span>Retry</span>
           </button>
         )}
         {(job.status === 'pending' || job.status === 'in_progress') &&
