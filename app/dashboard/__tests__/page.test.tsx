@@ -27,7 +27,7 @@ jest.mock('@/app/components/features/job-charts', () => {
   };
 });
 
-// Mock mock-data-generator
+// Mock jobs data
 const mockJobs: SyncJob[] = [
   {
     job_id: 'job-1',
@@ -51,15 +51,17 @@ const mockJobs: SyncJob[] = [
   },
 ];
 
-jest.mock('@/lib/utils/mock-data-generator', () => ({
-  mockDataStore: {
-    getJobs: jest.fn(() => mockJobs),
-  },
-}));
-
 // Mock API client
 jest.mock('@/lib/api/api-client', () => ({
-  ContentGeneratorAPI: jest.fn(),
+  ContentGeneratorAPI: jest.fn().mockImplementation(() => ({
+    listJobs: jest.fn().mockResolvedValue({
+      success: true,
+      data: {
+        jobs: mockJobs,
+        total: 2,
+      },
+    }),
+  })),
 }));
 
 describe('DashboardPage', () => {
@@ -115,7 +117,9 @@ describe('DashboardPage', () => {
     it('should show loading state initially', () => {
       render(<DashboardPage />);
 
-      expect(screen.getByText(/loading/i)).toBeInTheDocument();
+      // Look for skeleton loaders instead of text
+      const skeletons = document.querySelectorAll('.animate-pulse');
+      expect(skeletons.length).toBeGreaterThan(0);
     });
 
     it('should render quick actions section', () => {
@@ -123,7 +127,9 @@ describe('DashboardPage', () => {
 
       expect(screen.getByText('Quick Actions')).toBeInTheDocument();
       expect(screen.getByText('Generate Content')).toBeInTheDocument();
-      expect(screen.getByText('View Jobs')).toBeInTheDocument();
+      // "View Jobs" appears twice (heading and link), use getAllByText
+      const viewJobsElements = screen.getAllByText('View Jobs');
+      expect(viewJobsElements.length).toBeGreaterThan(0);
       expect(screen.getByText('Templates')).toBeInTheDocument();
     });
   });
@@ -138,7 +144,9 @@ describe('DashboardPage', () => {
       jest.advanceTimersByTime(300);
 
       await waitFor(() => {
-        expect(screen.queryByText(/loading/i)).not.toBeInTheDocument();
+        // Check that skeleton loaders are gone
+        const skeletons = document.querySelectorAll('.animate-pulse');
+        expect(skeletons.length).toBe(0);
       });
 
       expect(screen.getByTestId('analytics-metrics')).toBeInTheDocument();
@@ -176,8 +184,16 @@ describe('DashboardPage', () => {
   describe('Empty State', () => {
     it('should show empty state when no jobs are available', async () => {
       // Mock empty jobs
-      const mockDataGenerator = require('@/lib/utils/mock-data-generator');
-      mockDataGenerator.mockDataStore.getJobs.mockReturnValue([]);
+      const { ContentGeneratorAPI } = require('@/lib/api/api-client');
+      ContentGeneratorAPI.mockImplementationOnce(() => ({
+        listJobs: jest.fn().mockResolvedValue({
+          success: true,
+          data: {
+            jobs: [],
+            total: 0,
+          },
+        }),
+      }));
 
       render(<DashboardPage />);
 
@@ -191,8 +207,16 @@ describe('DashboardPage', () => {
     });
 
     it('should not show analytics when no jobs are available', async () => {
-      const mockDataGenerator = require('@/lib/utils/mock-data-generator');
-      mockDataGenerator.mockDataStore.getJobs.mockReturnValue([]);
+      const { ContentGeneratorAPI } = require('@/lib/api/api-client');
+      ContentGeneratorAPI.mockImplementationOnce(() => ({
+        listJobs: jest.fn().mockResolvedValue({
+          success: true,
+          data: {
+            jobs: [],
+            total: 0,
+          },
+        }),
+      }));
 
       render(<DashboardPage />);
 
@@ -289,10 +313,15 @@ describe('DashboardPage', () => {
 
   describe('Error Handling', () => {
     it('should handle jobs fetch error gracefully', async () => {
-      const mockDataGenerator = require('@/lib/utils/mock-data-generator');
-      mockDataGenerator.mockDataStore.getJobs.mockImplementation(() => {
-        throw new Error('Fetch failed');
-      });
+      const { ContentGeneratorAPI } = require('@/lib/api/api-client');
+      ContentGeneratorAPI.mockImplementationOnce(() => ({
+        listJobs: jest.fn().mockResolvedValue({
+          success: false,
+          error: {
+            message: 'Fetch failed',
+          },
+        }),
+      }));
 
       const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
 
@@ -302,8 +331,8 @@ describe('DashboardPage', () => {
 
       await waitFor(() => {
         expect(consoleErrorSpy).toHaveBeenCalledWith(
-          'Failed to fetch jobs for analytics:',
-          expect.any(Error)
+          'Failed to fetch jobs:',
+          'Fetch failed'
         );
       });
 
@@ -311,10 +340,15 @@ describe('DashboardPage', () => {
     });
 
     it('should show empty state after fetch error', async () => {
-      const mockDataGenerator = require('@/lib/utils/mock-data-generator');
-      mockDataGenerator.mockDataStore.getJobs.mockImplementation(() => {
-        throw new Error('Fetch failed');
-      });
+      const { ContentGeneratorAPI } = require('@/lib/api/api-client');
+      ContentGeneratorAPI.mockImplementationOnce(() => ({
+        listJobs: jest.fn().mockResolvedValue({
+          success: false,
+          error: {
+            message: 'Fetch failed',
+          },
+        }),
+      }));
 
       const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
 
@@ -323,7 +357,9 @@ describe('DashboardPage', () => {
       jest.advanceTimersByTime(300);
 
       await waitFor(() => {
-        expect(screen.queryByText(/loading/i)).not.toBeInTheDocument();
+        // Check that skeleton loaders are gone
+        const skeletons = document.querySelectorAll('.animate-pulse');
+        expect(skeletons.length).toBe(0);
       });
 
       expect(
@@ -340,19 +376,23 @@ describe('DashboardPage', () => {
     it('should show skeleton loaders while loading', () => {
       render(<DashboardPage />);
 
-      const skeletons = screen.getAllByTestId(/loading/i);
+      const skeletons = document.querySelectorAll('.animate-pulse');
       expect(skeletons.length).toBeGreaterThan(0);
     });
 
     it('should hide loading state after data is loaded', async () => {
       render(<DashboardPage />);
 
-      expect(screen.getByText(/loading/i)).toBeInTheDocument();
+      // Check skeleton loaders are present initially
+      let skeletons = document.querySelectorAll('.animate-pulse');
+      expect(skeletons.length).toBeGreaterThan(0);
 
       jest.advanceTimersByTime(300);
 
       await waitFor(() => {
-        expect(screen.queryByText(/loading/i)).not.toBeInTheDocument();
+        // Skeleton loaders should be gone
+        skeletons = document.querySelectorAll('.animate-pulse');
+        expect(skeletons.length).toBe(0);
       });
     });
   });

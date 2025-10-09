@@ -24,7 +24,14 @@ jest.mock('@/lib/utils/mock-campaigns', () => ({
       tags: ['sale', 'summer'],
       startDate: '2025-06-01',
       endDate: '2025-08-31',
-      channels: ['email', 'social'],
+      sources: [
+        { id: 'source-1', type: 'google_doc', name: 'Product Details', priority: 1 },
+        { id: 'source-2', type: 'template', name: 'Sale Template', priority: 2 },
+      ],
+      goals: [],
+      batches: [],
+      createdAt: '2025-01-01T00:00:00Z',
+      updatedAt: '2025-01-01T00:00:00Z',
     },
     {
       id: 'campaign-2',
@@ -34,7 +41,13 @@ jest.mock('@/lib/utils/mock-campaigns', () => ({
       tags: ['launch', 'product'],
       startDate: '2025-09-01',
       endDate: '2025-09-30',
-      channels: ['website', 'email'],
+      sources: [
+        { id: 'source-3', type: 'notion', name: 'Launch Plan', priority: 1 },
+      ],
+      goals: [],
+      batches: [],
+      createdAt: '2025-01-01T00:00:00Z',
+      updatedAt: '2025-01-01T00:00:00Z',
     },
     {
       id: 'campaign-3',
@@ -44,7 +57,13 @@ jest.mock('@/lib/utils/mock-campaigns', () => ({
       tags: ['holiday', 'seasonal'],
       startDate: '2025-12-01',
       endDate: '2025-12-31',
-      channels: ['email'],
+      sources: [
+        { id: 'source-4', type: 'text', name: 'Holiday Message', priority: 1 },
+      ],
+      goals: [],
+      batches: [],
+      createdAt: '2025-01-01T00:00:00Z',
+      updatedAt: '2025-01-01T00:00:00Z',
     },
   ]),
 }));
