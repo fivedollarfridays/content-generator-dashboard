@@ -29,7 +29,14 @@
       "Bash(netstat:*)",
       "Bash(findstr:*)",
       "Bash(git revert:*)",
-      "Bash(git merge:*)"
+      "Bash(git merge:*)",
+      "Bash(start http://localhost:3000)",
+      "Bash(start http://localhost:3001)",
+      "Bash(start http://localhost:3002)",
+      "Bash(Select-String -Pattern \"Content Generator|qluo\")",
+      "Bash(Select-Object -First 5)",
+      "Read(//c/Users/kmast/**)",
+      "Bash(start http://localhost:3004)"
     ],
     "deny": [],
     "ask": []
