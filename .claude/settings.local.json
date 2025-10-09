@@ -20,7 +20,11 @@
       "Bash(curl:*)",
       "Bash(Select-String -Pattern \"FAIL|PASS\")",
       "Bash(Select-Object -First 30)",
-      "Bash(python:*)"
+      "Bash(python:*)",
+      "Bash(git reset:*)",
+      "Bash(git rm:*)",
+      "Bash(git push:*)",
+      "Bash(npm run build:*)"
     ],
     "deny": [],
     "ask": []

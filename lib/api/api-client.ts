@@ -312,7 +312,7 @@ export class ContentGeneratorAPI {
 
     const query = queryParams.toString();
     return this.request<JobsListResponse>(
-      `/api/v2/content/sync${query ? `?${query}` : ''}`
+      `/api/v2/jobs${query ? `?${query}` : ''}`
     );
   }
 
@@ -335,7 +335,7 @@ export class ContentGeneratorAPI {
    * ```
    */
   async getJob(jobId: string): Promise<APIResponse<SyncJob>> {
-    return this.request<SyncJob>(`/api/v2/content/sync/${jobId}`);
+    return this.request<SyncJob>(`/api/v2/jobs/${jobId}`);
   }
 
   /**
@@ -377,7 +377,7 @@ export class ContentGeneratorAPI {
    * ```
    */
   async retryJob(jobId: string): Promise<APIResponse<SyncJob>> {
-    return this.request<SyncJob>(`/api/v2/content/sync/${jobId}/retry`, {
+    return this.request<SyncJob>(`/api/v2/jobs/${jobId}/retry`, {
       method: 'POST',
     });
   }
