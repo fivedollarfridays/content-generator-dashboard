@@ -3,6 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import ThemeToggle from './theme-toggle';
 
 /**
  * Navigation Component
@@ -59,6 +60,7 @@ const Navigation = (): React.ReactElement => {
 
       {/* Right side */}
       <div className="right">
+        <ThemeToggle />
         <span className="text-sm tb-chip" aria-label="API endpoint" style={{ fontSize: '0.75rem' }}>
           API: {process.env.NEXT_PUBLIC_API_URL ? new URL(process.env.NEXT_PUBLIC_API_URL).hostname : 'localhost:8000'}
         </span>
