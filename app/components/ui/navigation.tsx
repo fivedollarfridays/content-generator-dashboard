@@ -25,50 +25,43 @@ const Navigation = (): React.ReactElement => {
   const isActive = (path: string): boolean => pathname === path;
 
   return (
-    <nav className="bg-white shadow-sm" aria-label="Main navigation">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
-          <div className="flex">
-            {/* Logo */}
-            <div className="flex-shrink-0 flex items-center">
-              <Link
-                href="/"
-                className="text-xl font-bold text-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded"
-                aria-label="Content Generator Home"
-              >
-                Content Generator
-              </Link>
-            </div>
+    <nav className="tb-topbar" aria-label="Main navigation">
+      <div className="flex items-center gap-4">
+        {/* Logo */}
+        <Link
+          href="/"
+          className="brand"
+          style={{ fontFamily: 'var(--font-serif)', fontWeight: 800, fontSize: '1.25rem', color: 'var(--accent)', textDecoration: 'none' }}
+          aria-label="Content Generator Home"
+        >
+          Content Generator
+        </Link>
 
-            {/* Navigation Links */}
-            <div
-              className="hidden sm:ml-8 sm:flex sm:space-x-8"
-              role="navigation"
+        {/* Navigation Links */}
+        <div className="hidden sm:flex gap-2 ml-4" role="navigation">
+          {navItems.map(item => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={`px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
+                isActive(item.href)
+                  ? 'tb-btn primary'
+                  : 'tb-btn ghost'
+              }`}
+              aria-current={isActive(item.href) ? 'page' : undefined}
+              style={isActive(item.href) ? {} : { padding: '8px 12px' }}
             >
-              {navItems.map(item => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={`inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded ${
-                    isActive(item.href)
-                      ? 'border-blue-500 text-gray-900'
-                      : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
-                  }`}
-                  aria-current={isActive(item.href) ? 'page' : undefined}
-                >
-                  {item.label}
-                </Link>
-              ))}
-            </div>
-          </div>
-
-          {/* Right side */}
-          <div className="flex items-center">
-            <span className="text-sm text-gray-500" aria-label="API endpoint">
-              API: {process.env.NEXT_PUBLIC_API_URL || 'localhost:8000'}
-            </span>
-          </div>
+              {item.label}
+            </Link>
+          ))}
         </div>
+      </div>
+
+      {/* Right side */}
+      <div className="right">
+        <span className="text-sm tb-chip" aria-label="API endpoint" style={{ fontSize: '0.75rem' }}>
+          API: {process.env.NEXT_PUBLIC_API_URL ? new URL(process.env.NEXT_PUBLIC_API_URL).hostname : 'localhost:8000'}
+        </span>
       </div>
     </nav>
   );
