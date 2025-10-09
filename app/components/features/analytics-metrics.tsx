@@ -46,12 +46,12 @@ const MetricCard: React.FC<MetricCardProps> = ({
   };
 
   return (
-    <div className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition-shadow">
+    <div className="tb-card pad hover:shadow-lg transition-shadow">
       <div className="flex items-center justify-between">
         <div className="flex-1">
-          <p className="text-sm font-medium text-gray-600 mb-1">{title}</p>
-          <p className="text-3xl font-bold text-gray-900">{value}</p>
-          {subtitle && <p className="text-xs text-gray-500 mt-1">{subtitle}</p>}
+          <p className="text-sm title mb-1">{title}</p>
+          <p className="text-3xl font-bold">{value}</p>
+          {subtitle && <p className="text-xs subtle mt-1">{subtitle}</p>}
           {trend && (
             <div className="flex items-center mt-2">
               <span
@@ -61,7 +61,7 @@ const MetricCard: React.FC<MetricCardProps> = ({
               >
                 {trend.isPositive ? '↑' : '↓'} {Math.abs(trend.value)}%
               </span>
-              <span className="text-xs text-gray-500 ml-1">vs last period</span>
+              <span className="text-xs subtle ml-1">vs last period</span>
             </div>
           )}
         </div>
@@ -226,7 +226,7 @@ export const AnalyticsMetrics: React.FC<AnalyticsMetricsProps> = ({
       {/* Time Period Metrics */}
       {showTimePeriods && timePeriodMetrics && (
         <div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+          <h3 className="title text-lg mb-4">
             Success Rate by Time Period
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
