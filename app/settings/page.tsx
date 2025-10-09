@@ -78,38 +78,38 @@ const SettingsPage = (): React.ReactElement => {
   }, [clearApiKey]);
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen py-8">
+      <div className="tb-container">
         {/* Page Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Settings</h1>
-          <p className="mt-2 text-sm text-gray-600">
+          <h1 className="h1">Settings</h1>
+          <p className="mt-2 text-sm subtle">
             Configure your application settings and manage cache
           </p>
         </div>
 
         <div className="space-y-8">
           {/* API Configuration Section */}
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">
+          <div className="tb-card pad">
+            <h2 className="h2 mb-4">
               API Configuration
             </h2>
 
             {/* Environment Display */}
             <div className="mb-6 space-y-3">
               <div className="flex items-center justify-between py-2 border-b border-gray-200">
-                <span className="text-sm font-medium text-gray-600">
+                <span className="text-sm title">
                   API Base URL
                 </span>
-                <code className="text-sm bg-gray-100 px-3 py-1 rounded font-mono">
+                <code className="text-sm tb-chip font-mono">
                   {API_URL}
                 </code>
               </div>
               <div className="flex items-center justify-between py-2 border-b border-gray-200">
-                <span className="text-sm font-medium text-gray-600">
+                <span className="text-sm title">
                   WebSocket URL
                 </span>
-                <code className="text-sm bg-gray-100 px-3 py-1 rounded font-mono">
+                <code className="text-sm tb-chip font-mono">
                   {WS_URL}
                 </code>
               </div>
@@ -119,7 +119,7 @@ const SettingsPage = (): React.ReactElement => {
             <div className="mt-6">
               <label
                 htmlFor="apiKey"
-                className="block text-sm font-medium text-gray-700 mb-2"
+                className="block text-sm title mb-2"
               >
                 API Key (Optional)
               </label>
@@ -131,7 +131,7 @@ const SettingsPage = (): React.ReactElement => {
                     value={apiKey}
                     onChange={e => setApiKeyInput(e.target.value)}
                     placeholder="Enter your API key..."
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent pr-10"
+                    className="tb-input w-full pr-10"
                   />
                   <button
                     type="button"
@@ -178,14 +178,15 @@ const SettingsPage = (): React.ReactElement => {
                 <button
                   onClick={handleSaveApiKey}
                   disabled={apiKey === savedApiKey}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="tb-btn primary disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Save
                 </button>
                 {savedApiKey && (
                   <button
                     onClick={handleClearApiKey}
-                    className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                    className="tb-btn"
+                    style={{ background: 'var(--accent)', color: 'white' }}
                   >
                     Clear
                   </button>
@@ -237,8 +238,8 @@ const SettingsPage = (): React.ReactElement => {
           </div>
 
           {/* Cache Management Section */}
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">
+          <div className="tb-card pad">
+            <h2 className="h2 mb-4">
               Cache Management
             </h2>
             <CacheStats
@@ -252,9 +253,9 @@ const SettingsPage = (): React.ReactElement => {
           </div>
 
           {/* User Preferences Section */}
-          <div className="bg-white rounded-lg shadow-md p-6">
+          <div className="tb-card pad">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold text-gray-900">
+              <h2 className="h2">
                 User Preferences
               </h2>
               <button
@@ -262,7 +263,7 @@ const SettingsPage = (): React.ReactElement => {
                   resetPreferences();
                   toast.success('Preferences reset to defaults');
                 }}
-                className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+                className="tb-btn ghost text-sm"
               >
                 Reset to Defaults
               </button>
@@ -270,7 +271,7 @@ const SettingsPage = (): React.ReactElement => {
 
             {/* Notification Preferences */}
             <div className="mb-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-3">
+              <h3 className="title text-lg mb-3">
                 Notifications
               </h3>
               <div className="space-y-3">
@@ -402,12 +403,12 @@ const SettingsPage = (): React.ReactElement => {
 
             {/* Display Preferences */}
             <div className="border-t border-gray-200 pt-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-3">
+              <h3 className="title text-lg mb-3">
                 Display
               </h3>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-900 mb-2">
+                  <label className="block text-sm title mb-2">
                     Table Density
                   </label>
                   <select
@@ -420,7 +421,7 @@ const SettingsPage = (): React.ReactElement => {
                           | 'spacious',
                       })
                     }
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="tb-input w-full"
                   >
                     <option value="compact">Compact</option>
                     <option value="comfortable">Comfortable</option>
@@ -429,7 +430,7 @@ const SettingsPage = (): React.ReactElement => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-900 mb-2">
+                  <label className="block text-sm title mb-2">
                     Refresh Interval (seconds)
                   </label>
                   <select
@@ -439,7 +440,7 @@ const SettingsPage = (): React.ReactElement => {
                         refreshInterval: parseInt(e.target.value) * 1000,
                       })
                     }
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="tb-input w-full"
                   >
                     <option value="10">10 seconds</option>
                     <option value="30">30 seconds</option>
@@ -449,7 +450,7 @@ const SettingsPage = (): React.ReactElement => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-900 mb-2">
+                  <label className="block text-sm title mb-2">
                     Page Size
                   </label>
                   <select
@@ -459,7 +460,7 @@ const SettingsPage = (): React.ReactElement => {
                         pageSize: parseInt(e.target.value),
                       })
                     }
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="tb-input w-full"
                   >
                     <option value="10">10 items</option>
                     <option value="20">20 items</option>
@@ -496,36 +497,36 @@ const SettingsPage = (): React.ReactElement => {
           </div>
 
           {/* System Information */}
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">
+          <div className="tb-card pad">
+            <h2 className="h2 mb-4">
               System Information
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="bg-gray-50 rounded-lg p-4">
-                <h3 className="text-sm font-medium text-gray-600 mb-2">
+            <div className="tb-grid cols-2">
+              <div className="tb-stat">
+                <h3 className="title text-sm mb-2">
                   Dashboard Version
                 </h3>
-                <p className="text-lg font-semibold text-gray-900">0.1.0</p>
+                <p className="text-lg font-semibold">0.1.0</p>
               </div>
-              <div className="bg-gray-50 rounded-lg p-4">
-                <h3 className="text-sm font-medium text-gray-600 mb-2">
+              <div className="tb-stat">
+                <h3 className="title text-sm mb-2">
                   Framework
                 </h3>
-                <p className="text-lg font-semibold text-gray-900">
+                <p className="text-lg font-semibold">
                   Next.js 15.5
                 </p>
               </div>
-              <div className="bg-gray-50 rounded-lg p-4">
-                <h3 className="text-sm font-medium text-gray-600 mb-2">
+              <div className="tb-stat">
+                <h3 className="title text-sm mb-2">
                   TypeScript
                 </h3>
-                <p className="text-lg font-semibold text-gray-900">5.7.3</p>
+                <p className="text-lg font-semibold">5.7.3</p>
               </div>
-              <div className="bg-gray-50 rounded-lg p-4">
-                <h3 className="text-sm font-medium text-gray-600 mb-2">
+              <div className="tb-stat">
+                <h3 className="title text-sm mb-2">
                   Build Mode
                 </h3>
-                <p className="text-lg font-semibold text-gray-900">
+                <p className="text-lg font-semibold">
                   {process.env.NODE_ENV || 'development'}
                 </p>
               </div>

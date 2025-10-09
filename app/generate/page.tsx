@@ -55,12 +55,12 @@ const GeneratePage = (): React.ReactElement => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen py-8">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Page Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Generate Content</h1>
-          <p className="mt-2 text-sm text-gray-600">
+          <h1 className="h1">Generate Content</h1>
+          <p className="mt-2 text-sm subtle">
             Create AI-powered content and publish it across multiple channels
           </p>
         </div>
@@ -182,16 +182,10 @@ const GeneratePage = (): React.ReactElement => {
 
         {/* Quick Links */}
         <div className="mt-6 flex justify-between items-center text-sm">
-          <a
-            href="/templates"
-            className="text-blue-600 hover:text-blue-800 font-medium"
-          >
+          <a href="/templates" className="tb-btn ghost">
             ← Browse Templates
           </a>
-          <a
-            href="/jobs"
-            className="text-blue-600 hover:text-blue-800 font-medium"
-          >
+          <a href="/jobs" className="tb-btn ghost">
             View All Jobs →
           </a>
         </div>
