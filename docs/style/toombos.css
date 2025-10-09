@@ -1,0 +1,174 @@
+/* Toombos Frontend Design System
+   Palette + components mapped from the provided day-mode and dark-mode mockups.
+   Usage: attach a theme at <html data-theme="light"> or "dark". Light is default.
+*/
+
+/* 1) Base Reset (small, safe) */
+*,*::before,*::after{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,"Apple Color Emoji","Segoe UI Emoji";line-height:1.5;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+img,svg,video,canvas{display:block;max-width:100%}
+button,input,select,textarea{font:inherit;color:inherit}
+
+/* 2) Typography scale with supporting display serif for headings */
+:root{
+  --font-serif:"Georgia",ui-serif,serif; /* swap to your chosen display serif */
+  --font-sans:ui-sans-serif,system-ui,-apple-system,Segoe UI,Inter,Roboto,Arial;
+
+  /* Day Mode (beige + warm accents) */
+  --bg: #F7F1E8;                 /* page background */
+  --surface: #FFFFFF;            /* cards/panels */
+  --surface-muted:#F3EBDD;       /* sidebar and muted surfaces */
+  --text: #2E2A25;               /* primary text */
+  --text-muted:#6B6156;          /* secondary text */
+  --border:#E8DECF;              /* borders/dividers */
+  --accent:#A25A2A;              /* warm headline/badge accent */
+  --accent-2:#6E4A9E;            /* deep purple accent */
+  --focus:#C58940;               /* focus ring */
+  --shadow: 0 8px 24px rgba(0,0,0,.08);
+  --radius:16px;                 /* global corner radius */
+
+  /* Component tokens */
+  --btn-bg: #EDE1D0;
+  --btn-bg-hover:#E6D7C2;
+  --btn-text:#2E2A25;
+  --btn-primary-bg:#A25A2A;      /* gold/amber-brown */
+  --btn-primary-text:#FFF;
+  --btn-ghost-bg:transparent;
+  --btn-ghost-text:#6B6156;
+
+  --chip-bg:#EFE6D8;
+  --chip-text:#5A5248;
+
+  --chart-1:#C78C3D; /* donut segment */
+  --chart-2:#E8B979; /* donut segment */
+  --chart-3:#8B5E34; /* donut segment */
+}
+
+/* Auto-respect OS preference unless site explicitly sets data-theme */
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme]){color-scheme:dark}
+}
+
+/* Dark Mode (deep violet/navy + gold text highlights) */
+:root[data-theme="dark"]{
+  --bg:#1E1A1C;
+  --surface:#242026;
+  --surface-muted:#1C191B;
+  --text:#EDE6D9;
+  --text-muted:#B6AA9B;
+  --border:#3B353B;
+  --accent:#E2C48D;     /* warm gold headings */
+  --accent-2:#8A7BCB;   /* purple buttons/links */
+  --focus:#BFA266;
+  --shadow: 0 12px 28px rgba(0,0,0,.35);
+
+  --btn-bg:#2D2830;
+  --btn-bg-hover:#36303A;
+  --btn-text:#EDE6D9;
+  --btn-primary-bg:#8A7BCB;
+  --btn-primary-text:#121014;
+  --btn-ghost-bg:transparent;
+  --btn-ghost-text:#CFC6B8;
+
+  --chip-bg:#2A2530;
+  --chip-text:#D7CCBA;
+
+  --chart-1:#8A7BCB;
+  --chart-2:#C6B7F0;
+  --chart-3:#5C527F;
+}
+
+/* 3) Base colors and type utilities */
+body{background:var(--bg);color:var(--text)}
+.h1{font-family:var(--font-serif);font-size:clamp(28px,3vw,40px);font-weight:700;letter-spacing:.1px}
+.h2{font-family:var(--font-serif);font-size:clamp(22px,2.4vw,30px);font-weight:700}
+.subtle{color:var(--text-muted)}
+.link{color:var(--accent-2);text-decoration:none}
+.link:hover{text-decoration:underline}
+
+/* 4) Layout primitives */
+.tb-container{max-width:1200px;margin-inline:auto;padding:24px}
+.tb-grid{display:grid;gap:16px}
+.tb-grid.cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.tb-grid.cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media (max-width:1024px){.tb-grid.cols-4{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:768px){.tb-grid.cols-3,.tb-grid.cols-4{grid-template-columns:1fr}}
+
+/* 5) Surfaces */
+.tb-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow)}
+.tb-card.pad{padding:20px}
+.tb-surface-muted{background:var(--surface-muted)}
+
+/* 6) Buttons */
+.tb-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:12px;border:1px solid var(--border);background:var(--btn-bg);color:var(--btn-text);cursor:pointer;transition:background .15s ease,transform .05s ease}
+.tb-btn:hover{background:var(--btn-bg-hover)}
+.tb-btn:active{transform:translateY(1px)}
+.tb-btn.primary{background:var(--btn-primary-bg);border-color:transparent;color:var(--btn-primary-text)}
+.tb-btn.ghost{background:var(--btn-ghost-bg);border-color:transparent;color:var(--btn-ghost-text)}
+.tb-icon{width:18px;height:18px;display:inline-block}
+
+/* 7) Inputs */
+.tb-input,.tb-select,.tb-textarea{width:100%;padding:10px 12px;border-radius:12px;border:1px solid var(--border);background:var(--surface);color:var(--text)}
+.tb-input:focus,.tb-select:focus,.tb-textarea:focus{outline:2px solid var(--focus);outline-offset:2px}
+.tb-label{display:block;font-size:12px;letter-spacing:.4px;color:var(--text-muted);text-transform:uppercase;margin-bottom:6px}
+
+/* 8) Slider (tone) */
+.tb-slider{appearance:none;width:100%;height:4px;border-radius:999px;background:linear-gradient(90deg,var(--accent),var(--accent-2))}
+.tb-slider::-webkit-slider-thumb{appearance:none;width:18px;height:18px;border-radius:999px;background:var(--surface);border:2px solid var(--accent-2)}
+.tb-slider::-moz-range-thumb{width:18px;height:18px;border-radius:999px;background:var(--surface);border:2px solid var(--accent-2)}
+
+/* 9) Navigation */
+.tb-sidebar{width:260px;padding:20px;background:var(--surface-muted);border-right:1px solid var(--border)}
+.tb-sidebar .brand{font-family:var(--font-serif);font-weight:800;font-size:22px;color:var(--accent)}
+.tb-nav{display:flex;flex-direction:column;gap:6px;margin-top:14px}
+.tb-nav a{padding:10px 12px;border-radius:10px;text-decoration:none;color:var(--text-muted)}
+.tb-nav a.active,.tb-nav a:hover{background:var(--surface);color:var(--text)}
+
+.tb-topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--border);background:var(--surface)}
+.tb-topbar .right{display:flex;gap:10px;align-items:center}
+
+/* 10) Dashboard specific widgets */
+.tb-stat{display:flex;flex-direction:column;gap:6px}
+.tb-stat .value{font-family:var(--font-serif);font-size:32px;color:var(--accent)}
+.tb-chip{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;background:var(--chip-bg);color:var(--chip-text);border:1px solid var(--border)}
+
+/* 11) Tables / lists */
+.tb-table{width:100%;border-collapse:separate;border-spacing:0}
+.tb-table th,.tb-table td{padding:12px 14px;border-bottom:1px solid var(--border);text-align:left}
+.tb-table tr:hover td{background:var(--surface-muted)}
+
+/* 12) Panels used on Generator screen */
+.tb-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px}
+.tb-panel-title{font-family:var(--font-serif);font-size:18px;margin:0 0 10px;color:var(--text)}
+
+/* 13) Utility spacing */
+.mt-2{margin-top:8px}.mt-3{margin-top:12px}.mt-4{margin-top:16px}.mt-6{margin-top:24px}
+.mb-2{margin-bottom:8px}.mb-3{margin-bottom:12px}.mb-4{margin-bottom:16px}.mb-6{margin-bottom:24px}
+.p-2{padding:8px}.p-3{padding:12px}.p-4{padding:16px}.p-6{padding:24px}
+.flex{display:flex}.items-center{align-items:center}.justify-between{justify-content:space-between}.gap-2{gap:8px}.gap-3{gap:12px}.gap-4{gap:16px}
+
+/* 14) Example dashboard skeleton layout */
+.toombos-app{display:grid;grid-template-columns:260px 1fr;min-height:100vh}
+.toombos-main{display:flex;flex-direction:column}
+.toombos-content{padding:24px}
+
+/* 15) Quick Actions card styles */
+.tb-actions{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.tb-action{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:6px;box-shadow:var(--shadow);cursor:pointer;transition:transform .06s ease, box-shadow .2s ease}
+.tb-action:hover{transform:translateY(-1px);box-shadow:0 16px 32px rgba(0,0,0,.10)}
+.tb-action .title{font-weight:600}
+
+/* 16) Chart placeholder */
+.tb-donut{--size:120px;inline-size:var(--size);block-size:var(--size);border-radius:50%;background:
+  conic-gradient(var(--chart-1) 0 120deg,var(--chart-2) 120deg 240deg,var(--chart-3) 240deg 360deg);
+  mask:radial-gradient(circle 30px at center,transparent 30px,#000 31px)}
+
+/* 17) Toasts / inline alerts */
+.tb-alert{padding:12px 14px;border-radius:12px;border:1px solid var(--border);background:var(--surface)}
+.tb-alert.info{border-color:color-mix(in srgb,var(--accent-2) 40%, var(--border));}
+.tb-alert.success{border-color:color-mix(in srgb,#4CAF50 40%, var(--border));}
+
+/* 18) Accessibility helpers */
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.visually-hidden{position:absolute!important;clip:rect(1px,1px,1px,1px);padding:0;border:0;height:1px;width:1px;overflow:hidden;white-space:nowrap}

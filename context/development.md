@@ -1,9 +1,9 @@
 # Development Context - Toombos Frontend
 
-**Last Updated**: 2025-10-08 (Sprint 11 Session 3 - Coverage Completion Sprint!)
+**Last Updated**: 2025-10-09 (Sprint 12 - Toombos Design System Implementation)
 **Project**: Toombos Frontend
 **Repository**: https://github.com/fivedollarfridays/toombos-frontend
-**Status**: ✅ DEPLOYED TO PRODUCTION + 70% Coverage Target ACHIEVED
+**Status**: ✅ DEPLOYED TO PRODUCTION + Design System Migration In Progress
 
 ---
 
@@ -15,15 +15,17 @@ Build a production-ready dashboard for the Content Generator product that provid
 
 ### Last action was:
 
-**CORS Verification & Testing** ✅ (Complete):
-- **Verified**: Production CORS configuration between Vercel frontend and cloud backend
-- **Backend**: https://api.toombos.com
-- **Frontend**: https://toombos-frontend-1dvdoaozf-kevin-mastersons-projects.vercel.app
-- **Status**: ✅ CORS properly configured and working
-- **Deliverables**:
-  - Browser-based test suite (`test-cors.html`)
-  - Comprehensive test results documentation (`docs/CORS-TEST-RESULTS.md`)
-- **Commit**: `33620f0` - feat: Add CORS verification tests and documentation
+**Sprint 12 Planning: Toombos Design System** 🚀 (In Progress):
+- **Reviewed**: `docs/style/toombos.css` design system specification
+- **Created**: Sprint 12 plan with 7 implementation phases
+- **Scope**: Full migration from Tailwind utilities to Toombos design system
+- **Key Features**:
+  - CSS custom properties for light/dark themes
+  - Component classes (tb-card, tb-btn, tb-input, etc.)
+  - Typography with serif fonts for headings
+  - Color palette: Beige/warm (light) and Violet/gold (dark)
+- **Duration**: Estimated 13 hours (2-3 days)
+- **Next Step**: Begin Phase 1 - CSS Custom Properties Setup
 
 **Sprint 11 Session 3: Coverage Completion Sprint** ✅ (Complete):
 - **Branch**: feature/coverage-completion
@@ -473,49 +475,88 @@ Build a production-ready dashboard for the Content Generator product that provid
 
 ### Next action will be:
 
-**Immediate: Test Suite Remediation** (3-4 hours - CRITICAL):
-1. **Fix Failing Tests** (Phase 1 - 2-3 hours)
-   - Add global fetch mock to jest.setup.js
-   - Fix act() warnings in dashboard, hooks, forms tests
-   - Update mock configurations for consistency
-   - Target: 95%+ test pass rate (1020+ tests passing)
+**Sprint 12: Toombos Design System Implementation** (In Progress)
 
-2. **Close Branch Coverage Gap** (Phase 2 - 30 min)
-   - Identify uncovered branches (1-2 branches)
-   - Add edge case tests
-   - Target: Branches ≥70% (currently 69.92%)
+**Objective**: Implement the Toombos design system from `docs/style/toombos.css` throughout the application
 
-3. **Achieve 100% DoD Compliance**
-   - Update DoD assessment to FULLY COMPLIANT
-   - Document remediation results
-   - Merge fixes to master
+**Scope**:
+1. **CSS Custom Properties Setup** (Phase 1 - 2 hours)
+   - Implement CSS variables for light/dark themes
+   - Add color tokens: bg, surface, text, accent, borders
+   - Configure typography scale with serif fonts for headings
+   - Set up theme switching with data-theme attribute
 
-**See**: `docs/CORRECTIVE-ACTION-PLAN.md` for detailed implementation guide
+2. **Component Migration** (Phase 2 - 4 hours)
+   - Replace Tailwind utilities with tb-* classes:
+     - Cards: `.tb-card`, `.tb-surface-muted`
+     - Buttons: `.tb-btn`, `.tb-btn.primary`, `.tb-btn.ghost`
+     - Inputs: `.tb-input`, `.tb-select`, `.tb-textarea`
+     - Navigation: `.tb-sidebar`, `.tb-nav`, `.tb-topbar`
+   - Update all feature components to use new classes
+   - Maintain consistent spacing with utility classes
 
-**After DoD Compliance** (Sprint 12 Options):
+3. **Typography System** (Phase 3 - 1 hour)
+   - Apply serif font (Georgia) to all headings
+   - Use `.h1`, `.h2` classes for heading styles
+   - Apply `.subtle` for muted text
+   - Implement proper font scaling with clamp()
 
-**Option A: UI/UX Testing & Refinement** (Recommended - Ready NOW):
-1. Test production UI at Vercel URL
-2. Gather user feedback on UX/layout
-3. Iterate on design improvements
-4. Optimize user flows
-5. Duration: 1-2 weeks
+4. **Color Palette Migration** (Phase 4 - 2 hours)
+   - Light mode: Beige/warm palette (#F7F1E8 bg, #A25A2A accent)
+   - Dark mode: Violet/navy with gold (#1E1A1C bg, #E2C48D accent)
+   - Update chart colors to match design system
+   - Apply new shadow and radius tokens
+
+5. **Layout Primitives** (Phase 5 - 1 hour)
+   - Implement `.tb-container` for max-width layouts
+   - Apply `.tb-grid` with responsive column classes
+   - Use `.toombos-app` layout structure
+   - Configure sidebar width (260px)
+
+6. **Dashboard Widgets** (Phase 6 - 2 hours)
+   - Update stat cards with `.tb-stat` classes
+   - Implement chips with `.tb-chip` styling
+   - Apply `.tb-table` for data tables
+   - Update action cards with `.tb-actions`
+
+7. **Theme Toggle Feature** (Phase 7 - 1 hour)
+   - Add theme switcher to settings/nav
+   - Persist theme preference in localStorage
+   - Respect OS preference with prefers-color-scheme
+   - Smooth theme transitions
+
+**Estimated Duration**: 13 hours (2-3 days)
+
+**Success Criteria**:
+- All components use design system classes
+- Light/dark theme fully functional
+- Consistent visual design across all pages
+- No Tailwind utility classes in components (only spacing utilities)
+- Typography follows serif/sans-serif hierarchy
+
+**Files to Update**:
+- `app/globals.css` - Import design system
+- `app/layout.tsx` - Theme provider setup
+- All components in `app/components/features/*`
+- All page components in `app/*/page.tsx`
+- Navigation and layout components
+
+**After Sprint 12** (Previous Options):
+
+**Option A: Test Suite Remediation** (3-4 hours):
+1. Fix failing tests (global fetch mock, act() warnings)
+2. Close branch coverage gap
+3. Achieve 100% DoD compliance
 
 **Option B: Production Monitoring** (Infrastructure):
 1. Set up error tracking (Sentry)
-2. Configure analytics (Google Analytics)
+2. Configure analytics
 3. Performance monitoring
-4. Uptime monitoring
-5. Duration: 1 week
 
 **Option C: Feature Enhancements**:
 1. Advanced analytics dashboard
 2. Content scheduling
 3. Multi-user support
-4. Role-based access control
-5. Duration: 2-3 weeks
-
-**Recommended**: Fix tests first (3-4 hours), then Option A for UX refinement!
 
 ### Blockers/Risks:
 
@@ -550,7 +591,7 @@ Build a production-ready dashboard for the Content Generator product that provid
 ## 📊 Current Status
 
 ### Version
-- **Version**: 0.5.0-sprint11-session3 (Sprint 11 Session 3 Complete - Coverage Target EXCEEDED!)
+- **Version**: 0.6.0-sprint12 (Sprint 12 Active - Design System Migration)
 - **Build Status**: ✅ Passing (0 errors, 12 pages, 102KB first load)
 - **Test Status**: ✅ 947/1042 passing (90.9%, 93 failures, 2 skipped)
 - **Test Coverage**: ✅ **73.75%** (Target: 70%, Gap: **+3.75% - TARGET EXCEEDED!** 🎉)
@@ -717,18 +758,20 @@ Build a production-ready dashboard for the Content Generator product that provid
 See `docs/SPRINTS-ARCHIVE.md` for Sprints 1-9 details (archived to reduce context)
 
 ### Current Sprint
-**Sprint 10**: 📋 Planning Complete
+**Sprint 12**: 🎨 Toombos Design System Implementation (Active)
 
-**Strategic Test Coverage Plan**:
-- **See**: `docs/SPRINT-10-COVERAGE-PLAN.md` for complete strategy
-- **Duration**: 4-5 sessions (18-24 hours estimated)
-- **Target**: 33.36% → 70% coverage (+36.64%)
-- **Approach**: Priority-based phased execution
-- **Phase 1A** (Session 7): Auth context, Preferences context, Generate page → 42%
-- **Phase 1B** (Session 8): Jobs page, Settings page → 52%
-- **Phase 2** (Session 9): Use-websocket, History, Templates, Home pages → 62%
-- **Phase 3** (Session 10): Error boundary, Campaigns, Feature components → 71%
-- **Success Criteria**: ≥70% coverage, ≥95% pass rate, production-ready
+**Design System Migration Plan**:
+- **Specification**: `docs/style/toombos.css` - Complete design system
+- **Duration**: 13 hours (2-3 days)
+- **Approach**: 7-phase implementation
+- **Phase 1**: CSS Custom Properties Setup (2 hours)
+- **Phase 2**: Component Migration to tb-* classes (4 hours)
+- **Phase 3**: Typography System with serif fonts (1 hour)
+- **Phase 4**: Color Palette Migration (2 hours)
+- **Phase 5**: Layout Primitives (1 hour)
+- **Phase 6**: Dashboard Widgets (2 hours)
+- **Phase 7**: Theme Toggle Feature (1 hour)
+- **Success Criteria**: Full design system adoption, light/dark theme support
 
 ### Next Sprint Options
 
