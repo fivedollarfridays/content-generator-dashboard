@@ -13,7 +13,7 @@ const AnalyticsCharts = dynamic(
     ),
   {
     loading: () => (
-      <div className="bg-white rounded-lg shadow p-6 animate-pulse">
+      <div className="tb-card pad animate-pulse">
         <div className="h-8 bg-gray-200 rounded w-1/4 mb-4"></div>
         <div className="h-64 bg-gray-200 rounded"></div>
       </div>
@@ -115,15 +115,15 @@ const AnalyticsPage: React.FC = (): JSX.Element => {
 
   if (error) {
     return (
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="bg-red-50 border border-red-200 rounded-lg p-6">
-          <h3 className="text-lg font-semibold text-red-900 mb-2">
+      <div className="tb-container py-8">
+        <div className="tb-card pad" style={{ borderColor: 'var(--accent)' }}>
+          <h3 className="title text-lg mb-2">
             Error Loading Analytics
           </h3>
-          <p className="text-red-700">{error}</p>
+          <p className="subtle">{error}</p>
           <button
             onClick={fetchAnalytics}
-            className="mt-4 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
+            className="mt-4 tb-btn primary"
           >
             Retry
           </button>
@@ -133,13 +133,13 @@ const AnalyticsPage: React.FC = (): JSX.Element => {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="tb-container py-8">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">
+        <h1 className="h1 mb-2">
           Analytics Dashboard
         </h1>
-        <p className="text-gray-600">
+        <p className="subtle">
           Insights and performance metrics for your content generation jobs
         </p>
       </div>
@@ -150,11 +150,7 @@ const AnalyticsPage: React.FC = (): JSX.Element => {
           <button
             key={range}
             onClick={() => setTimeRange(range)}
-            className={`px-4 py-2 rounded-md font-medium transition-colors ${
-              timeRange === range
-                ? 'bg-blue-600 text-white'
-                : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
-            }`}
+            className={timeRange === range ? 'tb-btn primary' : 'tb-btn ghost'}
           >
             {range === '24h'
               ? 'Last 24 Hours'
@@ -165,7 +161,7 @@ const AnalyticsPage: React.FC = (): JSX.Element => {
         ))}
         <button
           onClick={fetchAnalytics}
-          className="ml-auto px-4 py-2 bg-white text-gray-700 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+          className="ml-auto tb-btn ghost"
           disabled={loading}
         >
           {loading ? 'Refreshing...' : 'Refresh'}
@@ -279,26 +275,26 @@ const AnalyticsPage: React.FC = (): JSX.Element => {
 
       {/* Recent Activity Section */}
       {analytics && !loading && (
-        <div className="mt-8 bg-white rounded-lg shadow p-6 border border-gray-200">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+        <div className="mt-8 tb-card pad">
+          <h3 className="title text-lg mb-4">
             Recent Activity
           </h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div>
-              <p className="text-sm text-gray-600 mb-1">Last 24 Hours</p>
-              <p className="text-2xl font-bold text-gray-900">
+          <div className="tb-grid cols-3">
+            <div className="tb-stat">
+              <p className="text-sm subtle mb-1">Last 24 Hours</p>
+              <p className="text-2xl font-bold">
                 {analytics.recent_activity.last_24h}
               </p>
             </div>
-            <div>
-              <p className="text-sm text-gray-600 mb-1">Last 7 Days</p>
-              <p className="text-2xl font-bold text-gray-900">
+            <div className="tb-stat">
+              <p className="text-sm subtle mb-1">Last 7 Days</p>
+              <p className="text-2xl font-bold">
                 {analytics.recent_activity.last_7d}
               </p>
             </div>
-            <div>
-              <p className="text-sm text-gray-600 mb-1">Last 30 Days</p>
-              <p className="text-2xl font-bold text-gray-900">
+            <div className="tb-stat">
+              <p className="text-sm subtle mb-1">Last 30 Days</p>
+              <p className="text-2xl font-bold">
                 {analytics.recent_activity.last_30d}
               </p>
             </div>

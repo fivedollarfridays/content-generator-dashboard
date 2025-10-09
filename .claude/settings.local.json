@@ -27,7 +27,9 @@
       "Bash(npm run build:*)",
       "Bash(npm run dev:*)",
       "Bash(netstat:*)",
-      "Bash(findstr:*)"
+      "Bash(findstr:*)",
+      "Bash(git revert:*)",
+      "Bash(git merge:*)"
     ],
     "deny": [],
     "ask": []

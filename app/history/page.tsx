@@ -164,22 +164,22 @@ const HistoryPage = (): React.ReactElement => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen py-8">
+      <div className="tb-container">
         {/* Page Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Job History</h1>
-          <p className="mt-2 text-sm text-gray-600">
+          <h1 className="h1">Job History</h1>
+          <p className="mt-2 text-sm subtle">
             Chronological view of all content generation jobs
           </p>
         </div>
 
         {/* Filters */}
-        <div className="bg-white rounded-lg shadow p-6 mb-6">
+        <div className="tb-card pad mb-6">
           <div className="space-y-4">
             {/* Search */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm title mb-2">
                 Search
               </label>
               <input
@@ -187,13 +187,13 @@ const HistoryPage = (): React.ReactElement => {
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
                 placeholder="Search by job ID or document ID..."
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="tb-input w-full"
               />
             </div>
 
             {/* Status Filter */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm title mb-2">
                 Status
               </label>
               <div className="flex flex-wrap gap-2">
@@ -201,11 +201,7 @@ const HistoryPage = (): React.ReactElement => {
                   <button
                     key={status.value}
                     onClick={() => setStatusFilter(status.value)}
-                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                      statusFilter === status.value
-                        ? 'bg-blue-600 text-white'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                    }`}
+                    className={statusFilter === status.value ? 'tb-btn primary' : 'tb-btn ghost'}
                   >
                     {status.label}
                   </button>
@@ -215,7 +211,7 @@ const HistoryPage = (): React.ReactElement => {
 
             {/* Results Count */}
             <div className="pt-2 border-t border-gray-200">
-              <p className="text-sm text-gray-600">
+              <p className="text-sm subtle">
                 Showing {filteredJobs.length} of {jobs.length} jobs
               </p>
             </div>
@@ -223,7 +219,7 @@ const HistoryPage = (): React.ReactElement => {
         </div>
 
         {/* Timeline */}
-        <div className="bg-white rounded-lg shadow p-6">
+        <div className="tb-card pad">
           {loading ? (
             <div className="animate-pulse space-y-4">
               {[1, 2, 3].map(i => (
