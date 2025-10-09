@@ -15,6 +15,40 @@ Build a production-ready dashboard for the Content Generator product that provid
 
 ### Last action was:
 
+**Sprint 13 Session 1: Test Suite Remediation Analysis** ⚠️ (Deferred - Revised Plan):
+- **Branch**: feature/test-suite-remediation
+- **Duration**: 1.5 hours (investigation and analysis)
+- **Status**: Deferred to future sprint - complexity higher than estimated
+
+**Key Findings**:
+1. **Global Fetch Mock Approach**: Attempted to add global fetch mock to jest.setup.js
+   - ✅ Successfully eliminated "fetch is not defined" errors
+   - ❌ Broke 113 existing passing tests (961 → 848 passing)
+   - **Root Cause**: Global mock returns `{}`, breaks tests expecting specific API response structures
+
+2. **Complexity Assessment**: Initial 3.5-4.5 hour estimate was optimistic
+   - **Actual Effort Needed**: 8-12 hours for comprehensive test remediation
+   - **Reason**: Each test suite needs individual mock strategy
+   - Tests rely on specific API response structures (e.g., analytics expects `job_analytics.total_jobs`)
+
+3. **Alternative Approach Required**:
+   - Individual test files should mock ContentGeneratorAPI responses
+   - Cannot use blanket global fetch mock
+   - Requires test-by-test analysis and refactoring
+
+**Action Taken**:
+- Reverted global fetch mock (commit `811a33c`)
+- Documented findings for future reference
+- Decided to defer Sprint 13 in favor of higher-value work
+
+**Commits**:
+- `18ee21c` - docs: Add Sprint 13 planning
+- `87f3bc3` - feat: Add global fetch mock (REVERTED)
+- `811a33c` - Revert: Global fetch mock
+
+**Recommendation**:
+Sprint 13 (Test Remediation) deferred to future. Proceeding with **Sprint 14: Additional Design System Migration** which provides immediate user value and builds on successful Sprint 12 work.
+
 **Sprint 12 Session 1: Design System Implementation** ✅ (COMPLETE - All 7 Phases):
 - **Completed**: All 7 phases of Toombos Design System migration
 - **Duration**: ~4 hours
@@ -526,88 +560,130 @@ Build a production-ready dashboard for the Content Generator product that provid
 
 ### Next action will be:
 
-**Sprint 12: Toombos Design System Implementation** (In Progress)
+**Sprint 14: Additional Design System Migration** (Planned - Ready to Start)
 
-**Objective**: Implement the Toombos design system from `docs/style/toombos.css` throughout the application
+**Branch**: `feature/design-system-completion`
 
-**Scope**:
-1. **CSS Custom Properties Setup** (Phase 1 - 2 hours)
-   - Implement CSS variables for light/dark themes
-   - Add color tokens: bg, surface, text, accent, borders
-   - Configure typography scale with serif fonts for headings
-   - Set up theme switching with data-theme attribute
+**Objective**: Complete Toombos Design System migration for all remaining pages and components, building on successful Sprint 12 foundation.
 
-2. **Component Migration** (Phase 2 - 4 hours)
-   - Replace Tailwind utilities with tb-* classes:
-     - Cards: `.tb-card`, `.tb-surface-muted`
-     - Buttons: `.tb-btn`, `.tb-btn.primary`, `.tb-btn.ghost`
-     - Inputs: `.tb-input`, `.tb-select`, `.tb-textarea`
-     - Navigation: `.tb-sidebar`, `.tb-nav`, `.tb-topbar`
-   - Update all feature components to use new classes
-   - Maintain consistent spacing with utility classes
+**Current Design System Coverage**:
+- ✅ **Completed in Sprint 12**:
+  - `app/globals.css` - Complete design system CSS
+  - `app/page.tsx` - Home page
+  - `app/dashboard/page.tsx` - Dashboard
+  - `app/components/ui/navigation.tsx` - Navigation
+  - `app/providers.tsx` - Theme provider
+  - `app/hooks/use-theme.tsx` - Theme hook
+  - `app/components/ui/theme-toggle.tsx` - Theme toggle
 
-3. **Typography System** (Phase 3 - 1 hour)
-   - Apply serif font (Georgia) to all headings
-   - Use `.h1`, `.h2` classes for heading styles
-   - Apply `.subtle` for muted text
-   - Implement proper font scaling with clamp()
+- 🟡 **Remaining Pages** (5 pages):
+  - `app/jobs/page.tsx` - Jobs management page
+  - `app/history/page.tsx` - Job history page
+  - `app/generate/page.tsx` - Content generation page
+  - `app/settings/page.tsx` - Settings page
+  - `app/analytics/page.tsx` - Analytics dashboard
 
-4. **Color Palette Migration** (Phase 4 - 2 hours)
-   - Light mode: Beige/warm palette (#F7F1E8 bg, #A25A2A accent)
-   - Dark mode: Violet/navy with gold (#1E1A1C bg, #E2C48D accent)
-   - Update chart colors to match design system
-   - Apply new shadow and radius tokens
+- 🟡 **Remaining Feature Components** (8 components):
+  - `app/components/features/jobs-list.tsx`
+  - `app/components/features/content-generation-form.tsx`
+  - `app/components/features/analytics-metrics.tsx`
+  - `app/components/features/job-charts.tsx`
+  - `app/components/features/advanced-job-filters.tsx`
+  - `app/components/features/filter-presets.tsx`
+  - `app/components/features/batch-job-operations.tsx`
+  - `app/components/ui/error-boundary.tsx`
 
-5. **Layout Primitives** (Phase 5 - 1 hour)
-   - Implement `.tb-container` for max-width layouts
-   - Apply `.tb-grid` with responsive column classes
-   - Use `.toombos-app` layout structure
-   - Configure sidebar width (260px)
+**Sprint 14 Tasks** (4 Phases):
 
-6. **Dashboard Widgets** (Phase 6 - 2 hours)
-   - Update stat cards with `.tb-stat` classes
-   - Implement chips with `.tb-chip` styling
-   - Apply `.tb-table` for data tables
-   - Update action cards with `.tb-actions`
+**Phase 1: Migrate Jobs & History Pages** (2-2.5 hours)
+1. `app/jobs/page.tsx`
+   - Replace Tailwind containers with `tb-container`
+   - Apply `h1`, `h2` typography classes
+   - Migrate cards to `tb-card pad`
+   - Update buttons to `tb-btn primary/ghost`
+   - Apply `subtle` class for muted text
 
-7. **Theme Toggle Feature** (Phase 7 - 1 hour)
-   - Add theme switcher to settings/nav
-   - Persist theme preference in localStorage
-   - Respect OS preference with prefers-color-scheme
-   - Smooth theme transitions
+2. `app/history/page.tsx`
+   - Same design system migration as jobs page
+   - Ensure consistency with dashboard styling
 
-**Estimated Duration**: 13 hours (2-3 days)
+**Phase 2: Migrate Generate & Settings Pages** (1.5-2 hours)
+3. `app/generate/page.tsx`
+   - Migrate form to use `tb-input`, `tb-select`, `tb-textarea`
+   - Apply `tb-label` for form labels
+   - Update buttons to `tb-btn primary`
+   - Use `tb-panel` for form sections
+
+4. `app/settings/page.tsx`
+   - Migrate settings panels to `tb-panel`
+   - Apply `tb-panel-title` for section headers
+   - Use design system form classes
+
+**Phase 3: Migrate Analytics & Feature Components** (2-2.5 hours)
+5. `app/analytics/page.tsx`
+   - Apply design system to analytics dashboard
+   - Use `tb-stat` for metric displays
+   - Update charts section with design system classes
+
+6. Feature components migration:
+   - `jobs-list.tsx` - Use `tb-table` for job listings
+   - `content-generation-form.tsx` - Form design system classes
+   - `analytics-metrics.tsx` - `tb-stat` integration
+   - `job-charts.tsx` - Chart container styling
+
+**Phase 4: Final Polish & Verification** (1 hour)
+7. Remaining components:
+   - `advanced-job-filters.tsx`
+   - `filter-presets.tsx`
+   - `batch-job-operations.tsx`
+   - `error-boundary.tsx`
+
+8. Verification:
+   - Test all pages in light/dark themes
+   - Verify responsive design
+   - Run production build
+   - Test theme toggle functionality
+
+**Estimated Duration**: 6.5-8 hours (2 working sessions)
 
 **Success Criteria**:
-- All components use design system classes
-- Light/dark theme fully functional
-- Consistent visual design across all pages
-- No Tailwind utility classes in components (only spacing utilities)
-- Typography follows serif/sans-serif hierarchy
+- ✅ All pages use Toombos Design System classes
+- ✅ Consistent visual design across entire application
+- ✅ Light/dark theme works on all pages
+- ✅ Typography hierarchy applied (serif headings)
+- ✅ Color palette consistent (beige/warm & violet/gold)
+- ✅ Production build successful
+- ✅ All pages tested with theme toggle
 
-**Files to Update**:
-- `app/globals.css` - Import design system
-- `app/layout.tsx` - Theme provider setup
-- All components in `app/components/features/*`
-- All page components in `app/*/page.tsx`
-- Navigation and layout components
+**Files to Modify** (13 files):
+- 5 page components in `app/*/page.tsx`
+- 8 feature/UI components
+- Maintain accessibility (WCAG 2.1 AA)
 
-**After Sprint 12** (Previous Options):
+**After Sprint 14** (Next Sprint Options):
 
-**Option A: Test Suite Remediation** (3-4 hours):
-1. Fix failing tests (global fetch mock, act() warnings)
-2. Close branch coverage gap
-3. Achieve 100% DoD compliance
+**Option A: Test Suite Remediation** (Deferred from Sprint 13 - 8-12 hours):
+1. Individual test file mock refactoring
+2. Fix API response mocking strategies
+3. Resolve act() warnings with proper async handling
+4. Close branch coverage gap to 70%+
+5. Achieve 95%+ test pass rate
+6. Reach 100% DoD compliance
 
-**Option B: Production Monitoring** (Infrastructure):
-1. Set up error tracking (Sentry)
-2. Configure analytics
-3. Performance monitoring
+**Option B: Production Monitoring & Observability** (4-6 hours):
+1. Set up error tracking (Sentry integration)
+2. Configure analytics (Google Analytics or Plausible)
+3. Performance monitoring (Web Vitals)
+4. Uptime monitoring and alerts
+5. Log aggregation and dashboards
 
-**Option C: Feature Enhancements**:
-1. Advanced analytics dashboard
-2. Content scheduling
-3. Multi-user support
+**Option C: Feature Enhancements** (Variable - 1-2 weeks):
+1. Advanced analytics dashboard with custom metrics
+2. Content scheduling and campaign management
+3. Multi-user support with role-based access
+4. Template marketplace and sharing
+5. API rate limiting and quotas
+6. Batch content operations UI
 
 ### Blockers/Risks:
 
