@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CORS Test - Toombos Frontend → Backend</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .test-section {
+            border: 1px solid #ddd;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .success { background-color: #d4edda; border-color: #c3e6cb; }
+        .error { background-color: #f8d7da; border-color: #f5c6cb; }
+        .info { background-color: #d1ecf1; border-color: #bee5eb; }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        pre {
+            background-color: #f5f5f5;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        .result {
+            margin-top: 10px;
+        }
+        h1 { color: #333; }
+        h2 { color: #666; }
+    </style>
+</head>
+<body>
+    <h1>🧪 CORS Test Suite - Toombos Frontend → Backend</h1>
+    <p><strong>Frontend (Vercel):</strong> https://toombos-frontend-1dvdoaozf-kevin-mastersons-projects.vercel.app</p>
+    <p><strong>Backend (Cloud):</strong> https://api.toombos.com</p>
+
+    <div class="test-section">
+        <h2>Test 1: Health Check Endpoint</h2>
+        <button onclick="testHealthCheck()">Run Test</button>
+        <div id="health-result" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Test 2: Metrics Endpoint</h2>
+        <button onclick="testMetrics()">Run Test</button>
+        <div id="metrics-result" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Test 3: Content Generation (POST)</h2>
+        <button onclick="testContentGeneration()">Run Test</button>
+        <div id="content-result" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Test 4: WebSocket Connection</h2>
+        <button onclick="testWebSocket()">Run Test</button>
+        <button onclick="closeWebSocket()">Close WebSocket</button>
+        <div id="websocket-result" class="result"></div>
+    </div>
+
+    <div class="test-section info">
+        <h2>📊 Test Summary</h2>
+        <div id="summary"></div>
+    </div>
+
+    <script>
+        const API_URL = 'https://api.toombos.com';
+        const WS_URL = 'wss://api.toombos.com';
+        let ws = null;
+        let testResults = {
+            health: null,
+            metrics: null,
+            content: null,
+            websocket: null
+        };
+
+        async function testHealthCheck() {
+            const resultDiv = document.getElementById('health-result');
+            resultDiv.innerHTML = '<p>⏳ Testing health check endpoint...</p>';
+
+            try {
+                const response = await fetch(`${API_URL}/health`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const data = await response.json();
+                const corsHeaders = {
+                    'access-control-allow-origin': response.headers.get('access-control-allow-origin'),
+                    'access-control-allow-credentials': response.headers.get('access-control-allow-credentials'),
+                    'access-control-allow-methods': response.headers.get('access-control-allow-methods')
+                };
+
+                testResults.health = true;
+                resultDiv.innerHTML = `
+                    <div class="success">
+                        <h3>✅ SUCCESS</h3>
+                        <p><strong>Status:</strong> ${response.status} ${response.statusText}</p>
+                        <p><strong>Service:</strong> ${data.service}</p>
+                        <p><strong>Version:</strong> ${data.version}</p>
+                        <p><strong>Environment:</strong> ${data.environment}</p>
+                        <p><strong>Uptime:</strong> ${data.uptime_seconds}s</p>
+                        <h4>CORS Headers:</h4>
+                        <pre>${JSON.stringify(corsHeaders, null, 2)}</pre>
+                        <h4>Response:</h4>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    </div>
+                `;
+            } catch (error) {
+                testResults.health = false;
+                resultDiv.innerHTML = `
+                    <div class="error">
+                        <h3>❌ FAILED</h3>
+                        <p><strong>Error:</strong> ${error.message}</p>
+                        <p>This indicates a CORS issue or network problem.</p>
+                    </div>
+                `;
+            }
+            updateSummary();
+        }
+
+        async function testMetrics() {
+            const resultDiv = document.getElementById('metrics-result');
+            resultDiv.innerHTML = '<p>⏳ Testing metrics endpoint...</p>';
+
+            try {
+                const response = await fetch(`${API_URL}/metrics`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const data = await response.json();
+                testResults.metrics = true;
+                resultDiv.innerHTML = `
+                    <div class="success">
+                        <h3>✅ SUCCESS</h3>
+                        <p><strong>Status:</strong> ${response.status} ${response.statusText}</p>
+                        <p><strong>Total Requests:</strong> ${data.total_requests || 'N/A'}</p>
+                        <p><strong>Active Jobs:</strong> ${data.active_jobs || 'N/A'}</p>
+                        <h4>Response:</h4>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    </div>
+                `;
+            } catch (error) {
+                testResults.metrics = false;
+                resultDiv.innerHTML = `
+                    <div class="error">
+                        <h3>❌ FAILED</h3>
+                        <p><strong>Error:</strong> ${error.message}</p>
+                    </div>
+                `;
+            }
+            updateSummary();
+        }
+
+        async function testContentGeneration() {
+            const resultDiv = document.getElementById('content-result');
+            resultDiv.innerHTML = '<p>⏳ Testing content generation endpoint (POST)...</p>';
+
+            const payload = {
+                topic: "CORS Test",
+                channels: ["email"],
+                content_type: "update",
+                template_style: "modern"
+            };
+
+            try {
+                const response = await fetch(`${API_URL}/api/v2/content/sync`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.json();
+                testResults.content = response.ok;
+
+                if (response.ok) {
+                    resultDiv.innerHTML = `
+                        <div class="success">
+                            <h3>✅ SUCCESS</h3>
+                            <p><strong>Status:</strong> ${response.status} ${response.statusText}</p>
+                            <p><strong>Job ID:</strong> ${data.job_id || 'N/A'}</p>
+                            <h4>Request Payload:</h4>
+                            <pre>${JSON.stringify(payload, null, 2)}</pre>
+                            <h4>Response:</h4>
+                            <pre>${JSON.stringify(data, null, 2)}</pre>
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="error">
+                            <h3>⚠️ API Error</h3>
+                            <p><strong>Status:</strong> ${response.status} ${response.statusText}</p>
+                            <p><strong>Message:</strong> ${data.detail || data.message || 'Unknown error'}</p>
+                            <p>CORS is working (request went through), but API returned an error.</p>
+                            <h4>Response:</h4>
+                            <pre>${JSON.stringify(data, null, 2)}</pre>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                testResults.content = false;
+                resultDiv.innerHTML = `
+                    <div class="error">
+                        <h3>❌ FAILED</h3>
+                        <p><strong>Error:</strong> ${error.message}</p>
+                        <p>This indicates a CORS issue or network problem.</p>
+                    </div>
+                `;
+            }
+            updateSummary();
+        }
+
+        function testWebSocket() {
+            const resultDiv = document.getElementById('websocket-result');
+            resultDiv.innerHTML = '<p>⏳ Connecting to WebSocket...</p>';
+
+            try {
+                ws = new WebSocket(`${WS_URL}/ws/jobs`);
+
+                ws.onopen = () => {
+                    testResults.websocket = true;
+                    resultDiv.innerHTML = `
+                        <div class="success">
+                            <h3>✅ WebSocket Connected</h3>
+                            <p><strong>URL:</strong> ${WS_URL}/ws/jobs</p>
+                            <p><strong>Ready State:</strong> ${ws.readyState} (OPEN)</p>
+                            <p>WebSocket connection established successfully!</p>
+                        </div>
+                    `;
+                    updateSummary();
+                };
+
+                ws.onmessage = (event) => {
+                    const currentContent = resultDiv.querySelector('.success');
+                    if (currentContent) {
+                        currentContent.innerHTML += `
+                            <h4>Message Received:</h4>
+                            <pre>${event.data}</pre>
+                        `;
+                    }
+                };
+
+                ws.onerror = (error) => {
+                    testResults.websocket = false;
+                    resultDiv.innerHTML = `
+                        <div class="error">
+                            <h3>❌ WebSocket Error</h3>
+                            <p><strong>Error:</strong> Connection failed</p>
+                            <p>WebSocket connection could not be established.</p>
+                        </div>
+                    `;
+                    updateSummary();
+                };
+
+                ws.onclose = () => {
+                    const currentContent = resultDiv.querySelector('.success');
+                    if (currentContent) {
+                        currentContent.innerHTML += `<p><strong>Connection closed</strong></p>`;
+                    }
+                };
+            } catch (error) {
+                testResults.websocket = false;
+                resultDiv.innerHTML = `
+                    <div class="error">
+                        <h3>❌ FAILED</h3>
+                        <p><strong>Error:</strong> ${error.message}</p>
+                    </div>
+                `;
+                updateSummary();
+            }
+        }
+
+        function closeWebSocket() {
+            if (ws) {
+                ws.close();
+                document.getElementById('websocket-result').innerHTML += `<p>🔌 WebSocket closed manually</p>`;
+            }
+        }
+
+        function updateSummary() {
+            const summary = document.getElementById('summary');
+            const total = Object.values(testResults).filter(r => r !== null).length;
+            const passed = Object.values(testResults).filter(r => r === true).length;
+            const failed = Object.values(testResults).filter(r => r === false).length;
+
+            summary.innerHTML = `
+                <p><strong>Tests Run:</strong> ${total}/4</p>
+                <p><strong>Passed:</strong> ✅ ${passed}</p>
+                <p><strong>Failed:</strong> ❌ ${failed}</p>
+                <hr>
+                <p>🔍 <strong>Health Check:</strong> ${formatResult(testResults.health)}</p>
+                <p>📊 <strong>Metrics:</strong> ${formatResult(testResults.metrics)}</p>
+                <p>📝 <strong>Content Generation:</strong> ${formatResult(testResults.content)}</p>
+                <p>🔌 <strong>WebSocket:</strong> ${formatResult(testResults.websocket)}</p>
+            `;
+        }
+
+        function formatResult(result) {
+            if (result === null) return '⏸️ Not tested';
+            if (result === true) return '✅ Passed';
+            return '❌ Failed';
+        }
+
+        // Auto-run health check on load
+        window.addEventListener('load', () => {
+            testHealthCheck();
+        });
+    </script>
+</body>
+</html>
