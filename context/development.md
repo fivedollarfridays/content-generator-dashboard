@@ -15,6 +15,40 @@ Build a production-ready dashboard for the Content Generator product that provid
 
 ### Last action was:
 
+**Sprint 13 Session 1: Test Suite Remediation Analysis** ⚠️ (Deferred - Revised Plan):
+- **Branch**: feature/test-suite-remediation
+- **Duration**: 1.5 hours (investigation and analysis)
+- **Status**: Deferred to future sprint - complexity higher than estimated
+
+**Key Findings**:
+1. **Global Fetch Mock Approach**: Attempted to add global fetch mock to jest.setup.js
+   - ✅ Successfully eliminated "fetch is not defined" errors
+   - ❌ Broke 113 existing passing tests (961 → 848 passing)
+   - **Root Cause**: Global mock returns `{}`, breaks tests expecting specific API response structures
+
+2. **Complexity Assessment**: Initial 3.5-4.5 hour estimate was optimistic
+   - **Actual Effort Needed**: 8-12 hours for comprehensive test remediation
+   - **Reason**: Each test suite needs individual mock strategy
+   - Tests rely on specific API response structures (e.g., analytics expects `job_analytics.total_jobs`)
+
+3. **Alternative Approach Required**:
+   - Individual test files should mock ContentGeneratorAPI responses
+   - Cannot use blanket global fetch mock
+   - Requires test-by-test analysis and refactoring
+
+**Action Taken**:
+- Reverted global fetch mock (commit `811a33c`)
+- Documented findings for future reference
+- Decided to defer Sprint 13 in favor of higher-value work
+
+**Commits**:
+- `18ee21c` - docs: Add Sprint 13 planning
+- `87f3bc3` - feat: Add global fetch mock (REVERTED)
+- `811a33c` - Revert: Global fetch mock
+
+**Recommendation**:
+Sprint 13 (Test Remediation) deferred to future. Proceeding with **Sprint 14: Additional Design System Migration** which provides immediate user value and builds on successful Sprint 12 work.
+
 **Sprint 12 Session 1: Design System Implementation** ✅ (COMPLETE - All 7 Phases):
 - **Completed**: All 7 phases of Toombos Design System migration
 - **Duration**: ~4 hours
@@ -526,102 +560,130 @@ Build a production-ready dashboard for the Content Generator product that provid
 
 ### Next action will be:
 
-**Sprint 13: Test Suite Remediation** (Planned - Ready to Start)
+**Sprint 14: Additional Design System Migration** (Planned - Ready to Start)
 
-**Branch**: `feature/test-suite-remediation`
+**Branch**: `feature/design-system-completion`
 
-**Objective**: Fix failing tests and achieve 100% DoD compliance by reaching 95%+ test pass rate and 70%+ coverage on all metrics.
+**Objective**: Complete Toombos Design System migration for all remaining pages and components, building on successful Sprint 12 foundation.
 
-**Current Test Health Status**:
-- **Total Tests**: 1,076
-- **Passing**: 981 (91.16%)
-- **Failing**: 93 (8.64%)
-- **Skipped**: 2 (0.19%)
-- **Target**: 95%+ pass rate (1,022+ passing tests)
+**Current Design System Coverage**:
+- ✅ **Completed in Sprint 12**:
+  - `app/globals.css` - Complete design system CSS
+  - `app/page.tsx` - Home page
+  - `app/dashboard/page.tsx` - Dashboard
+  - `app/components/ui/navigation.tsx` - Navigation
+  - `app/providers.tsx` - Theme provider
+  - `app/hooks/use-theme.tsx` - Theme hook
+  - `app/components/ui/theme-toggle.tsx` - Theme toggle
 
-**Coverage Status**:
-- Statements: 73.75% ✅ (Target: 70%)
-- Branches: 69.92% 🟡 (Target: 70%, Gap: -0.08%)
-- Functions: 76.5% ✅ (Target: 70%)
-- Lines: 75.79% ✅ (Target: 70%)
+- 🟡 **Remaining Pages** (5 pages):
+  - `app/jobs/page.tsx` - Jobs management page
+  - `app/history/page.tsx` - Job history page
+  - `app/generate/page.tsx` - Content generation page
+  - `app/settings/page.tsx` - Settings page
+  - `app/analytics/page.tsx` - Analytics dashboard
 
-**Root Causes of Test Failures**:
-1. **Global fetch not mocked** (~56 tests, 60% of failures)
-   - Error: "fetch is not defined"
-   - Impact: Page components, hooks that use fetch
-2. **Act() warnings** (~28 tests, 30% of failures)
-   - Error: Async state updates not wrapped
-   - Impact: Dashboard, hooks, form tests
-3. **Mock inconsistencies** (~9 tests, 10% of failures)
-   - localStorage timing issues
-   - WebSocket connection timing
-   - Mock configuration conflicts
+- 🟡 **Remaining Feature Components** (8 components):
+  - `app/components/features/jobs-list.tsx`
+  - `app/components/features/content-generation-form.tsx`
+  - `app/components/features/analytics-metrics.tsx`
+  - `app/components/features/job-charts.tsx`
+  - `app/components/features/advanced-job-filters.tsx`
+  - `app/components/features/filter-presets.tsx`
+  - `app/components/features/batch-job-operations.tsx`
+  - `app/components/ui/error-boundary.tsx`
 
-**Sprint 13 Tasks**:
+**Sprint 14 Tasks** (4 Phases):
 
-1. **Fix Global Fetch Mocking** (Phase 1 - 1.5-2 hours)
-   - Add global fetch mock to `jest.setup.js`
-   - Configure fetch mock for all test environments
-   - Fix ~56 tests with "fetch is not defined" errors
-   - Target: 95.5% pass rate after completion
+**Phase 1: Migrate Jobs & History Pages** (2-2.5 hours)
+1. `app/jobs/page.tsx`
+   - Replace Tailwind containers with `tb-container`
+   - Apply `h1`, `h2` typography classes
+   - Migrate cards to `tb-card pad`
+   - Update buttons to `tb-btn primary/ghost`
+   - Apply `subtle` class for muted text
 
-2. **Resolve Act() Warnings** (Phase 2 - 1-1.5 hours)
-   - Identify async state updates in tests
-   - Wrap updates in `act()` or `waitFor()`
-   - Fix dashboard, hooks, and form tests
-   - Fix ~28 tests with timing issues
-   - Target: 98% pass rate after completion
+2. `app/history/page.tsx`
+   - Same design system migration as jobs page
+   - Ensure consistency with dashboard styling
 
-3. **Fix Mock Inconsistencies** (Phase 3 - 0.5-1 hour)
-   - Fix localStorage mocks in affected tests
-   - Fix WebSocket timing issues
-   - Resolve mock configuration conflicts
-   - Fix remaining ~9 tests
-   - Target: 99%+ pass rate after completion
+**Phase 2: Migrate Generate & Settings Pages** (1.5-2 hours)
+3. `app/generate/page.tsx`
+   - Migrate form to use `tb-input`, `tb-select`, `tb-textarea`
+   - Apply `tb-label` for form labels
+   - Update buttons to `tb-btn primary`
+   - Use `tb-panel` for form sections
 
-4. **Close Branch Coverage Gap** (Phase 4 - 0.5 hour)
-   - Identify uncovered branches (likely 1-2 edge cases)
-   - Add targeted tests for uncovered branches
-   - Reach 70%+ on all 4 coverage metrics
-   - Target: Branches ≥70%
+4. `app/settings/page.tsx`
+   - Migrate settings panels to `tb-panel`
+   - Apply `tb-panel-title` for section headers
+   - Use design system form classes
 
-**Estimated Duration**: 3.5-4.5 hours (1 working session)
+**Phase 3: Migrate Analytics & Feature Components** (2-2.5 hours)
+5. `app/analytics/page.tsx`
+   - Apply design system to analytics dashboard
+   - Use `tb-stat` for metric displays
+   - Update charts section with design system classes
+
+6. Feature components migration:
+   - `jobs-list.tsx` - Use `tb-table` for job listings
+   - `content-generation-form.tsx` - Form design system classes
+   - `analytics-metrics.tsx` - `tb-stat` integration
+   - `job-charts.tsx` - Chart container styling
+
+**Phase 4: Final Polish & Verification** (1 hour)
+7. Remaining components:
+   - `advanced-job-filters.tsx`
+   - `filter-presets.tsx`
+   - `batch-job-operations.tsx`
+   - `error-boundary.tsx`
+
+8. Verification:
+   - Test all pages in light/dark themes
+   - Verify responsive design
+   - Run production build
+   - Test theme toggle functionality
+
+**Estimated Duration**: 6.5-8 hours (2 working sessions)
 
 **Success Criteria**:
-- ✅ Test pass rate ≥95% (1,022+ tests passing)
-- ✅ All 4 coverage metrics ≥70%
-- ✅ Zero act() warnings in test output
-- ✅ Zero "fetch is not defined" errors
-- ✅ 100% DoD compliance achieved
+- ✅ All pages use Toombos Design System classes
+- ✅ Consistent visual design across entire application
+- ✅ Light/dark theme works on all pages
+- ✅ Typography hierarchy applied (serif headings)
+- ✅ Color palette consistent (beige/warm & violet/gold)
+- ✅ Production build successful
+- ✅ All pages tested with theme toggle
 
-**Files to Modify**:
-- `jest.setup.js` - Add global fetch mock
-- `app/dashboard/__tests__/page.test.tsx` - Fix act() warnings
-- `app/hooks/__tests__/*.test.tsx` - Fix async timing
-- `app/components/features/__tests__/*.test.tsx` - Fix mocks
-- Edge case tests for branch coverage
+**Files to Modify** (13 files):
+- 5 page components in `app/*/page.tsx`
+- 8 feature/UI components
+- Maintain accessibility (WCAG 2.1 AA)
 
-**After Sprint 13** (Next Sprint Options):
+**After Sprint 14** (Next Sprint Options):
 
-**Option A: Additional Design System Migration** (4-6 hours):
-1. Migrate remaining page components (jobs, history, generate, settings)
-2. Migrate feature components (analytics, charts, templates)
-3. Full tb-* class coverage across all pages
-4. Consistent design system application
+**Option A: Test Suite Remediation** (Deferred from Sprint 13 - 8-12 hours):
+1. Individual test file mock refactoring
+2. Fix API response mocking strategies
+3. Resolve act() warnings with proper async handling
+4. Close branch coverage gap to 70%+
+5. Achieve 95%+ test pass rate
+6. Reach 100% DoD compliance
 
 **Option B: Production Monitoring & Observability** (4-6 hours):
 1. Set up error tracking (Sentry integration)
 2. Configure analytics (Google Analytics or Plausible)
 3. Performance monitoring (Web Vitals)
 4. Uptime monitoring and alerts
-5. Log aggregation
+5. Log aggregation and dashboards
 
 **Option C: Feature Enhancements** (Variable - 1-2 weeks):
 1. Advanced analytics dashboard with custom metrics
 2. Content scheduling and campaign management
 3. Multi-user support with role-based access
-4. Template marketplace
+4. Template marketplace and sharing
 5. API rate limiting and quotas
+6. Batch content operations UI
 
 ### Blockers/Risks:
 
