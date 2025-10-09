@@ -10,7 +10,13 @@
       "Bash(else echo \"No coverage file found\")",
       "Bash(fi)",
       "Bash(xargs:*)",
-      "Bash(Select-String -Pattern \"Tests:|PASS|FAIL|✓|✕\" -Context 0,1)"
+      "Bash(Select-String -Pattern \"Tests:|PASS|FAIL|✓|✕\" -Context 0,1)",
+      "Bash(vercel:*)",
+      "Bash(test:*)",
+      "Bash(cat:*)",
+      "Bash(npm install:*)",
+      "Bash(start https://toombos-frontend-1dvdoaozf-kevin-mastersons-projects.vercel.app)",
+      "Bash(git checkout:*)"
     ],
     "deny": [],
     "ask": []
